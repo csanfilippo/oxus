@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`oxus` is a Swift command-line tool built with Swift Package Manager and [swift-argument-parser](https://github.com/apple/swift-argument-parser). The repository is at the initial-template stage: a single executable target whose `@main` entry point is a `ParsableCommand` in `Sources/oxus/oxus.swift`.
+`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients. It is a Swift executable built with Swift Package Manager and [swift-argument-parser](https://github.com/apple/swift-argument-parser). The repository is at the initial-template stage: a single executable target whose `@main` entry point is a `ParsableCommand` in `Sources/oxus/oxus.swift`; no MCP or Spotlight code exists yet.
 
 ## Commands
 
