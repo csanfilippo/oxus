@@ -3,22 +3,39 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ApproachableConcurrency"),
+]
+
 let package = Package(
     name: "oxus",
     platforms: [.macOS(.v27)],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.0"),
+        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.12.1"),
     ],
     targets: [
+        .target(
+            name: "OxusServer",
+            dependencies: [
+                .product(name: "MCP", package: "swift-sdk"),
+            ],
+            swiftSettings: swiftSettings,
+        ),
         .executableTarget(
             name: "oxus",
             dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "OxusServer",
+                .product(name: "MCP", package: "swift-sdk"),
             ],
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
-            ],
+            swiftSettings: swiftSettings,
         ),
-
+        .testTarget(
+            name: "OxusServerTests",
+            dependencies: [
+                "OxusServer",
+                .product(name: "MCP", package: "swift-sdk"),
+            ],
+            swiftSettings: swiftSettings,
+        ),
     ]
 )
