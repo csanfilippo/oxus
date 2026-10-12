@@ -23,7 +23,8 @@ Free-text search (increment 2), folder scopes, metadata in results, structured c
 
 - **Port:** a `Spotlight` protocol in `OxusServer`, injected through `makeOxusServer(spotlight:)`, with an explicit invalid-query outcome. Protocol tests keep driving the MCP `Client` against a fake, independent of the machine's index.
 - **Adapter:** `CoreServicesSpotlight` using `MDQueryCreate` + `MDQueryExecute(…, kMDQuerySynchronous)`, with `MDQuerySetMaxCount` for the limit. `MDQueryCreate` returning `NULL` signals a malformed query. Preferred over `NSMetadataQuery` (run-loop and notification driven, poor fit for strict concurrency) and over spawning `mdfind` (process management and output parsing for no gain).
-- **Adapter tests:** a few tests against real Spotlight querying always-indexed system files (e.g. `Finder.app`), tagged so the default `swift test` run stays fast. Temporary directories are not indexed, and polling for a freshly indexed file would make tests timing-dependent.
+- **Targets:** `CoreServicesSpotlight` lives in its own `CoreServicesAdapter` library, which depends on `OxusServer`; the compiler enforces that the port never depends on CoreServices. `oxus` is the composition root wiring the adapter into the server. Tests split the same way: `OxusServerTests` (protocol, with a fake), `CoreServicesAdapterTests` (real Spotlight), `AcceptanceTests` (MCP client against the real adapter).
+- **Adapter tests:** a few tests against real Spotlight querying always-indexed system files (e.g. `Finder.app`). They depend on the machine, not on time (a query takes ~30 ms), so they are isolated by test target rather than by tag. Temporary directories are not indexed, and polling for a freshly indexed file would make tests timing-dependent.
 
 ## Decisions
 

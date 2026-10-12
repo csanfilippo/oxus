@@ -12,7 +12,7 @@
 - Unknown tool: protocol error (invalidParams), unchanged
 - Truncation signalling: deferred to the pagination increment
 - Spotlight is reached through a port; protocol tests use a fake, adapter tests use real Spotlight
-- Adapter tests query always-indexed system files (e.g. Finder.app), tagged so the default run stays fast
+- Adapter tests query always-indexed system files (e.g. Finder.app), in their own test target
 
 ## Test List (TDD)
 - [ ] Acceptance test: a client queries `kMDItemFSName == "Finder.app"` over MCP and receives Finder's path
