@@ -26,6 +26,18 @@ import MCP
 import Testing
 import OxusServer
 
+final class FakeSpotlight: Sendable, Spotlight {
+    private let result: [String]
+    
+    init(result: [String] = []) {
+        self.result = result
+    }
+    
+    func search(query: String, limit: Int) async throws -> [String] {
+        self.result
+    }
+}
+
 @Suite struct SpotlightQueryTests {
     @Test func `the server advertises spotlight_query as its only tool`() async throws {
         let client = try await connectedClient()
@@ -49,9 +61,17 @@ import OxusServer
         #expect(limit["maximum"] == 100)
     }
     
-    private func connectedClient() async throws -> Client {
+    @Test func `query returns one text block per matching path, in Spotlight's order`() async throws {
+        let client = try await connectedClient(spotlight: FakeSpotlight(result: ["/b","/a"]))
+        
+        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
+        
+        #expect(texts(in: content) == ["/b","/a"])
+    }
+    
+    private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-        let server = await makeOxusServer()
+        let server = await makeOxusServer(spotlight: spotlight)
         try await server.start(transport: serverTransport)
         let client = Client(name: "oxus-tests", version: "0")
         try await client.connect(transport: clientTransport)

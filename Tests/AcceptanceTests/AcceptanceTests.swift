@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import Testing
 import MCP
+import Testing
 import OxusServer
 import CoreServicesAdapter
 
@@ -43,9 +43,9 @@ import CoreServicesAdapter
         }
     }
     
-    private func connectedClient(spotlight: CoreServicesSpotlight) async throws -> Client {
+    private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-        let server = await makeOxusServer()
+        let server = await makeOxusServer(spotlight: spotlight)
         try await server.start(transport: serverTransport)
         let client = Client(name: "oxus-tests", version: "0")
         try await client.connect(transport: clientTransport)

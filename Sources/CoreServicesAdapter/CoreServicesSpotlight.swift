@@ -24,6 +24,10 @@
 
 import OxusServer
 
-public struct CoreServicesSpotlight {
+public struct CoreServicesSpotlight: Spotlight {
+    public func search(query: String, limit: Int) async throws -> [String] {
+        []
+    }
+    
     public init() {}
 }
