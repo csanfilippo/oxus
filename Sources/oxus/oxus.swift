@@ -7,7 +7,7 @@
 import ArgumentParser
 
 @main
-struct oxus: ParsableCommand {
+struct Oxus: ParsableCommand {
     mutating func run() throws {
         print("Hello, world!")
     }
