@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "oxus",
+    platforms: [.macOS(.v27)],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.8.0"),
     ],
