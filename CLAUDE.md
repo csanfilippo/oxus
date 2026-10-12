@@ -39,3 +39,7 @@ printf '%s\n' \
 - `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`. Tests exercise the protocol a real client sees, not handler internals.
 - Stdout carries JSON-RPC only. Never `print` from the server; anything diagnostic goes to stderr.
 - Unknown tool names throw `MCPError.invalidParams`, which becomes a protocol error. Failures of a known tool are returned as a result with `isError: true`.
+
+## Increments
+
+Each increment is documented in `docs/increments/NNN-<slug>.md` (goal, status, contract, out of scope, design, open decisions, risks). Update its status and decisions as work progresses.
