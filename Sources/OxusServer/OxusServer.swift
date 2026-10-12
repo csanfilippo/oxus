@@ -8,11 +8,11 @@ public func makeOxusServer() async -> Server {
     )
 
     await server.withMethodHandler(ListTools.self) { _ in
-        .init(tools: [hello])
+        .init(tools: [spotlightQuery])
     }
 
     await server.withMethodHandler(CallTool.self) { params in
-        guard params.name == hello.name else {
+        guard params.name == spotlightQuery.name else {
             throw MCPError.invalidParams("Unknown tool: \(params.name)")
         }
         let name = params.arguments?["name"]?.stringValue ?? "world"
@@ -22,16 +22,22 @@ public func makeOxusServer() async -> Server {
     return server
 }
 
-private let hello = Tool(
-    name: "hello",
-    description: "Greets someone by name, or the world when no name is given.",
+private let spotlightQuery = Tool(
+    name: "spotlight_query",
+    description: "Perform raw Spotlight queries",
     inputSchema: .object([
         "type": "object",
         "properties": .object([
-            "name": .object([
+            "query": .object([
                 "type": "string",
-                "description": "Who to greet",
+                "description": "The query to be performed",
+            ]),
+            "limit": .object([
+                "type": "integer",
+                "maximum": 100,
+                "description": "The maximum number of paths to return",
             ]),
         ]),
+        "required": ["query"],
     ])
 )

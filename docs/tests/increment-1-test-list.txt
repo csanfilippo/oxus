@@ -16,8 +16,8 @@
 
 ## Test List (TDD)
 - [ ] Acceptance test: a client queries `kMDItemFSName == "Finder.app"` over MCP and receives Finder's path
-- [ ] The server advertises spotlight_query as its only tool
-- [ ] spotlight_query advertises a required query and an optional limit with maximum 100
+- [x] The server advertises spotlight_query as its only tool
+- [x] spotlight_query advertises a required query and an optional limit with maximum 100
 - [ ] A query returns one text block per matching path, in Spotlight's order
 - [ ] A query matching no files returns empty content without error
 - [ ] Spotlight is asked for 25 results when no limit is given

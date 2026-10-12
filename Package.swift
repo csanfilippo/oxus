@@ -21,10 +21,18 @@ let package = Package(
             ],
             swiftSettings: swiftSettings,
         ),
+        .target(
+            name: "CoreServicesAdapter",
+            dependencies: [
+                "OxusServer"
+            ],
+            swiftSettings: swiftSettings,
+        ),
         .executableTarget(
             name: "oxus",
             dependencies: [
                 "OxusServer",
+                "CoreServicesAdapter",
                 .product(name: "MCP", package: "swift-sdk"),
             ],
             swiftSettings: swiftSettings,
@@ -37,5 +45,22 @@ let package = Package(
             ],
             swiftSettings: swiftSettings,
         ),
+//        .testTarget(
+//            name: "CoreServicesAdapterTests",
+//            dependencies: [
+//                "CoreServicesAdapter",
+//                "OxusServer"
+//            ],
+//            swiftSettings: swiftSettings,
+//        ),
+        .testTarget(
+            name: "AcceptanceTests",
+            dependencies: [
+                "CoreServicesAdapter",
+                "OxusServer",
+                .product(name: "MCP", package: "swift-sdk"),
+            ],
+            swiftSettings: swiftSettings,
+        )
     ]
 )
