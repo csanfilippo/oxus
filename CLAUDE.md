@@ -42,4 +42,4 @@ printf '%s\n' \
 
 ## Increments
 
-Each increment is documented in `docs/increments/NNN-<slug>.md` (goal, status, contract, out of scope, design, open decisions, risks). Update its status and decisions as work progresses.
+Each increment is documented in `docs/increments/NNN-<slug>.md` (goal, status, contract, out of scope, design, open decisions, risks). Update its status and decisions as work progresses. Its TDD test list lives in `docs/tests/increment-N-test-list.txt`.

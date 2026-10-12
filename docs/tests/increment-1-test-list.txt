@@ -1,0 +1,33 @@
+# Increment 1: spotlight_query - Test List
+
+## Specifications
+- Tool: `spotlight_query` replaces `hello`; it is the only advertised tool
+- Input: `query` (string, required, raw Spotlight query syntax), `limit` (integer, optional, default 25, maximum 100)
+- Output: one text content block per matching file path (POSIX), in Spotlight's order
+- No matches: success with empty content
+- Limit above 100: clamped to 100
+- Limit below 1 or not an integer: result with isError
+- Missing, empty, or blank query: result with isError
+- Malformed query: result with isError and a message the client can act on
+- Unknown tool: protocol error (invalidParams), unchanged
+- Truncation signalling: deferred to the pagination increment
+- Spotlight is reached through a port; protocol tests use a fake, adapter tests use real Spotlight
+- Adapter tests query always-indexed system files (e.g. Finder.app), tagged so the default run stays fast
+
+## Test List (TDD)
+- [ ] Acceptance test: a client queries `kMDItemFSName == "Finder.app"` over MCP and receives Finder's path
+- [ ] The server advertises spotlight_query as its only tool
+- [ ] spotlight_query advertises a required query and an optional limit with maximum 100
+- [ ] A query returns one text block per matching path, in Spotlight's order
+- [ ] A query matching no files returns empty content without error
+- [ ] Spotlight is asked for 25 results when no limit is given
+- [ ] Spotlight is asked for 100 results when the limit exceeds 100
+- [ ] A limit below 1 is rejected as an error result
+- [ ] A limit that is not an integer is rejected as an error result
+- [ ] A missing or blank query is rejected as an error result
+- [ ] A malformed query is rejected as an error result naming the query
+- [ ] An unknown tool is rejected as a protocol error
+- [ ] Real Spotlight finds Finder.app by name
+- [ ] Real Spotlight returns at most the requested number of paths
+- [ ] Real Spotlight reports a malformed query as invalid
+- [ ] Real Spotlight returns no paths for a name nothing has
