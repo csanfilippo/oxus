@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Oxus">
+  <rect width="64" height="64" rx="12" fill="#1E3A8A"/>
+  <circle cx="32" cy="32" r="18.05" fill="none" stroke="#FFFFFF" stroke-width="8.90"/>
+  <path d="M58 58 C 44 50, 20 14, 6 6" fill="none" stroke="#E8B84A" stroke-width="6" stroke-linecap="round"/>
+</svg>

@@ -1,4 +1,10 @@
-# oxus
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/oxus-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset=".github/assets/oxus-logo-light.svg">
+    <img alt="oxus" src=".github/assets/oxus-logo-light.svg" width="320">
+  </picture>
+</h1>
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
