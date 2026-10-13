@@ -24,6 +24,7 @@
 
 import MCP
 
+private let minimumLimit = 1
 private let defaultLimit = 25
 private let maximumLimit = 100
 
@@ -46,6 +47,13 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
         let query = params.arguments?["query"]?.stringValue ?? ""
         let requestedLimit = params.arguments?["limit"]?.intValue ?? defaultLimit
         
+        guard requestedLimit >= minimumLimit else {
+            
+            let errorMessage = "limit must be at least \(minimumLimit), got \(requestedLimit)"
+            
+            return CallTool.Result(content: [.text(text: errorMessage, annotations: nil, _meta: nil)], isError: true)
+        }
+        
         let paths = try await spotlight.search(query: query, limit: min(requestedLimit, maximumLimit))
         
         return CallTool.Result(content: paths.map { path in .text(text: path, annotations: nil, _meta: nil) }, isError: false)
@@ -67,6 +75,7 @@ private let spotlightQuery = Tool(
             "limit": .object([
                 "type": "integer",
                 "maximum": .int(maximumLimit),
+                "minimum": .int(minimumLimit),
                 "description": "The maximum number of paths to return",
             ]),
         ]),

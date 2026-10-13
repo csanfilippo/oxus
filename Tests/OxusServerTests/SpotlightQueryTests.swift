@@ -47,7 +47,7 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(tools.map(\.name) == ["spotlight_query"])
     }
     
-    @Test func `spotlight_query advertises a required query and an optional limit with maximum 100`() async throws {
+    @Test func `spotlight_query advertises a required query and an optional limit between 1 and 100`() async throws {
         let client = try await connectedClient()
         
         let (tools, _) = try await client.listTools()
@@ -59,6 +59,7 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(properties["query"]?.objectValue?["type"] == "string")
         #expect(limit["type"] == "integer")
         #expect(limit["maximum"] == 100)
+        #expect(limit["minimum"] == 1)
     }
     
     @Test func `query returns one text block per matching path, in Spotlight's order`() async throws {
@@ -87,6 +88,18 @@ final class FakeSpotlight: Sendable, Spotlight {
         let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": 300])
         
         #expect(texts(in: content).count == 100)
+    }
+    
+    @Test(arguments: [0,-5])
+    func `A limit below 1 is rejected as an error result`(limit: Int) async throws {
+        
+        let client = try await connectedClient()
+        
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": .int(limit)])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("got \(limit)") == true)
     }
     
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {

@@ -8,7 +8,7 @@ Replace `hello` with a `spotlight_query` tool that runs a raw Spotlight query an
 
 ## Contract
 
-- Input: `query` (string, required, Spotlight query syntax, e.g. `kMDItemFSName == "*.pdf"c`), `limit` (integer, optional, default 25, capped at 100).
+- Input: `query` (string, required, Spotlight query syntax, e.g. `kMDItemFSName == "*.pdf"c`), `limit` (integer, optional, default 25, minimum 1, capped at 100). The schema advertises both bounds.
 - Output: one text content block per matching file path, in Spotlight's order.
 - Empty or blank `query`, malformed `query`, or `limit < 1` returns a result with `isError: true` and a message the client can act on.
 - Unknown tool names still throw `invalidParams`.
