@@ -142,6 +142,18 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(texts(in: content).first?.contains("query must be a string") == true)
     }
     
+    @Test func `An unknown tool is rejected as a protocol error`() async throws {
+        let client = try await connectedClient()
+        
+        let error = try await #require(throws: MCPError.self) {
+            try await client.callTool(name: "nonexistent")
+        }
+        guard case .invalidParams = error else {
+            Issue.record("expected invalidParams, got \(error)")
+            return
+        }
+    }
+    
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)

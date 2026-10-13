@@ -27,7 +27,7 @@
 - [x] A blank query is rejected as an error result
 - [x] A missing query is rejected as an error result
 - [ ] A malformed query is rejected as an error result naming the query
-- [ ] An unknown tool is rejected as a protocol error
+- [x] An unknown tool is rejected as a protocol error
 - [ ] Real Spotlight finds Finder.app by name
 - [ ] Real Spotlight returns at most the requested number of paths
 - [ ] Real Spotlight reports a malformed query as invalid
