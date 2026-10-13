@@ -1,6 +1,6 @@
 # Increment 1 — `spotlight_query`
 
-**Status:** Defined
+**Status:** Done (2026-10-14)
 
 ## Goal
 

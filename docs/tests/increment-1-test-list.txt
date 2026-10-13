@@ -29,9 +29,9 @@
 - [x] A malformed query is rejected as an error result naming the query
 - [x] An unknown tool is rejected as a protocol error
 - [x] Real Spotlight finds Finder.app by name
-- [ ] Real Spotlight returns at most the requested number of paths
-- [ ] Real Spotlight reports a malformed query as invalid
-- [ ] Real Spotlight returns no paths for a name nothing has
+- [x] Real Spotlight returns at most the requested number of paths
+- [x] Real Spotlight reports a malformed query as invalid
+- [x] Real Spotlight returns no paths for a nonexistent file name
 
 ## Additional Tests (Added: 2026-10-13)
 - [x] A query that is not a string is rejected as an error result

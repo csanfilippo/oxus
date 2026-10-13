@@ -49,6 +49,7 @@ let package = Package(
             name: "CoreServicesAdapterTests",
             dependencies: [
                 "CoreServicesAdapter",
+                "OxusServer",
             ],
             swiftSettings: swiftSettings,
         ),

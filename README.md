@@ -2,7 +2,7 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** work in progress. The `spotlight_query` tool is advertised and wired end to end, but the Spotlight adapter does not query Spotlight yet, so every query currently returns no paths. See [increment 1](docs/increments/001-spotlight-query.md).
+> **Status:** early. `spotlight_query` runs raw Spotlight queries end to end. Free-text search is planned next ([increment 2](docs/increments/002-search.md)).
 
 ## Requirements
 
@@ -68,6 +68,7 @@ swift test
 | `CoreServicesAdapter` | Implements the port on CoreServices (`MDQuery`) |
 | `oxus` | Executable; wires the adapter into the server over stdio |
 | `OxusServerTests` | Protocol tests through an MCP client, against a fake Spotlight |
+| `CoreServicesAdapterTests` | Adapter tests against real Spotlight |
 | `AcceptanceTests` | End-to-end tests through an MCP client, against real Spotlight |
 
 Work is planned in increments: each one is described in [`docs/increments`](docs/increments) and its TDD test list lives in [`docs/tests`](docs/tests).

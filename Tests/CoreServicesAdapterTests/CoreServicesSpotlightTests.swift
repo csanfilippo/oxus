@@ -22,7 +22,9 @@
  SOFTWARE.
  */
 
+import Foundation
 import Testing
+import OxusServer
 import CoreServicesAdapter
 
 @Suite struct CoreServicesAdapterTests {
@@ -32,5 +34,35 @@ import CoreServicesAdapter
         let paths = try await spotlight.search(query: #"kMDItemFSName == "Finder.app""#, limit: 10)
 
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
+    }
+    
+    @Test func `Real Spotlight returns at most the requested number of paths`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let paths = try await spotlight.search(query: #"kMDItemContentType == "com.apple.application-bundle""#, limit: 2)
+
+        #expect(paths.count == 2)
+    }
+    
+    @Test func `Real Spotlight reports a malformed query as invalid`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let error = try await #require(throws: SpotlightError.self) {
+            try await spotlight.search(query: "kMDItemFSName ==", limit: 2)
+        }
+        guard case .malformedQuery(let query) = error else {
+            Issue.record("expected malformedQuery, got \(error)")
+            return
+        }
+        #expect(query == "kMDItemFSName ==")
+    }
+    
+    @Test func `Real Spotlight returns no paths for a nonexistent file name`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let nonexistentFileName = UUID().uuidString
+
+        let paths = try await spotlight.search(query: #"kMDItemFSName == "\#(nonexistentFileName)""#, limit: 2)
+
+        #expect(paths.isEmpty)
     }
 }
