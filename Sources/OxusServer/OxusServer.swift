@@ -32,7 +32,7 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     )
 
     await server.withMethodHandler(ListTools.self) { _ in
-        .init(tools: [spotlightQuery])
+        .init(tools: [search, spotlightQuery])
     }
 
     await server.withMethodHandler(CallTool.self) { params in
@@ -62,6 +62,27 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
 private let spotlightQuery = Tool(
     name: "spotlight_query",
     description: "Perform raw Spotlight queries",
+    inputSchema: .object([
+        "type": "object",
+        "properties": .object([
+            "query": .object([
+                "type": "string",
+                "description": "The query to be performed",
+            ]),
+            "limit": .object([
+                "type": "integer",
+                "maximum": .int(Limit.maximum),
+                "minimum": .int(Limit.minimum),
+                "description": "The maximum number of paths to return",
+            ]),
+        ]),
+        "required": ["query"],
+    ])
+)
+
+private let search = Tool(
+    name: "search",
+    description: "Finds files whose name contains the given text, without Spotlight query syntax. Matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
     inputSchema: .object([
         "type": "object",
         "properties": .object([

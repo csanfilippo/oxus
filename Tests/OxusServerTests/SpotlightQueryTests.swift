@@ -26,44 +26,22 @@ import MCP
 import Testing
 import OxusServer
 
-final class FakeSpotlight: Sendable, Spotlight {
-    private let result: [String]
-    
-    init(result: [String] = []) {
-        self.result = result
-    }
-    
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
-        Array(self.result.prefix(limit))
-    }
-}
-
-final class MalformedQuerySpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.malformedQuery(query: query)
-    }
-}
-
-final class FailingExecutionSpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.executionFailed(query: query)
-    }
-}
-
 @Suite struct SpotlightQueryTests {
-    @Test func `the server advertises spotlight_query as its only tool`() async throws {
+    @Test func `the server advertises spotlight_query`() async throws {
         let client = try await connectedClient()
 
         let (tools, _) = try await client.listTools()
 
-        #expect(tools.map(\.name) == ["spotlight_query"])
+        #expect(tools.map(\.name).contains("spotlight_query"))
     }
     
     @Test func `spotlight_query advertises a required query and an optional limit between 1 and 100`() async throws {
         let client = try await connectedClient()
         
         let (tools, _) = try await client.listTools()
-        let schema = try #require(tools.first?.inputSchema.objectValue)
+        let schema = try #require(tools.first(where: { tool in
+            tool.name == "spotlight_query"
+        })?.inputSchema.objectValue)
         let properties = try #require(schema["properties"]?.objectValue)
         let limit = try #require(properties["limit"]?.objectValue)
         
@@ -194,20 +172,5 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
         #expect(isError == true)
 
         #expect(texts(in: content).first?.contains(#"Spotlight could not run the query 'kMDItemFSName == "Finder.app"'"#) == true)
-    }
-
-    private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
-        let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-        let server = await makeOxusServer(spotlight: spotlight)
-        try await server.start(transport: serverTransport)
-        let client = Client(name: "oxus-tests", version: "0")
-        try await client.connect(transport: clientTransport)
-        return client
-    }
-
-    private func texts(in content: [Tool.Content]) -> [String] {
-        content.compactMap {
-            if case .text(let text, _, _) = $0 { text } else { nil }
-        }
     }
 }
