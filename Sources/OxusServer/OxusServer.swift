@@ -41,7 +41,7 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
         }
         
         let query = params.arguments?["query"]?.stringValue ?? ""
-        let limit = params.arguments?["limit"]?.intValue ?? 10
+        let limit = params.arguments?["limit"]?.intValue ?? 25
         
         let paths = try await spotlight.search(query: query, limit: limit)
         

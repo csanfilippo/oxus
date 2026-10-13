@@ -34,7 +34,7 @@ final class FakeSpotlight: Sendable, Spotlight {
     }
     
     func search(query: String, limit: Int) async throws -> [String] {
-        self.result
+        Array(self.result.prefix(limit))
     }
 }
 
@@ -67,6 +67,16 @@ final class FakeSpotlight: Sendable, Spotlight {
         let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
         
         #expect(texts(in: content) == ["/b","/a"])
+    }
+    
+    @Test func `Spotlight is asked for 25 results when no limit is given`() async throws {
+        
+        let paths: [String] = .init(repeating: "a", count: 100)
+        let client = try await connectedClient(spotlight: FakeSpotlight(result: paths))
+        
+        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
+        
+        #expect(texts(in: content).count == 25)
     }
     
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {

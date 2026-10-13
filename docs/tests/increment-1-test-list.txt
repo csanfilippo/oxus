@@ -20,7 +20,7 @@
 - [x] spotlight_query advertises a required query and an optional limit with maximum 100
 - [x] A query returns one text block per matching path, in Spotlight's order
 - [ ] A query matching no files returns empty content without error
-- [ ] Spotlight is asked for 25 results when no limit is given
+- [x] Spotlight is asked for 25 results when no limit is given
 - [ ] Spotlight is asked for 100 results when the limit exceeds 100
 - [ ] A limit below 1 is rejected as an error result
 - [ ] A limit that is not an integer is rejected as an error result
