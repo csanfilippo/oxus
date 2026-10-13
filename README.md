@@ -2,7 +2,7 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** early. `spotlight_query` runs raw Spotlight queries end to end. Free-text search is planned next ([increment 2](docs/increments/002-search.md)).
+> **Status:** early. `spotlight_query` runs raw Spotlight queries end to end. Searching by name without query syntax is planned next ([increment 2](docs/increments/002-search.md)).
 
 ## Requirements
 

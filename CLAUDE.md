@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It exposes a single `spotlight_query` tool that runs a raw Spotlight query and returns matching file paths. Increment 1 is done; increment 2 (free-text `search`) is proposed.
+`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It exposes a single `spotlight_query` tool that runs a raw Spotlight query and returns matching file paths. Increment 1 is done; increment 2 (`search` by name) is defined.
 
 ## Commands
 
