@@ -102,6 +102,17 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(texts(in: content).first?.contains("got \(limit)") == true)
     }
     
+    @Test func `A limit that is not an integer is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+        
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": "test"])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("must be an integer") == true)
+        
+    }
+    
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)

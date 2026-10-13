@@ -23,7 +23,7 @@
 - [x] Spotlight is asked for 25 results when no limit is given
 - [x] Spotlight is asked for 100 results when the limit exceeds 100
 - [x] A limit below 1 is rejected as an error result
-- [ ] A limit that is not an integer is rejected as an error result
+- [x] A limit that is not an integer is rejected as an error result
 - [ ] A missing or blank query is rejected as an error result
 - [ ] A malformed query is rejected as an error result naming the query
 - [ ] An unknown tool is rejected as a protocol error
