@@ -33,7 +33,7 @@ Free-text search (increment 2), folder scopes, metadata in results, structured c
 - **No matches is success with empty content:** every content block is a path, so the result has a single meaning.
 - **Limit above the cap is clamped,** not rejected: a large limit means "as many as possible".
 - **No truncation signal yet:** it belongs with pagination.
-- **The port uses typed throws (`throws(SpotlightError)`):** the adapter must translate every CoreServices failure into a `SpotlightError` case, so the server knows the complete set of failures it has to report.
+- **The port uses typed throws (`throws(SpotlightError)`):** the adapter must translate every CoreServices failure into a `SpotlightError` case, so the server knows the complete set of failures it has to report. `MDQueryCreate` returning `NULL` is `.malformedQuery`; `MDQueryExecute` returning `false` is `.executionFailed`, reported rather than passed off as "no matches". No known query triggers the latter, so only the server's handling of it is tested, through a stub.
 
 ## Test list
 

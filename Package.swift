@@ -45,14 +45,13 @@ let package = Package(
             ],
             swiftSettings: swiftSettings,
         ),
-//        .testTarget(
-//            name: "CoreServicesAdapterTests",
-//            dependencies: [
-//                "CoreServicesAdapter",
-//                "OxusServer"
-//            ],
-//            swiftSettings: swiftSettings,
-//        ),
+        .testTarget(
+            name: "CoreServicesAdapterTests",
+            dependencies: [
+                "CoreServicesAdapter",
+            ],
+            swiftSettings: swiftSettings,
+        ),
         .testTarget(
             name: "AcceptanceTests",
             dependencies: [

@@ -15,7 +15,7 @@
 - Adapter tests query always-indexed system files (e.g. Finder.app), in their own test target
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client queries `kMDItemFSName == "Finder.app"` over MCP and receives Finder's path
+- [x] Acceptance test: a client queries `kMDItemFSName == "Finder.app"` over MCP and receives Finder's path
 - [x] The server advertises spotlight_query as its only tool
 - [x] spotlight_query advertises a required query and an optional limit between 1 and 100
 - [x] A query returns one text block per matching path, in Spotlight's order
@@ -28,10 +28,11 @@
 - [x] A missing query is rejected as an error result
 - [x] A malformed query is rejected as an error result naming the query
 - [x] An unknown tool is rejected as a protocol error
-- [ ] Real Spotlight finds Finder.app by name
+- [x] Real Spotlight finds Finder.app by name
 - [ ] Real Spotlight returns at most the requested number of paths
 - [ ] Real Spotlight reports a malformed query as invalid
 - [ ] Real Spotlight returns no paths for a name nothing has
 
 ## Additional Tests (Added: 2026-10-13)
 - [x] A query that is not a string is rejected as an error result
+- [x] A query Spotlight cannot run is rejected as an error result naming the query

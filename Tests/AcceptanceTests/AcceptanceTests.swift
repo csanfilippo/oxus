@@ -30,17 +30,17 @@ import CoreServicesAdapter
 @Suite struct AcceptanceTests {
     @Test func `a client queries kMDItemFSName == "Finder.app" over MCP and receives Finder's path`() async throws {
         
-        await withKnownIssue {
-            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
-            
-            let (content, isError) = try await client.callTool(
-                name: "spotlight_query",
-                arguments: ["query": #"kMDItemFSName == "Finder.app""#]
-            )
-            
-            #expect(isError != true)
-            #expect(texts(in: content).contains("/System/Library/CoreServices/Finder.app"))
-        }
+        
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+        
+        let (content, isError) = try await client.callTool(
+            name: "spotlight_query",
+            arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+        )
+        
+        #expect(isError != true)
+        #expect(texts(in: content).contains("/System/Library/CoreServices/Finder.app"))
+        
     }
     
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {

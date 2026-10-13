@@ -44,6 +44,12 @@ final class MalformedQuerySpotlight: Sendable, Spotlight {
     }
 }
 
+final class FailingExecutionSpotlight: Sendable, Spotlight {
+    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+        throw SpotlightError.executionFailed(query: query)
+    }
+}
+
 @Suite struct SpotlightQueryTests {
     @Test func `the server advertises spotlight_query as its only tool`() async throws {
         let client = try await connectedClient()
@@ -179,7 +185,17 @@ final class MalformedQuerySpotlight: Sendable, Spotlight {
         
         #expect(texts(in: content).first?.contains("malformed Spotlight query: 'kMDItemFSName =='") == true)
     }
-    
+
+    @Test func `A query Spotlight cannot run is rejected as an error result naming the query`() async throws {
+        let client = try await connectedClient(spotlight: FailingExecutionSpotlight())
+
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": #"kMDItemFSName == "Finder.app""#])
+
+        #expect(isError == true)
+
+        #expect(texts(in: content).first?.contains(#"Spotlight could not run the query 'kMDItemFSName == "Finder.app"'"#) == true)
+    }
+
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)

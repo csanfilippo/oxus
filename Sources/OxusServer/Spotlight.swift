@@ -24,11 +24,14 @@
 
 public enum SpotlightError: Error {
     case malformedQuery(query: String)
+    case executionFailed(query: String)
     
     var message: String {
         return switch self {
         case .malformedQuery(let query):
             #"malformed Spotlight query: '\#(query)'. Use Spotlight query syntax, e.g. kMDItemFSName == "*.pdf"c."#
+        case .executionFailed(let query):
+            "Spotlight could not run the query '\(query)'"
         }
     }
 }
