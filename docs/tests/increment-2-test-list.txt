@@ -1,0 +1,24 @@
+# Increment 2: search by name - Test List
+
+## Specifications
+- Tool: `search`, advertised alongside `spotlight_query`, which stays unchanged
+- Input: `name_contains` (string, required), `limit` (integer, optional, default 25, minimum 1, maximum 100)
+- Matching: the display name (`kMDItemDisplayName`) contains the text, case- and diacritic-insensitive; "calcolatri" finds Calculator.app on an Italian Mac
+- Literal input: `"`, `\` and `*` in `name_contains` are matched literally; `?` is not a Spotlight wildcard and needs no escaping
+- Output: one text content block per matching path, in Spotlight's order; no matches is success with empty content
+- Missing, blank, or non-string `name_contains`: result with isError and a message the client can act on
+- Limit: same rules as `spotlight_query`, tested here only for wiring
+- The client's LLM interprets natural language; oxus receives only structured arguments
+- Spotlight port and adapter unchanged; acceptance test searches for part of Finder's display name
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches for "finde" over MCP and receives Finder's path
+- [ ] A name compiles to a case- and diacritic-insensitive "contains" match on the display name
+- [ ] Quotes, backslashes and asterisks in the name are matched literally
+- [ ] The server advertises search alongside spotlight_query
+- [ ] search advertises a required name_contains and an optional limit between 1 and 100
+- [ ] search returns the paths Spotlight finds for the compiled name query
+- [ ] search asks Spotlight for 25 results when no limit is given
+- [ ] A missing name_contains is rejected as an error result
+- [ ] A blank name_contains is rejected as an error result
+- [ ] A name_contains that is not a string is rejected as an error result

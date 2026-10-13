@@ -9,7 +9,7 @@ Add a `search` tool that finds files whose name contains a given text, so client
 ## Contract
 
 - Input: `name_contains` (string, required), `limit` (integer, optional, same default, minimum and cap as `spotlight_query`).
-- Matching is case- and diacritic-insensitive: `name_contains: "report"` matches `Report-Final.PDF`.
+- Matching is on the display name (`kMDItemDisplayName`), case- and diacritic-insensitive: `name_contains: "report"` matches `Report-Final.PDF`, and `"calcolatri"` matches Calculator.app on an Italian Mac.
 - Characters in `name_contains` are matched literally: `"`, `\` and `*` never alter the query.
 - Output: same as `spotlight_query`, one text content block per matching path, in Spotlight's order.
 - Missing, blank, or non-string `name_contains` returns a result with `isError: true` and a message the client can act on.
@@ -25,7 +25,7 @@ Filtering by kind (increment 3), starts with / ends with / exact name, dates, si
 
 - **The server never interprets natural language.** The client's LLM turns "find the files whose name contains xyz" into `search(name_contains: "xyz")`. An OR between filters is expressed as several calls.
 - **Flat, optional filters combined with AND, not an expression tree.** A recursive schema (`$ref`, `anyOf`) is rejected by many LLM clients; a flat object of typed fields is what models fill most reliably. Later filters are added as new optional fields.
-- **`SearchCriteria` value object:** parses the tool arguments and compiles them into a Spotlight query string, e.g. `name_contains: "xyz"` → `kMDItemFSName == "*xyz*"cd`. Escapes `\` first, then `"` and `*`, so user input cannot change the query (query injection). Pure logic, test-driven with unit tests, separate from MCP and Spotlight.
+- **`SearchCriteria` value object:** parses the tool arguments and compiles them into a Spotlight query string, e.g. `name_contains: "xyz"` → `kMDItemDisplayName == "*xyz*"cd`. Escapes `\` first, then `"` and `*`, so user input cannot change the query (query injection). Pure logic, test-driven with unit tests, separate from MCP and Spotlight.
 - **Reuses the `Spotlight` port and `Limit` unchanged.** `search` is a translator in front of the same port; `CoreServicesSpotlight` needs no change.
 - **Routing two tools:** with a second tool, the `CallTool` handler dispatches on the tool name. Each tool becomes its own type behind a shared "handle these arguments" method (Command pattern), so `makeOxusServer` only routes. The refactor happens when `search` arrives, not before.
 
@@ -33,10 +33,13 @@ Filtering by kind (increment 3), starts with / ends with / exact name, dates, si
 
 - **Name contains, not exact name, as the smallest slice:** both need the second tool, routing, compilation and escaping; "contains" adds only the `*…*cd` wrapping and is what users actually ask for.
 - **Arguments use snake_case** (`name_contains`), matching the tool names.
+- **Match the display name, not the file system name:** `kMDItemDisplayName` is what users see in Finder, localized and usually without extension; `kMDItemFSName` would miss "Calcolatrice" and match every `.pdf` for "pdf".
+- **`?` is not a wildcard:** `kMDItemFSName == "Finde?.app"` matches nothing, so only `\`, `"` and `*` are escaped.
+- **Limit is tested for wiring only:** its rules are already covered through `spotlight_query`.
 
-## Open decisions
+## Test list
 
-- **Is `?` a wildcard in Spotlight's query syntax?** If so, it must be escaped too. Settle it with a unit test against the compiled query and an adapter test against real Spotlight.
+`docs/tests/increment-2-test-list.txt`
 
 ## Risks
 
