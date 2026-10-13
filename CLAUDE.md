@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It currently exposes a single `hello` tool, a walking skeleton; no Spotlight code exists yet.
+`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It exposes a single `spotlight_query` tool that runs a raw Spotlight query and returns matching file paths. The CoreServices adapter is still a stub that returns no paths (increment 1 in progress).
 
 ## Commands
 
@@ -12,16 +12,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 swift build                 # debug build
 swift build -c release      # release build
 swift test                  # run all tests
-swift test --filter HelloToolTests/greetsByName   # run a single test
+swift test --filter OxusServerTests              # run one test target
+swift test --skip AcceptanceTests                # skip tests that hit real Spotlight
 ```
 
-To exercise the server by hand, run the built binary directly instead of `swift run`, so that build output cannot mix with protocol traffic:
+To exercise the server by hand, run the built binary directly instead of `swift run`, so that build output cannot mix with protocol traffic. The server stops as soon as stdin closes, before replying, so keep stdin open briefly with `sleep`:
 
 ```sh
-printf '%s\n' \
+{ printf '%s\n' \
   '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"sh","version":"0"}}}' \
   '{"jsonrpc":"2.0","method":"notifications/initialized"}' \
-  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"hello","arguments":{"name":"Ada"}}}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"spotlight_query","arguments":{"query":"kMDItemFSName == \"Finder.app\""}}}'; sleep 1; } \
   | "$(swift build --show-bin-path)/oxus"
 ```
 
@@ -34,9 +35,12 @@ printf '%s\n' \
 
 ## Structure
 
-- `OxusServer` (library) builds the MCP `Server` through `makeOxusServer()` and registers the tool handlers. All behaviour lives here.
-- `oxus` (executable) only connects that server to `StdioTransport`. Keep it a thin adapter.
-- `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`. Tests exercise the protocol a real client sees, not handler internals.
+- `OxusServer` (library) builds the MCP `Server` through `makeOxusServer(spotlight:)`, registers the tool handlers, and defines the `Spotlight` port. All behaviour lives here; it never imports CoreServices.
+- `CoreServicesAdapter` (library) implements `Spotlight` as `CoreServicesSpotlight` on `MDQuery`. It depends on `OxusServer`, never the other way round, and never imports `MCP`.
+- `oxus` (executable) is the composition root: it passes `CoreServicesSpotlight()` to `makeOxusServer(spotlight:)` and connects the server to `StdioTransport`. Keep it a thin adapter.
+- `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`, against `FakeSpotlight`. Tests exercise the protocol a real client sees, not handler internals.
+- `CoreServicesAdapterTests` tests `CoreServicesSpotlight` directly against real Spotlight, querying always-indexed system files (e.g. `Finder.app`). Every behaviour `FakeSpotlight` assumes (such as honouring `limit`) needs a matching test here.
+- `AcceptanceTests` drives the server through an MCP `Client` wired to the real `CoreServicesSpotlight`.
 - Stdout carries JSON-RPC only. Never `print` from the server; anything diagnostic goes to stderr.
 - Unknown tool names throw `MCPError.invalidParams`, which becomes a protocol error. Failures of a known tool are returned as a result with `isError: true`.
 
