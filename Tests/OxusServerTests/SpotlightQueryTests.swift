@@ -79,6 +79,16 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(texts(in: content).count == 25)
     }
     
+    @Test func `Spotlight is asked for 100 results when the limit exceeds 100`() async throws {
+        
+        let paths: [String] = .init(repeating: "a", count: 200)
+        let client = try await connectedClient(spotlight: FakeSpotlight(result: paths))
+        
+        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": 300])
+        
+        #expect(texts(in: content).count == 100)
+    }
+    
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)
