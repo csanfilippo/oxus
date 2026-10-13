@@ -79,6 +79,10 @@ swift test
 
 Work is planned in increments: each one is described in [`docs/increments`](docs/increments) and its TDD test list lives in [`docs/tests`](docs/tests).
 
+## Name
+
+Oxus is the ancient name of the Amu Darya, one of the great rivers of Central Asia. Its banks gave up the Oxus Treasure, a hoard of Achaemenid gold and silver found in the 1870s and now held at the British Museum. oxus does the same for your Mac: it digs through what Spotlight has indexed and brings the files you are looking for to the surface.
+
 ## License
 
 [MIT](LICENSE)
