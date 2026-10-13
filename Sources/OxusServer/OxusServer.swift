@@ -51,10 +51,9 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
             return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
         } catch let queryError as Query.Error {
             return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
-        } catch {
-            return CallTool.Result(content: [], isError: true)
+        } catch let spotlightError as SpotlightError {
+            return CallTool.Result(content: [.text(text: spotlightError.message, annotations: nil, _meta: nil)], isError: true)
         }
-        
     }
 
     return server

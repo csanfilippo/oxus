@@ -25,7 +25,7 @@
 import OxusServer
 
 public struct CoreServicesSpotlight: Spotlight {
-    public func search(query: String, limit: Int) async throws -> [String] {
+    public func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
         []
     }
     

@@ -33,8 +33,14 @@ final class FakeSpotlight: Sendable, Spotlight {
         self.result = result
     }
     
-    func search(query: String, limit: Int) async throws -> [String] {
+    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
         Array(self.result.prefix(limit))
+    }
+}
+
+final class MalformedQuerySpotlight: Sendable, Spotlight {
+    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+        throw SpotlightError.malformedQuery(query: query)
     }
 }
 
@@ -162,6 +168,16 @@ final class FakeSpotlight: Sendable, Spotlight {
         #expect(isError != true)
         
         #expect(content.isEmpty)
+    }
+    
+    @Test func `A malformed query is rejected as an error result naming the query`() async throws {
+        let client = try await connectedClient(spotlight: MalformedQuerySpotlight())
+        
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": "kMDItemFSName =="])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("malformed Spotlight query: 'kMDItemFSName =='") == true)
     }
     
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {

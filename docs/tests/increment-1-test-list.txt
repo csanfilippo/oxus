@@ -26,7 +26,7 @@
 - [x] A limit that is not an integer is rejected as an error result
 - [x] A blank query is rejected as an error result
 - [x] A missing query is rejected as an error result
-- [ ] A malformed query is rejected as an error result naming the query
+- [x] A malformed query is rejected as an error result naming the query
 - [x] An unknown tool is rejected as a protocol error
 - [ ] Real Spotlight finds Finder.app by name
 - [ ] Real Spotlight returns at most the requested number of paths
