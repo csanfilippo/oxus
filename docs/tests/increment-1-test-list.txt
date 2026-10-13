@@ -24,10 +24,14 @@
 - [x] Spotlight is asked for 100 results when the limit exceeds 100
 - [x] A limit below 1 is rejected as an error result
 - [x] A limit that is not an integer is rejected as an error result
-- [ ] A missing or blank query is rejected as an error result
+- [x] A blank query is rejected as an error result
+- [x] A missing query is rejected as an error result
 - [ ] A malformed query is rejected as an error result naming the query
 - [ ] An unknown tool is rejected as a protocol error
 - [ ] Real Spotlight finds Finder.app by name
 - [ ] Real Spotlight returns at most the requested number of paths
 - [ ] Real Spotlight reports a malformed query as invalid
 - [ ] Real Spotlight returns no paths for a name nothing has
+
+## Additional Tests (Added: 2026-10-13)
+- [x] A query that is not a string is rejected as an error result

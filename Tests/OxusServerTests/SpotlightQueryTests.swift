@@ -113,6 +113,35 @@ final class FakeSpotlight: Sendable, Spotlight {
         
     }
     
+    @Test(arguments: ["", "    "])
+    func `A blank query is rejected as an error result`(query: String) async throws {
+        let client = try await connectedClient()
+          
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": .string(query)])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("query cannot be empty") == true)
+    }
+
+    @Test func `A missing query is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: [:])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("query is missing") == true)
+    }
+    
+    @Test func `A query that is not a string is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": 42])
+        
+        #expect(isError == true)
+        
+        #expect(texts(in: content).first?.contains("query must be a string") == true)
+    }
+    
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)

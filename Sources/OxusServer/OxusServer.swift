@@ -24,46 +24,6 @@
 
 import MCP
 
-private let minimumLimit = 1
-private let defaultLimit = 25
-private let maximumLimit = 100
-
-private struct Limit {
-    
-    enum Error: Swift.Error {
-        case notAnInteger
-        case belowMinimum(minimumAccepted: Int, received: Int)
-        
-        var message: String {
-            switch self {
-            case .notAnInteger:
-                return "limit must be an integer"
-            case .belowMinimum(minimumAccepted: let minimumAccepted, received: let received):
-                return "limit must be at least \(minimumAccepted), got \(received)"
-            }
-        }
-    }
-    
-    let value: Int
-    
-    init(_ argument: Value?) throws(Error) {
-        guard let argument else {
-            self.value = defaultLimit
-            return
-        }
-        
-        guard let intValue = argument.intValue else {
-            throw .notAnInteger
-        }
-        
-        guard intValue >= minimumLimit else {
-            throw .belowMinimum(minimumAccepted: minimumLimit, received: intValue)
-        }
-        
-        self.value = min(intValue, maximumLimit)
-    }
-}
-
 public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     let server = Server(
         name: "oxus",
@@ -81,19 +41,20 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
         }
         
         do {
-            let query = params.arguments?["query"]?.stringValue ?? ""
+            let query = try Query(params.arguments?["query"])
             let limit = try Limit(params.arguments?["limit"])
             
-            let paths = try await spotlight.search(query: query, limit: limit.value)
+            let paths = try await spotlight.search(query: query.value, limit: limit.value)
             
             return CallTool.Result(content: paths.map { path in .text(text: path, annotations: nil, _meta: nil) }, isError: false)
-        } catch let validationError as Limit.Error {
-            
-            return CallTool.Result(content: [.text(text: validationError.message, annotations: nil, _meta: nil)], isError: true)
-            
+        } catch let limitError as Limit.Error {
+            return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
+        } catch let queryError as Query.Error {
+            return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
         } catch {
             return CallTool.Result(content: [], isError: true)
         }
+        
     }
 
     return server
@@ -111,8 +72,8 @@ private let spotlightQuery = Tool(
             ]),
             "limit": .object([
                 "type": "integer",
-                "maximum": .int(maximumLimit),
-                "minimum": .int(minimumLimit),
+                "maximum": .int(Limit.maximum),
+                "minimum": .int(Limit.minimum),
                 "description": "The maximum number of paths to return",
             ]),
         ]),
