@@ -154,6 +154,16 @@ final class FakeSpotlight: Sendable, Spotlight {
         }
     }
     
+    @Test func `A query matching no files returns empty content without error`() async throws {
+        let client = try await connectedClient()
+        
+        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
+        
+        #expect(isError != true)
+        
+        #expect(content.isEmpty)
+    }
+    
     private func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)
