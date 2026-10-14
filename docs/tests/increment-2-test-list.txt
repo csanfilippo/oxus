@@ -13,7 +13,7 @@
 
 ## Test List (TDD)
 - [ ] Acceptance test: a client searches for "finde" over MCP and receives Finder's path
-- [ ] A name compiles to a case- and diacritic-insensitive "contains" match on the display name
+- [x] A name compiles to a case- and diacritic-insensitive "contains" match on the display name
 - [ ] Quotes, backslashes and asterisks in the name are matched literally
 - [x] The server advertises search alongside spotlight_query
 - [x] search advertises a required name_contains and an optional limit between 1 and 100
