@@ -31,4 +31,16 @@ import Testing
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*report*"cd"#)
     }
+    
+    @Test(arguments: [
+        (#"say "hi""#, #"say \"hi\""#),
+        (#"C:\temp"#, #"C:\\temp"#),
+        ("*.txt", #"\*.txt"#),
+        (#"\""#, #"\\\""#),
+    ])
+    func `Quotes, backslashes and asterisks in the name are matched literally`(name: String, escapedName: String) {
+        let criteria = SearchCriteria(nameContains: name)
+
+        #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
+    }
 }

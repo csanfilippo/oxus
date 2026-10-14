@@ -22,10 +22,20 @@
  SOFTWARE.
  */
 
+import Foundation
+
 struct SearchCriteria {
     let nameContains: String
 
     var spotlightQuery: String {
-        #"kMDItemDisplayName == "*\#(nameContains)*"cd"#
+        #"kMDItemDisplayName == "*\#(literal(nameContains))*"cd"#
     }
+}
+
+// Backslashes must be escaped first, or the backslashes added for quotes and asterisks would be doubled.
+private func literal(_ value: String) -> String {
+    value
+        .replacingOccurrences(of: #"\"#, with: #"\\"#)
+        .replacingOccurrences(of: #"""#, with: #"\""#)
+        .replacingOccurrences(of: "*", with: #"\*"#)
 }
