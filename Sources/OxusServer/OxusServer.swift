@@ -86,9 +86,9 @@ private let search = Tool(
     inputSchema: .object([
         "type": "object",
         "properties": .object([
-            "query": .object([
+            "name_contains": .object([
                 "type": "string",
-                "description": "The query to be performed",
+                "description": "Text the file's name must contain",
             ]),
             "limit": .object([
                 "type": "integer",
@@ -97,6 +97,6 @@ private let search = Tool(
                 "description": "The maximum number of paths to return",
             ]),
         ]),
-        "required": ["query"],
+        "required": ["name_contains"],
     ])
 )

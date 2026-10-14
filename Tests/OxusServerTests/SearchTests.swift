@@ -34,4 +34,21 @@ import OxusServer
 
         #expect(Set(tools.map(\.name)) == Set(["search", "spotlight_query"]))
     }
+    
+    @Test func `search advertises a required name_contains and an optional limit between 1 and 100`() async throws {
+        let client = try await connectedClient()
+        
+        let (tools, _) = try await client.listTools()
+        
+        let search = try #require(tools.first(where: { $0.name == "search" }))
+        let schema = try #require(search.inputSchema.objectValue)
+        let properties = try #require(schema["properties"]?.objectValue)
+        let limit = try #require(properties["limit"]?.objectValue)
+
+        #expect(schema["required"] == ["name_contains"])
+        #expect(properties["name_contains"]?.objectValue?["type"] == "string")
+        #expect(limit["type"] == "integer")
+        #expect(limit["minimum"] == 1)
+        #expect(limit["maximum"] == 100)
+    }
 }
