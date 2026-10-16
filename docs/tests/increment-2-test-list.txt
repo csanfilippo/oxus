@@ -12,7 +12,7 @@
 - Spotlight port and adapter unchanged; acceptance test searches for part of Finder's display name
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches for "finde" over MCP and receives Finder's path
+- [x] Acceptance test: a client searches for "finde" over MCP and receives Finder's path
 - [x] A name compiles to a case- and diacritic-insensitive "contains" match on the display name
 - [x] Quotes, backslashes and asterisks in the name are matched literally
 - [x] The server advertises search alongside spotlight_query

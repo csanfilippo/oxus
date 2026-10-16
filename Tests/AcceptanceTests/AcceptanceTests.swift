@@ -43,6 +43,18 @@ import CoreServicesAdapter
         
     }
     
+    @Test func `a client searches for "finde" over MCP and receives Finder's path`() async throws {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+        
+        let (content, isError) = try await client.callTool(
+            name: "search",
+            arguments: ["name_contains": "finde"]
+        )
+        
+        #expect(isError != true)
+        #expect(texts(in: content).contains("/System/Library/CoreServices/Finder.app"))
+    }
+    
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)
