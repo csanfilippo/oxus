@@ -1,6 +1,6 @@
 # Increment 2 — `search` by name
 
-**Status:** Defined
+**Status:** Done (2026-10-16)
 
 ## Goal
 
