@@ -49,6 +49,16 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
     }
 }
 
+final class SpySpotlight: Spotlight, @unchecked Sendable {
+    private(set) var receivedQuery: String?
+    private let result: [String]
+    init(result: [String] = []) { self.result = result }
+    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+        receivedQuery = query
+        return Array(result.prefix(limit))
+    }
+}
+
 func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
     let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
     let server = await makeOxusServer(spotlight: spotlight)

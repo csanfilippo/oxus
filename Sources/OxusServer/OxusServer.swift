@@ -36,27 +36,56 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     }
 
     await server.withMethodHandler(CallTool.self) { params in
-        guard params.name == spotlightQuery.name else {
+    
+        switch params.name {
+        case spotlightQuery.name:
+            return try await handleSpotlightSearch(params: params, spotlight: spotlight)
+        case search.name:
+            return try await handleSearch(params: params, spotlight: spotlight)
+        default:
             throw MCPError.invalidParams("Unknown tool: \(params.name)")
-        }
-        
-        do {
-            let query = try Query(params.arguments?["query"])
-            let limit = try Limit(params.arguments?["limit"])
-            
-            let paths = try await spotlight.search(query: query.value, limit: limit.value)
-            
-            return CallTool.Result(content: paths.map { path in .text(text: path, annotations: nil, _meta: nil) }, isError: false)
-        } catch let limitError as Limit.Error {
-            return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
-        } catch let queryError as Query.Error {
-            return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
-        } catch let spotlightError as SpotlightError {
-            return CallTool.Result(content: [.text(text: spotlightError.message, annotations: nil, _meta: nil)], isError: true)
         }
     }
 
     return server
+}
+
+private func handleSpotlightSearch(params: CallTool.Parameters, spotlight: any Spotlight) async throws -> CallTool.Result {
+    do {
+        let (query, limit) = try queryAndLimit(params: params, queryName: "query")
+        return try await pathsResult(query: query, limit: limit, spotlight: spotlight)
+    } catch let limitError as Limit.Error {
+        return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
+    } catch let queryError as Query.Error {
+        return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
+    }
+}
+
+private func handleSearch(params: CallTool.Parameters, spotlight: any Spotlight) async throws -> CallTool.Result {
+    do {
+        let (query, limit) = try queryAndLimit(params: params, queryName: "name_contains")
+        let searchQuery = SearchCriteria(nameContains: query)
+        return try await pathsResult(query: searchQuery.spotlightQuery, limit: limit, spotlight: spotlight)
+    } catch let limitError as Limit.Error {
+        return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
+    } catch let queryError as Query.Error {
+        return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
+    }
+}
+
+private func pathsResult(query: String, limit: Int, spotlight: any Spotlight) async throws -> CallTool.Result {
+    do {
+        let paths = try await spotlight.search(query: query, limit: limit)
+        return CallTool.Result(content: paths.map { path in .text(text: path, annotations: nil, _meta: nil) }, isError: false)
+    } catch let spotlightError {
+        return CallTool.Result(content: [.text(text: spotlightError.message, annotations: nil, _meta: nil)], isError: true)
+    }
+}
+
+private func queryAndLimit(params: CallTool.Parameters, queryName: String) throws -> (query: String, limit: Int) {
+    let query = try Query(params.arguments?[queryName], name: queryName)
+    let limit = try Limit(params.arguments?["limit"])
+    return (query: query.value, limit: limit.value)
 }
 
 private let spotlightQuery = Tool(

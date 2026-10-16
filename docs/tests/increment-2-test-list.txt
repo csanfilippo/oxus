@@ -17,8 +17,8 @@
 - [x] Quotes, backslashes and asterisks in the name are matched literally
 - [x] The server advertises search alongside spotlight_query
 - [x] search advertises a required name_contains and an optional limit between 1 and 100
-- [ ] search returns the paths Spotlight finds for the compiled name query
+- [x] search returns the paths Spotlight finds for the compiled name query
 - [ ] search asks Spotlight for 25 results when no limit is given
-- [ ] A missing name_contains is rejected as an error result
-- [ ] A blank name_contains is rejected as an error result
-- [ ] A name_contains that is not a string is rejected as an error result
+- [x] A missing name_contains is rejected as an error result
+- [x] A blank name_contains is rejected as an error result
+- [x] A name_contains that is not a string is rejected as an error result

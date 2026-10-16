@@ -51,4 +51,42 @@ import OxusServer
         #expect(limit["minimum"] == 1)
         #expect(limit["maximum"] == 100)
     }
+    
+    @Test func `search returns the paths Spotlight finds for the compiled name query`() async throws {
+        let spy = SpySpotlight(result: ["/a", "/b"])
+        let client = try await connectedClient(spotlight: spy)
+
+        let (content, _) = try await client.callTool(name: "search", arguments: ["name_contains": "test"])
+
+        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*test*"cd"#)
+        #expect(texts(in: content) == ["/a", "/b"])
+    }
+
+    @Test func `A missing name_contains is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: [:])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("name_contains is missing") == true)
+    }
+
+    @Test(arguments: ["", "   "])
+    func `A blank name_contains is rejected as an error result`(name: String) async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["name_contains": .string(name)])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("name_contains cannot be empty") == true)
+    }
+
+    @Test func `A name_contains that is not a string is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["name_contains": 42])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("name_contains must be a string") == true)
+    }
 }

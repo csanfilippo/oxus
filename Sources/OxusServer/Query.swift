@@ -27,37 +27,37 @@ import Foundation
 
 struct Query {
     enum Error: Swift.Error {
-        case empty
-        case missing
-        case notAString
-        
+        case empty(name: String)
+        case missing(name: String)
+        case notAString(name: String)
+
         var message: String {
             return switch self {
-            case .empty:
-                "query cannot be empty"
-            case .missing:
-                "query is missing"
-            case .notAString:
-                "query must be a string"
+            case .empty(let name):
+                "\(name) cannot be empty"
+            case .missing(let name):
+                "\(name) is missing"
+            case .notAString(let name):
+                "\(name) must be a string"
             }
         }
     }
-    
+
     let value: String
-    
-    init(_ argument: Value?) throws(Error) {
+
+    init(_ argument: Value?, name: String = "query") throws(Error) {
         guard let argument else {
-            throw .missing
+            throw .missing(name: name)
         }
-        
+
         guard let stringValue = argument.stringValue else {
-            throw .notAString
+            throw .notAString(name: name)
         }
-        
+
         guard stringValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
-            throw .empty
+            throw .empty(name: name)
         }
-        
+
         self.value = stringValue
     }
 }
