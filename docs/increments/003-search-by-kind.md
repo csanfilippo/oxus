@@ -17,7 +17,15 @@ Let `search` filter by kind of file, so a request like "find all the images whos
 - **`Kind` enum** maps each kind to a content type matched on `kMDItemContentTypeTree` (e.g. `image` → `public.image`), so parent types match all subtypes (PNG, JPEG, HEIC…).
 - The schema's `enum` is built from `Kind.allCases`, so the advertised kinds and the accepted kinds cannot drift apart.
 
-## Open decisions
+## Decisions
 
-- The initial set of kinds.
-- What a call with no filters returns: an error (recommended — an empty query would match everything) or the most recent files.
+- **Initial kinds:** `image`, `movie`, `audio`, `pdf`, `folder`, `application`.
+- **No filters is an error:** an empty query would match everything; the message says at least one of `name_contains` or `kind` is required.
+- **Unknown or non-string `kind` is an error that lists the accepted kinds,** so the client's LLM can correct itself.
+- **Kind values are exact and lowercase:** only advertised values are accepted.
+- **A blank `name_contains` stays an error** even when `kind` is present: a filter that is present but blank is a client mistake.
+- **Acceptance tests check both directions:** "finde" + `application` finds Finder, and "finde" + `folder` does not, which proves the kind clause reaches Spotlight and is combined with AND.
+
+## Test list
+
+`docs/tests/increment-3-test-list.txt`

@@ -1,0 +1,26 @@
+# Increment 3: search by kind - Test List
+
+## Specifications
+- Tool: `search` gains `kind` (string, optional), advertised as an `enum`: image, movie, audio, pdf, folder, application
+- `name_contains` becomes optional; at least one of `name_contains` and `kind` is required
+- Filters present in the same call are combined with AND
+- Matching: each kind matches its content type on `kMDItemContentTypeTree`, so a parent type matches all subtypes (image → public.image, movie → public.movie, audio → public.audio, pdf → com.adobe.pdf, folder → public.folder, application → com.apple.application)
+- Kind values are exact and lowercase: "Image" is an unknown kind
+- Neither filter: result with isError and a message saying at least one of name_contains or kind is required
+- Unknown or non-string `kind`: result with isError and a message that lists the accepted kinds
+- Blank `name_contains` is still an error, even when `kind` is present
+- Limit and output unchanged from increment 2; `spotlight_query` unchanged
+- Spotlight port and adapter unchanged; acceptance tests rely on Finder.app's content type tree containing com.apple.application and not public.folder
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches for "finde" with kind application over MCP and receives Finder's path
+- [ ] Acceptance test: a client searches for "finde" with kind folder over MCP and does not receive Finder's path
+- [ ] A kind compiles to a match on the content type tree
+- [ ] Each kind compiles to its content type
+- [ ] A name and a kind compile to both matches combined with AND
+- [ ] search advertises an optional kind listing the six kinds, and name_contains is no longer required
+- [ ] search with only a kind returns the paths Spotlight finds for the compiled kind query
+- [ ] A search with neither name_contains nor kind is rejected as an error result
+- [ ] An unknown kind is rejected as an error result that lists the accepted kinds
+- [ ] A kind that is not a string is rejected as an error result
+- [ ] A blank name_contains is rejected as an error result even when a kind is given
