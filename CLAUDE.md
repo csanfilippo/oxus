@@ -38,8 +38,8 @@ To exercise the server by hand, run the built binary directly instead of `swift 
 - `OxusServer` (library) builds the MCP `Server` through `makeOxusServer(spotlight:)`, registers the tool handlers, and defines the `Spotlight` port. All behaviour lives here; it never imports CoreServices.
 - `CoreServicesAdapter` (library) implements `Spotlight` as `CoreServicesSpotlight` on `MDQuery`. It depends on `OxusServer`, never the other way round, and never imports `MCP`.
 - `oxus` (executable) is the composition root: it passes `CoreServicesSpotlight()` to `makeOxusServer(spotlight:)` and connects the server to `StdioTransport`. Keep it a thin adapter.
-- `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`, against `FakeSpotlight`. Tests exercise the protocol a real client sees, not handler internals.
-- `CoreServicesAdapterTests` tests `CoreServicesSpotlight` directly against real Spotlight, querying always-indexed system files (e.g. `Finder.app`). Every behaviour `FakeSpotlight` assumes (such as honouring `limit`) needs a matching test here.
+- `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`, against `SpySpotlight`. Tests exercise the protocol a real client sees, not handler internals.
+- `CoreServicesAdapterTests` tests `CoreServicesSpotlight` directly against real Spotlight, querying always-indexed system files (e.g. `Finder.app`). Every behaviour `SpySpotlight` assumes (such as honouring `limit`) needs a matching test here.
 - `AcceptanceTests` drives the server through an MCP `Client` wired to the real `CoreServicesSpotlight`.
 - Stdout carries JSON-RPC only. Never `print` from the server; anything diagnostic goes to stderr.
 - Unknown tool names throw `MCPError.invalidParams`, which becomes a protocol error. Failures of a known tool are returned as a result with `isError: true`.

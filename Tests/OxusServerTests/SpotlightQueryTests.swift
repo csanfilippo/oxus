@@ -53,7 +53,7 @@ import OxusServer
     }
     
     @Test func `query returns one text block per matching path, in Spotlight's order`() async throws {
-        let client = try await connectedClient(spotlight: FakeSpotlight(result: ["/b","/a"]))
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/b","/a"]))
         
         let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
         
@@ -63,7 +63,7 @@ import OxusServer
     @Test func `Spotlight is asked for 25 results when no limit is given`() async throws {
         
         let paths: [String] = .init(repeating: "a", count: 100)
-        let client = try await connectedClient(spotlight: FakeSpotlight(result: paths))
+        let client = try await connectedClient(spotlight: SpySpotlight(result: paths))
         
         let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
         
@@ -73,7 +73,7 @@ import OxusServer
     @Test func `Spotlight is asked for 100 results when the limit exceeds 100`() async throws {
         
         let paths: [String] = .init(repeating: "a", count: 200)
-        let client = try await connectedClient(spotlight: FakeSpotlight(result: paths))
+        let client = try await connectedClient(spotlight: SpySpotlight(result: paths))
         
         let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": 300])
         

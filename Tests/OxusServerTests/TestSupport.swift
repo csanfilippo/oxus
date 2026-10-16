@@ -25,18 +25,6 @@
 import MCP
 import OxusServer
 
-final class FakeSpotlight: Sendable, Spotlight {
-    private let result: [String]
-
-    init(result: [String] = []) {
-        self.result = result
-    }
-
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
-        Array(self.result.prefix(limit))
-    }
-}
-
 final class MalformedQuerySpotlight: Sendable, Spotlight {
     func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
         throw SpotlightError.malformedQuery(query: query)
@@ -62,7 +50,7 @@ final class SpySpotlight: Spotlight, @unchecked Sendable {
     }
 }
 
-func connectedClient(spotlight: any Spotlight = FakeSpotlight()) async throws -> Client {
+func connectedClient(spotlight: any Spotlight = SpySpotlight()) async throws -> Client {
     let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
     let server = await makeOxusServer(spotlight: spotlight)
     try await server.start(transport: serverTransport)
