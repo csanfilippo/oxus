@@ -89,4 +89,14 @@ import OxusServer
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("name_contains must be a string") == true)
     }
+    
+    @Test func `search asks Spotlight for 25 results when no limit is given`() async throws {
+        let spy = SpySpotlight(result: ["/a", "/b"])
+        let client = try await connectedClient(spotlight: spy)
+        
+        let (content, _) = try await client.callTool(name: "search", arguments: ["name_contains": "test"])
+        
+        #expect(spy.receivedLimit == 25)
+        #expect(texts(in: content) == ["/a", "/b"])
+    }
 }

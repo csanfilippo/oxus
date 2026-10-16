@@ -18,7 +18,7 @@
 - [x] The server advertises search alongside spotlight_query
 - [x] search advertises a required name_contains and an optional limit between 1 and 100
 - [x] search returns the paths Spotlight finds for the compiled name query
-- [ ] search asks Spotlight for 25 results when no limit is given
+- [x] search asks Spotlight for 25 results when no limit is given
 - [x] A missing name_contains is rejected as an error result
 - [x] A blank name_contains is rejected as an error result
 - [x] A name_contains that is not a string is rejected as an error result

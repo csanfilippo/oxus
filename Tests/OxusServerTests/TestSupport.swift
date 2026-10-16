@@ -51,10 +51,13 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
 
 final class SpySpotlight: Spotlight, @unchecked Sendable {
     private(set) var receivedQuery: String?
+    private(set) var receivedLimit: Int?
+    
     private let result: [String]
     init(result: [String] = []) { self.result = result }
     func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
         receivedQuery = query
+        receivedLimit = limit
         return Array(result.prefix(limit))
     }
 }
