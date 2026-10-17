@@ -4,15 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It exposes two tools: `spotlight_query` runs a raw Spotlight query and returns matching file paths; `search` finds files by name without Spotlight syntax. Increments 1 and 2 are done; increment 3 (`search` by kind) is proposed.
+`oxus` is an MCP (Model Context Protocol) server that exposes macOS Spotlight search to MCP clients over stdio. It is built with Swift Package Manager on the official [MCP Swift SDK](https://github.com/modelcontextprotocol/swift-sdk) (product `MCP`). It exposes two tools: `spotlight_query` runs a raw Spotlight query and returns matching file paths; `search` finds files by name without Spotlight syntax.
 
 ## Commands
 
 ```sh
-swift build                 # debug build
-swift build -c release      # release build
-swift test                  # run all tests
-swift test --filter OxusServerTests              # run one test target
 swift test --skip AcceptanceTests                # skip tests that hit real Spotlight
 ```
 
@@ -28,10 +24,8 @@ To exercise the server by hand, run the built binary directly instead of `swift 
 
 ## Toolchain and compiler settings
 
-- `swift-tools-version: 6.4`, so the package builds in Swift 6 language mode with strict concurrency checking on.
 - The minimum deployment target is macOS 27, the only version currently tested.
 - Every target enables the `ApproachableConcurrency` upcoming feature through the shared `swiftSettings` in `Package.swift`; new targets must use it too.
-- Dependency versions are pinned in `Package.resolved`, which is committed.
 
 ## Structure
 
