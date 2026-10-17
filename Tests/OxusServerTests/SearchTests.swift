@@ -123,6 +123,7 @@ import OxusServer
         let (content, _) = try await client.callTool(name: "search", arguments: ["kind": "image"])
         
         #expect(spy.receivedLimit == 25)
+        #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
         #expect(texts(in: content) == ["/a", "/b"])
     }
 }
