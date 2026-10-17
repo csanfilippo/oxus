@@ -31,22 +31,37 @@ struct NameContains: NonEmptyStringArgument {
 }
 
 struct SearchCriteria {
-    private let nameContains: NameContains
+    enum Error: Swift.Error {
+        case noFilters
+
+        var message: String {
+            "at least one of name_contains or kind is required"
+        }
+    }
+
+    private let nameContains: NameContains?
     private let kind: Kind?
-    
-    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
-        self.nameContains = try NameContains(from: arguments)
-        self.kind = Kind(from: arguments)
+
+    init(from arguments: [String: Value]?) throws {
+        if arguments?[NameContains.name] != nil {
+            nameContains = try NameContains(from: arguments)
+        } else {
+            nameContains = nil
+        }
+        kind = Kind(from: arguments)
+
+        guard nameContains != nil || kind != nil else {
+            throw Error.noFilters
+        }
     }
 
     var spotlightQuery: String {
-        var query = #"kMDItemDisplayName == "*\#(literal(self.nameContains.value))*"cd"#
-        
-        if let kind {
-            query += " && \(kind.spotlightQuery)"
-        }
-        
-        return query
+        [
+            nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.value))*"cd"# },
+            kind?.spotlightQuery,
+        ]
+        .compactMap { $0 }
+        .joined(separator: " && ")
     }
 }
 

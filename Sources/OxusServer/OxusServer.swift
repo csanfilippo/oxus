@@ -69,6 +69,8 @@ private func handleSearch(params: CallTool.Parameters, spotlight: any Spotlight)
         return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
     } catch let queryError as NonEmptyStringError {
         return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
+    } catch let criteriaError as SearchCriteria.Error {
+        return CallTool.Result(content: [.text(text: criteriaError.message, annotations: nil, _meta: nil)], isError: true)
     }
 }
 

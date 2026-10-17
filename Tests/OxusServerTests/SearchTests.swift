@@ -78,13 +78,13 @@ import OxusServer
         #expect(texts(in: content) == ["/a", "/b"])
     }
 
-    @Test func `A missing name_contains is rejected as an error result`() async throws {
+    @Test func `A search with neither name_contains nor kind is rejected as an error result`() async throws {
         let client = try await connectedClient()
 
         let (content, isError) = try await client.callTool(name: "search", arguments: [:])
 
         #expect(isError == true)
-        #expect(texts(in: content).first?.contains("name_contains is missing") == true)
+        #expect(texts(in: content).first?.contains("at least one of name_contains or kind is required") == true)
     }
 
     @Test(arguments: ["", "   "])
@@ -111,6 +111,16 @@ import OxusServer
         let client = try await connectedClient(spotlight: spy)
         
         let (content, _) = try await client.callTool(name: "search", arguments: ["name_contains": "test"])
+        
+        #expect(spy.receivedLimit == 25)
+        #expect(texts(in: content) == ["/a", "/b"])
+    }
+    
+    @Test func `search with only a kind returns the paths Spotlight finds for the compiled kind query`() async throws {
+        let spy = SpySpotlight(result: ["/a", "/b"])
+        let client = try await connectedClient(spotlight: spy)
+        
+        let (content, _) = try await client.callTool(name: "search", arguments: ["kind": "image"])
         
         #expect(spy.receivedLimit == 25)
         #expect(texts(in: content) == ["/a", "/b"])
