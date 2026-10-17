@@ -32,13 +32,21 @@ struct NameContains: NonEmptyStringArgument {
 
 struct SearchCriteria {
     private let nameContains: NameContains
+    private let kind: Kind?
     
     init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
         self.nameContains = try NameContains(from: arguments)
+        self.kind = Kind(from: arguments)
     }
 
     var spotlightQuery: String {
-        #"kMDItemDisplayName == "*\#(literal(self.nameContains.value))*"cd"#
+        var query = #"kMDItemDisplayName == "*\#(literal(self.nameContains.value))*"cd"#
+        
+        if let kind {
+            query += " && \(kind.spotlightQuery)"
+        }
+        
+        return query
     }
 }
 

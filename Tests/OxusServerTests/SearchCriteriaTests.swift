@@ -44,4 +44,13 @@ import Testing
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
     }
+    
+    @Test func `A name and a kind compile to both matches combined with AND"`() throws {
+        let criteria = try SearchCriteria(from: [
+            "name_contains": "finde",
+            "kind": "application"
+        ])
+
+        #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*finde*"cd && kMDItemContentTypeTree == "com.apple.application""#)
+    }
 }

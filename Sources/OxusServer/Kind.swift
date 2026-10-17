@@ -22,6 +22,8 @@
  SOFTWARE.
  */
 
+import MCP
+
 enum Kind: String {
     case image
     case movie
@@ -29,25 +31,6 @@ enum Kind: String {
     case pdf
     case folder
     case application
-    
-    init?(rawValue: String) {
-        switch rawValue {
-        case "image":
-            self = .image
-        case "movie":
-            self = .movie
-        case "audio":
-            self = .audio
-        case "pdf":
-            self = .pdf
-        case "folder":
-            self = .folder
-        case "application":
-            self = .application
-        default:
-            return nil
-        }
-    }
     
     var spotlightQuery: String {
         return switch self {
@@ -63,6 +46,14 @@ enum Kind: String {
             #"kMDItemContentTypeTree == "public.folder""#
         case .application:
             #"kMDItemContentTypeTree == "com.apple.application""#
+        }
+    }
+    
+    init?(from arg: [String: Value]?) {
+        if let kind = arg?["kind"], let stringValue = kind.stringValue {
+            self.init(rawValue: stringValue)
+        } else {
+            return nil
         }
     }
 }

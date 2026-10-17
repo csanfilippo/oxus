@@ -17,7 +17,7 @@
 - [ ] Acceptance test: a client searches for "finde" with kind folder over MCP and does not receive Finder's path
 - [x] A kind compiles to a match on the content type tree
 - [x] Each kind compiles to its content type
-- [ ] A name and a kind compile to both matches combined with AND
+- [x] A name and a kind compile to both matches combined with AND
 - [ ] search advertises an optional kind listing the six kinds, and name_contains is no longer required
 - [ ] search with only a kind returns the paths Spotlight finds for the compiled kind query
 - [ ] A search with neither name_contains nor kind is rejected as an error result
