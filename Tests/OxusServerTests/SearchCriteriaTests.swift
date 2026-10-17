@@ -22,12 +22,13 @@
  SOFTWARE.
  */
 
+import MCP
 import Testing
 @testable import OxusServer
 
 @Suite struct SearchCriteriaTests {
-    @Test func `A name compiles to a case- and diacritic-insensitive contains match on the display name`() {
-        let criteria = SearchCriteria(nameContains: "report")
+    @Test func `A name compiles to a case- and diacritic-insensitive contains match on the display name`() throws {
+        let criteria = try SearchCriteria(from: ["name_contains": .string("report")])
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*report*"cd"#)
     }
@@ -38,8 +39,8 @@ import Testing
         ("*.txt", #"\*.txt"#),
         (#"\""#, #"\\\""#),
     ])
-    func `Quotes, backslashes and asterisks in the name are matched literally`(name: String, escapedName: String) {
-        let criteria = SearchCriteria(nameContains: name)
+    func `Quotes, backslashes and asterisks in the name are matched literally`(name: String, escapedName: String) throws {
+        let criteria = try SearchCriteria(from: ["name_contains": .string(name)])
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
     }

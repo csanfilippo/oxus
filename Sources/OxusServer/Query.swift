@@ -22,42 +22,7 @@
  SOFTWARE.
  */
 
-import MCP
-import Foundation
-
-struct Query {
-    enum Error: Swift.Error {
-        case empty(name: String)
-        case missing(name: String)
-        case notAString(name: String)
-
-        var message: String {
-            return switch self {
-            case .empty(let name):
-                "\(name) cannot be empty"
-            case .missing(let name):
-                "\(name) is missing"
-            case .notAString(let name):
-                "\(name) must be a string"
-            }
-        }
-    }
-
+struct Query: NonEmptyStringArgument {
+    static let name = "query"
     let value: String
-
-    init(_ argument: Value?, name: String = "query") throws(Error) {
-        guard let argument else {
-            throw .missing(name: name)
-        }
-
-        guard let stringValue = argument.stringValue else {
-            throw .notAString(name: name)
-        }
-
-        guard stringValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
-            throw .empty(name: name)
-        }
-
-        self.value = stringValue
-    }
 }

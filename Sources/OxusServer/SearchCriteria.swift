@@ -22,13 +22,23 @@
  SOFTWARE.
  */
 
+import MCP
 import Foundation
 
+struct NameContains: NonEmptyStringArgument {
+    static let name = "name_contains"
+    let value: String
+}
+
 struct SearchCriteria {
-    let nameContains: String
+    private let nameContains: NameContains
+    
+    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
+        self.nameContains = try NameContains(from: arguments)
+    }
 
     var spotlightQuery: String {
-        #"kMDItemDisplayName == "*\#(literal(nameContains))*"cd"#
+        #"kMDItemDisplayName == "*\#(literal(self.nameContains.value))*"cd"#
     }
 }
 

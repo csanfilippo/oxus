@@ -52,23 +52,22 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
 
 private func handleSpotlightSearch(params: CallTool.Parameters, spotlight: any Spotlight) async throws -> CallTool.Result {
     do {
-        let (query, limit) = try queryAndLimit(params: params, queryName: "query")
+        let (query, limit) = try queryAndLimit(params: params)
         return try await pathsResult(query: query, limit: limit, spotlight: spotlight)
     } catch let limitError as Limit.Error {
         return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let queryError as Query.Error {
+    } catch let queryError as NonEmptyStringError {
         return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
     }
 }
 
 private func handleSearch(params: CallTool.Parameters, spotlight: any Spotlight) async throws -> CallTool.Result {
     do {
-        let (query, limit) = try queryAndLimit(params: params, queryName: "name_contains")
-        let searchQuery = SearchCriteria(nameContains: query)
-        return try await pathsResult(query: searchQuery.spotlightQuery, limit: limit, spotlight: spotlight)
+        let (query, limit) = try searchQueryAndLimit(params: params)
+        return try await pathsResult(query: query, limit: limit, spotlight: spotlight)
     } catch let limitError as Limit.Error {
         return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let queryError as Query.Error {
+    } catch let queryError as NonEmptyStringError {
         return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
     }
 }
@@ -82,10 +81,16 @@ private func pathsResult(query: String, limit: Int, spotlight: any Spotlight) as
     }
 }
 
-private func queryAndLimit(params: CallTool.Parameters, queryName: String) throws -> (query: String, limit: Int) {
-    let query = try Query(params.arguments?[queryName], name: queryName)
+private func queryAndLimit(params: CallTool.Parameters) throws -> (query: String, limit: Int) {
+    let query = try Query(from: params.arguments)
     let limit = try Limit(params.arguments?["limit"])
     return (query: query.value, limit: limit.value)
+}
+
+private func searchQueryAndLimit(params: CallTool.Parameters) throws -> (query: String, limit: Int) {
+    let query = try SearchCriteria(from: params.arguments)
+    let limit = try Limit(params.arguments?["limit"])
+    return (query: query.spotlightQuery, limit: limit.value)
 }
 
 private let spotlightQuery = Tool(
@@ -94,7 +99,7 @@ private let spotlightQuery = Tool(
     inputSchema: .object([
         "type": "object",
         "properties": .object([
-            "query": .object([
+            Query.name: .object([
                 "type": "string",
                 "description": "The query to be performed",
             ]),
@@ -105,7 +110,7 @@ private let spotlightQuery = Tool(
                 "description": "The maximum number of paths to return",
             ]),
         ]),
-        "required": ["query"],
+        "required": [.string(Query.name)],
     ])
 )
 
@@ -115,7 +120,7 @@ private let search = Tool(
     inputSchema: .object([
         "type": "object",
         "properties": .object([
-            "name_contains": .object([
+            NameContains.name: .object([
                 "type": "string",
                 "description": "Text the file's name must contain",
             ]),
@@ -126,6 +131,6 @@ private let search = Tool(
                 "description": "The maximum number of paths to return",
             ]),
         ]),
-        "required": ["name_contains"],
+        "required": [.string(NameContains.name)],
     ])
 )
