@@ -45,13 +45,29 @@ import OxusServer
         let properties = try #require(schema["properties"]?.objectValue)
         let limit = try #require(properties["limit"]?.objectValue)
 
-        #expect(schema["required"] == ["name_contains"])
         #expect(properties["name_contains"]?.objectValue?["type"] == "string")
         #expect(limit["type"] == "integer")
         #expect(limit["minimum"] == 1)
         #expect(limit["maximum"] == 100)
     }
-    
+
+    @Test func `search advertises an optional kind listing the six kinds, and name_contains is no longer required`() async throws {
+        let client = try await connectedClient()
+
+        let (tools, _) = try await client.listTools()
+
+        let search = try #require(tools.first(where: { $0.name == "search" }))
+        let schema = try #require(search.inputSchema.objectValue)
+        let properties = try #require(schema["properties"]?.objectValue)
+        let kind = try #require(properties["kind"]?.objectValue)
+        let required = schema["required"]?.arrayValue ?? []
+
+        #expect(kind["type"] == "string")
+        #expect(kind["enum"] == ["image", "movie", "audio", "pdf", "folder", "application"])
+        #expect(!required.contains("kind"))
+        #expect(!required.contains("name_contains"))
+    }
+
     @Test func `search returns the paths Spotlight finds for the compiled name query`() async throws {
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)

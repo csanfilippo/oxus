@@ -136,6 +136,6 @@ private let search = Tool(
                 "description": "The kind of file to find",
             ]),
         ]),
-        "required": [.string(NameContains.name)],
+        "required": [],
     ])
 )
