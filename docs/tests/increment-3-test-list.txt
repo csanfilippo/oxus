@@ -15,8 +15,8 @@
 ## Test List (TDD)
 - [ ] Acceptance test: a client searches for "finde" with kind application over MCP and receives Finder's path
 - [ ] Acceptance test: a client searches for "finde" with kind folder over MCP and does not receive Finder's path
-- [ ] A kind compiles to a match on the content type tree
-- [ ] Each kind compiles to its content type
+- [x] A kind compiles to a match on the content type tree
+- [x] Each kind compiles to its content type
 - [ ] A name and a kind compile to both matches combined with AND
 - [ ] search advertises an optional kind listing the six kinds, and name_contains is no longer required
 - [ ] search with only a kind returns the paths Spotlight finds for the compiled kind query

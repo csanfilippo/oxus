@@ -130,6 +130,11 @@ private let search = Tool(
                 "minimum": .int(Limit.minimum),
                 "description": "The maximum number of paths to return",
             ]),
+            "kind": .object([
+                "type": "string",
+                "enum": ["image", "movie", "audio", "pdf", "folder", "application"],
+                "description": "The kind of file to find",
+            ]),
         ]),
         "required": [.string(NameContains.name)],
     ])
