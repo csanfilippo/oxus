@@ -22,6 +22,7 @@
  SOFTWARE.
  */
 
+import Foundation
 import MCP
 import Testing
 import OxusServer
@@ -41,6 +42,26 @@ import CoreServicesAdapter
         #expect(isError != true)
         #expect(texts(in: content).contains("/System/Library/CoreServices/Finder.app"))
         
+    }
+    
+    @Test func `a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block`() async throws {
+        await withKnownIssue {
+            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+            let result = try await client.send(CallTool.request(.init(
+                name: "spotlight_query",
+                arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+            ))).value
+
+            let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+            let text = try #require(texts(in: result.content).first)
+            let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+            #expect(result.isError != true)
+            #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
+            #expect(result.content.count == 1)
+            #expect(mirrored == result.structuredContent)
+        }
     }
     
     @Test func `a client searches for "finde" over MCP and receives Finder's path`() async throws {
