@@ -35,7 +35,7 @@ import OxusServer
         #expect(Set(tools.map(\.name)) == Set(["search", "spotlight_query"]))
     }
     
-    @Test func `search advertises a required name_contains and an optional limit between 1 and 100`() async throws {
+    @Test func `search advertises a string name_contains and an optional limit between 1 and 100`() async throws {
         let client = try await connectedClient()
         
         let (tools, _) = try await client.listTools()

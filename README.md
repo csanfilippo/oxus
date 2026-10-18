@@ -8,7 +8,7 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** early. `spotlight_query` runs raw Spotlight queries end to end. Searching by name without query syntax is planned next ([increment 2](docs/increments/002-search.md)).
+> **Status:** early. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name and kind without query syntax.
 
 ## Requirements
 
@@ -61,6 +61,18 @@ To try a query before sending it, run it with `mdfind`:
 ```sh
 mdfind 'kMDItemFSName == "Finder.app"'
 ```
+
+### `search`
+
+Finds files by name, kind, or both, without Spotlight query syntax. At least one of `name_contains` and `kind` is required; when both are given, a file must match both.
+
+| Argument | Type | Required | Description |
+|---|---|---|---|
+| `name_contains` | string | no | Text the file's name must contain, ignoring case and diacritics |
+| `kind` | string | no | One of `image`, `movie`, `audio`, `pdf`, `folder`, `application`; a kind includes its subtypes, e.g. `image` matches PNG, JPEG and HEIC |
+| `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
+
+The result has one text content block per matching path, in Spotlight's order.
 
 ## Development
 

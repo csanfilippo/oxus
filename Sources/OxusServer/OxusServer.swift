@@ -120,7 +120,7 @@ private let spotlightQuery = Tool(
 
 private let search = Tool(
     name: "search",
-    description: "Finds files whose name contains the given text, without Spotlight query syntax. Matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
+    description: "Finds files by name, kind, or both, without Spotlight query syntax. At least one of name_contains or kind is required; when both are given, a file must match both. Name matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
     inputSchema: .object([
         "type": "object",
         "properties": .object([
@@ -136,8 +136,8 @@ private let search = Tool(
             ]),
             "kind": .object([
                 "type": "string",
-                "enum": ["image", "movie", "audio", "pdf", "folder", "application"],
-                "description": "The kind of file to find",
+                "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
+                "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
             ]),
         ]),
         "required": [],
