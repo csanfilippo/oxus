@@ -48,7 +48,7 @@ struct SearchCriteria {
         } else {
             nameContains = nil
         }
-        kind = Kind(from: arguments)
+        kind = try Kind(from: arguments)
 
         guard nameContains != nil || kind != nil else {
             throw Error.noFilters

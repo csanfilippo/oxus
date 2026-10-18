@@ -126,4 +126,14 @@ import OxusServer
         #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
         #expect(texts(in: content) == ["/a", "/b"])
     }
+    
+    @Test func `An unknown kind is rejected as an error result that lists the accepted kinds`() async throws {
+        
+        let client = try await connectedClient()
+        
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["kind": "unknown"])
+        
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)
+    }
 }

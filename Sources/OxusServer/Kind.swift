@@ -24,13 +24,24 @@
 
 import MCP
 
-enum Kind: String {
+enum Kind: String, CaseIterable {
     case image
     case movie
     case audio
     case pdf
     case folder
     case application
+    
+    enum Error: Swift.Error {
+        case unknown(String)
+
+        var message: String {
+            switch self {
+            case .unknown(let value):
+                "unknown kind \(value); accepted kinds are: \(Kind.allCases.map(\.rawValue).joined(separator: ","))"
+            }
+        }
+    }
     
     var spotlightQuery: String {
         return switch self {
@@ -49,11 +60,16 @@ enum Kind: String {
         }
     }
     
-    init?(from arg: [String: Value]?) {
+    init?(from arg: [String: Value]?) throws(Error) {
         if let kind = arg?["kind"], let stringValue = kind.stringValue {
-            self.init(rawValue: stringValue)
+            try self.init(parsing: stringValue)
         } else {
             return nil
         }
+    }
+    
+    init(parsing value: String) throws(Error) {
+        guard let kind = Kind(rawValue: value) else { throw .unknown(value) }
+        self = kind
     }
 }

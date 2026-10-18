@@ -21,6 +21,6 @@
 - [x] search advertises an optional kind listing the six kinds, and name_contains is no longer required
 - [x] search with only a kind returns the paths Spotlight finds for the compiled kind query
 - [x] A search with neither name_contains nor kind is rejected as an error result
-- [ ] An unknown kind is rejected as an error result that lists the accepted kinds
+- [x] An unknown kind is rejected as an error result that lists the accepted kinds
 - [ ] A kind that is not a string is rejected as an error result
 - [ ] A blank name_contains is rejected as an error result even when a kind is given
