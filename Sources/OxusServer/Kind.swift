@@ -34,11 +34,14 @@ enum Kind: String, CaseIterable {
     
     enum Error: Swift.Error {
         case unknown(String)
+        case wrongType(String)
 
         var message: String {
             switch self {
             case .unknown(let value):
                 "unknown kind \(value); accepted kinds are: \(Kind.allCases.map(\.rawValue).joined(separator: ","))"
+            case .wrongType(let value):
+                "wrong kind \(value); kind must be a string; accepted kinds are: \(Kind.allCases.map(\.rawValue).joined(separator: ","))"
             }
         }
     }
@@ -61,10 +64,15 @@ enum Kind: String, CaseIterable {
     }
     
     init?(from arg: [String: Value]?) throws(Error) {
-        if let kind = arg?["kind"], let stringValue = kind.stringValue {
+        
+        guard let kind = arg?["kind"] else {
+            return nil
+        }
+        
+        if let stringValue = kind.stringValue {
             try self.init(parsing: stringValue)
         } else {
-            return nil
+            throw .wrongType(String(describing: kind))
         }
     }
     

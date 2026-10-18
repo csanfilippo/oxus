@@ -136,4 +136,14 @@ import OxusServer
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)
     }
+    
+    @Test func `A kind that is not a string is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+        
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["kind": 42])
+        
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("kind must be a string") == true)
+        #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)
+    }
 }
