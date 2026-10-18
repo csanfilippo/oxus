@@ -43,6 +43,13 @@ Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json
 }
 ```
 
+## Privacy
+
+oxus runs locally and makes no network requests, but it gives the connected MCP client the paths of any file Spotlight has indexed for your user, including files in your home folder. If the client is backed by a hosted model, those paths, and the queries that produced them, are sent to that model's provider.
+
+- Results are paths only; oxus never returns file contents. A `spotlight_query` can still match on metadata or indexed text, so a result can reveal what a file contains.
+- oxus has no allowlist of folders. To keep a location out of its results, exclude it from Spotlight in System Settings, under Spotlight's privacy settings.
+
 ## Tools
 
 ### `spotlight_query`
