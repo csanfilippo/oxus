@@ -146,4 +146,14 @@ import OxusServer
         #expect(texts(in: content).first?.contains("kind must be a string") == true)
         #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)
     }
+
+    @Test(arguments: ["", "   "])
+    func `A blank name_contains is rejected as an error result even when a kind is given`(name: String) async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["name_contains": .string(name), "kind": "image"])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("name_contains cannot be empty") == true)
+    }
 }
