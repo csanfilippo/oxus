@@ -1,6 +1,6 @@
 # Increment 3 — `search` by kind
 
-**Status:** Proposed
+**Status:** Done (2026-10-18)
 
 ## Goal
 

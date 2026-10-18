@@ -13,8 +13,8 @@
 - Spotlight port and adapter unchanged; acceptance tests rely on Finder.app's content type tree containing com.apple.application and not public.folder
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches for "finde" with kind application over MCP and receives Finder's path
-- [ ] Acceptance test: a client searches for "finde" with kind folder over MCP and does not receive Finder's path
+- [x] Acceptance test: a client searches for "finde" with kind application over MCP and receives Finder's path
+- [x] Acceptance test: a client searches for "finde" with kind folder over MCP and does not receive Finder's path
 - [x] A kind compiles to a match on the content type tree
 - [x] Each kind compiles to its content type
 - [x] A name and a kind compile to both matches combined with AND
