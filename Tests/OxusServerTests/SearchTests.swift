@@ -25,6 +25,7 @@
 import MCP
 import Testing
 import OxusServer
+import Foundation
 
 @Suite struct SearchTests {
     @Test func `The server advertises search alongside spotlight_query`() async throws {
@@ -168,5 +169,25 @@ import OxusServer
 
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("name_contains cannot be empty") == true)
+    }
+
+    @Test func `search returns a single text block that decodes to its structured content`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(result.content.count == 1)
+        #expect(mirrored == result.structuredContent)
+    }
+
+    @Test func `A search error result carries no structured content`() async throws {
+        let client = try await connectedClient()
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: [:]))).value
+
+        #expect(result.isError == true)
+        #expect(result.structuredContent == nil)
     }
 }

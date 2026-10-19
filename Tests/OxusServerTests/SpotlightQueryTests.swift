@@ -196,4 +196,24 @@ import Foundation
         #expect(result.content.count == 1)
         #expect(mirrored == result.structuredContent)
     }
+
+    @Test func `Paths containing quotes, backslashes or newlines decode from the text block unchanged`() async throws {
+        let paths = [#"/a "quoted" name"#, #"/a\back\slash"#, "/a\nnew\nline"]
+        let client = try await connectedClient(spotlight: SpySpotlight(result: paths))
+
+        let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test"]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(mirrored == ["paths": .array(paths.map { .string($0) })])
+    }
+
+    @Test func `An error result carries no structured content`() async throws {
+        let client = try await connectedClient(spotlight: MalformedQuerySpotlight())
+
+        let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "kMDItemFSName =="]))).value
+
+        #expect(result.isError == true)
+        #expect(result.structuredContent == nil)
+    }
 }

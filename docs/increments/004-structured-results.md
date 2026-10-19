@@ -1,10 +1,10 @@
 # Increment 4 — Structured results
 
-**Status:** Proposed
+**Status:** Done (2026-10-19)
 
 ## Goal
 
-Return search results in a form every MCP client hands to its model intact. Today each path is its own text content block, and Claude Code joins the blocks with no separator, so the model receives one string of paths stuck together and has to guess where each path ends.
+Return search results in a form every MCP client hands to its model intact. Before this increment each path was its own text content block, and Claude Code joined the blocks with no separator, so the model received one string of paths stuck together and had to guess where each path ended.
 
 ## Contract
 

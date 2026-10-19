@@ -61,7 +61,7 @@ Runs a raw [Spotlight query](https://developer.apple.com/library/archive/documen
 | `query` | string | yes | Spotlight query syntax, e.g. `kMDItemFSName == "*.pdf"c` |
 | `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
 
-The result has one text content block per matching path, in Spotlight's order.
+The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
 
 To try a query before sending it, run it with `mdfind`:
 
@@ -79,7 +79,7 @@ Finds files by name, kind, or both, without Spotlight query syntax. At least one
 | `kind` | string | no | One of `image`, `movie`, `audio`, `pdf`, `folder`, `application`; a kind includes its subtypes, e.g. `image` matches PNG, JPEG and HEIC |
 | `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
 
-The result has one text content block per matching path, in Spotlight's order.
+The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
 
 ## Development
 
