@@ -10,14 +10,14 @@
 - Version stays 0.1.0
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block
-- [ ] Acceptance test: a client searches for "finde" and receives Finder's path in structured content and in the text block
+- [x] Acceptance test: a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block
+- [x] Acceptance test: a client searches for "finde" and receives Finder's path in structured content and in the text block
 - [x] spotlight_query advertises an output schema with a required array of string paths
 - [x] search advertises the same output schema as spotlight_query
-- [ ] spotlight_query returns the paths Spotlight finds as structured content, in Spotlight's order
-- [ ] spotlight_query returns a single text block that decodes to its structured content
-- [ ] search returns the paths Spotlight finds as structured content, in Spotlight's order
+- [x] spotlight_query returns the paths Spotlight finds as structured content, in Spotlight's order
+- [x] spotlight_query returns a single text block that decodes to its structured content
+- [x] search returns the paths Spotlight finds as structured content, in Spotlight's order
 - [ ] search returns a single text block that decodes to its structured content
-- [ ] A query matching no files returns empty paths in structured content and text, without error
+- [x] A query matching no files returns empty paths in structured content and text, without error
 - [ ] Paths containing quotes, backslashes or newlines decode from the text block unchanged
 - [ ] An error result carries no structured content

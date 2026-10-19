@@ -23,6 +23,17 @@
  */
 
 import MCP
+import Foundation
+
+private struct OxusResponse: Codable {
+    let paths: [String]
+}
+
+private extension Array where Element == String {
+    var asOxusResponse: OxusResponse {
+        .init(paths: self)
+    }
+}
 
 public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     let server = Server(
@@ -77,12 +88,17 @@ private func handleSearch(params: CallTool.Parameters, spotlight: any Spotlight)
 }
 
 private func pathsResult(query: String, limit: Int, spotlight: any Spotlight) async throws -> CallTool.Result {
+    let paths: [String]
     do {
-        let paths = try await spotlight.search(query: query, limit: limit)
-        return CallTool.Result(content: paths.map { path in .text(text: path, annotations: nil, _meta: nil) }, isError: false)
+        paths = try await spotlight.search(query: query, limit: limit)
     } catch let spotlightError {
         return CallTool.Result(content: [.text(text: spotlightError.message, annotations: nil, _meta: nil)], isError: true)
     }
+    let response = paths.asOxusResponse
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .withoutEscapingSlashes
+    let text = String(decoding: try encoder.encode(response), as: UTF8.self)
+    return try CallTool.Result(content: [.text(text: text, annotations: nil, _meta: nil)], structuredContent: response, isError: false)
 }
 
 private func queryAndLimit(params: CallTool.Parameters) throws -> (query: String, limit: Int) {

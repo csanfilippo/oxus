@@ -25,6 +25,7 @@
 import MCP
 import Testing
 import OxusServer
+import Foundation
 
 @Suite struct SpotlightQueryTests {
     @Test func `the server advertises spotlight_query`() async throws {
@@ -62,22 +63,14 @@ import OxusServer
         #expect(schema["required"] == ["paths"])
     }
     
-    @Test func `query returns one text block per matching path, in Spotlight's order`() async throws {
-        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/b","/a"]))
-        
-        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
-        
-        #expect(texts(in: content) == ["/b","/a"])
-    }
-    
     @Test func `Spotlight is asked for 25 results when no limit is given`() async throws {
         
         let paths: [String] = .init(repeating: "a", count: 100)
         let client = try await connectedClient(spotlight: SpySpotlight(result: paths))
         
-        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
+        let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test"]))).value
         
-        #expect(texts(in: content).count == 25)
+        #expect(result.structuredContent?.objectValue?["paths"]?.arrayValue?.count == 25)
     }
     
     @Test func `Spotlight is asked for 100 results when the limit exceeds 100`() async throws {
@@ -85,9 +78,9 @@ import OxusServer
         let paths: [String] = .init(repeating: "a", count: 200)
         let client = try await connectedClient(spotlight: SpySpotlight(result: paths))
         
-        let (content, _) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test", "limit": 300])
+        let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test", "limit": 300]))).value
         
-        #expect(texts(in: content).count == 100)
+        #expect(result.structuredContent?.objectValue?["paths"]?.arrayValue?.count == 100)
     }
     
     @Test(arguments: [0,-5])
@@ -154,14 +147,16 @@ import OxusServer
         }
     }
     
-    @Test func `A query matching no files returns empty content without error`() async throws {
+    @Test func `A query matching no files returns empty paths in structured content and text, without error`() async throws {
         let client = try await connectedClient()
         
-        let (content, isError) = try await client.callTool(name: "spotlight_query", arguments: ["query": "test"])
+        let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test"]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
         
-        #expect(isError != true)
-        
-        #expect(content.isEmpty)
+        #expect(result.isError != true)
+        #expect(result.structuredContent == ["paths": []])
+        #expect(mirrored == result.structuredContent)
     }
     
     @Test func `A malformed query is rejected as an error result naming the query`() async throws {
@@ -182,5 +177,23 @@ import OxusServer
         #expect(isError == true)
 
         #expect(texts(in: content).first?.contains(#"Spotlight could not run the query 'kMDItemFSName == "Finder.app"'"#) == true)
+    }
+    
+    @Test func `spotlight_query returns the paths Spotlight finds as structured content, in Spotlight's order`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/path1", "/path2"]))
+
+        let result = try await client.send(CallTool.request(.init(
+            name: "spotlight_query",
+            arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+        ))).value
+
+        let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(result.isError != true)
+        #expect(paths == ["/path1", "/path2"])
+        #expect(result.content.count == 1)
+        #expect(mirrored == result.structuredContent)
     }
 }

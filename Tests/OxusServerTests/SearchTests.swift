@@ -85,10 +85,10 @@ import OxusServer
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
 
-        let (content, _) = try await client.callTool(name: "search", arguments: ["name_contains": "test"])
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
 
         #expect(spy.receivedQuery == #"kMDItemDisplayName == "*test*"cd"#)
-        #expect(texts(in: content) == ["/a", "/b"])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
 
     @Test func `A search with neither name_contains nor kind is rejected as an error result`() async throws {
@@ -123,21 +123,21 @@ import OxusServer
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
         
-        let (content, _) = try await client.callTool(name: "search", arguments: ["name_contains": "test"])
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
         
         #expect(spy.receivedLimit == 25)
-        #expect(texts(in: content) == ["/a", "/b"])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
     
     @Test func `search with only a kind returns the paths Spotlight finds for the compiled kind query`() async throws {
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
         
-        let (content, _) = try await client.callTool(name: "search", arguments: ["kind": "image"])
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["kind": "image"]))).value
         
         #expect(spy.receivedLimit == 25)
         #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
-        #expect(texts(in: content) == ["/a", "/b"])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
     
     @Test func `An unknown kind is rejected as an error result that lists the accepted kinds`() async throws {
