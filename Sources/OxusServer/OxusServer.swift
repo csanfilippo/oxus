@@ -27,6 +27,18 @@ import Foundation
 
 private struct OxusResponse: Codable {
     let paths: [String]
+
+    static let schema: Value = .object([
+        "type": "object",
+        "properties": .object([
+            "paths": .object([
+                "type": "array",
+                "items": .object(["type": "string"]),
+                "description": "Paths of the matching files, in Spotlight's order",
+            ]),
+        ]),
+        "required": ["paths"],
+    ])
 }
 
 private extension Array where Element == String {
@@ -128,17 +140,7 @@ private let spotlightQuery = Tool(
         ]),
         "required": [.string(Query.name)],
     ]),
-    outputSchema: .object([
-        "type": "object",
-        "properties": .object([
-            "paths": .object([
-                "type": "array",
-                "items": .object(["type": "string"]),
-                "description": "Paths of the matching files, in Spotlight's order",
-            ]),
-        ]),
-        "required": ["paths"],
-    ])
+    outputSchema: OxusResponse.schema
 )
 
 private let search = Tool(
@@ -165,15 +167,5 @@ private let search = Tool(
         ]),
         "required": [],
     ]),
-    outputSchema: .object([
-        "type": "object",
-        "properties": .object([
-            "paths": .object([
-                "type": "array",
-                "items": .object(["type": "string"]),
-                "description": "Paths of the matching files, in Spotlight's order",
-            ]),
-        ]),
-        "required": ["paths"],
-    ])
+    outputSchema: OxusResponse.schema
 )
