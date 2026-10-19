@@ -50,6 +50,19 @@ import OxusServer
         #expect(limit["minimum"] == 1)
         #expect(limit["maximum"] == 100)
     }
+    
+    @Test func `search advertises the same output schema as spotlight_query`() async throws {
+        let client = try await connectedClient()
+        
+        let (tools, _) = try await client.listTools()
+        
+        let search = try #require(toolWithName(tools: tools, name: "search"))
+        let spotlightQuery = try #require(toolWithName(tools: tools, name: "spotlight_query"))
+        let searchSchema = try #require(search.outputSchema?.objectValue)
+        let spotlightQuerySchema = try #require(spotlightQuery.outputSchema?.objectValue)
+        
+        #expect(searchSchema == spotlightQuerySchema)
+    }
 
     @Test func `search advertises an optional kind listing the six kinds, and name_contains is no longer required`() async throws {
         let client = try await connectedClient()

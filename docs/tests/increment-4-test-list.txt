@@ -13,7 +13,7 @@
 - [ ] Acceptance test: a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block
 - [ ] Acceptance test: a client searches for "finde" and receives Finder's path in structured content and in the text block
 - [x] spotlight_query advertises an output schema with a required array of string paths
-- [ ] search advertises the same output schema as spotlight_query
+- [x] search advertises the same output schema as spotlight_query
 - [ ] spotlight_query returns the paths Spotlight finds as structured content, in Spotlight's order
 - [ ] spotlight_query returns a single text block that decodes to its structured content
 - [ ] search returns the paths Spotlight finds as structured content, in Spotlight's order
