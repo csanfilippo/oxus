@@ -32,7 +32,7 @@ enum Kind: String, CaseIterable {
     case folder
     case application
     
-    enum Error: Swift.Error {
+    enum Error: ToolFailure {
         case unknown(String)
         case wrongType(String)
 

@@ -65,10 +65,8 @@ private func handleSpotlightSearch(params: CallTool.Parameters, spotlight: any S
     do {
         let (query, limit) = try queryAndLimit(params: params)
         return try await pathsResult(query: query, limit: limit, spotlight: spotlight)
-    } catch let limitError as Limit.Error {
-        return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let queryError as NonEmptyStringError {
-        return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
+    } catch let failure as any ToolFailure {
+        return failureResult(failure)
     }
 }
 
@@ -76,15 +74,13 @@ private func handleSearch(params: CallTool.Parameters, spotlight: any Spotlight)
     do {
         let (query, limit) = try searchQueryAndLimit(params: params)
         return try await pathsResult(query: query, limit: limit, spotlight: spotlight)
-    } catch let limitError as Limit.Error {
-        return CallTool.Result(content: [.text(text: limitError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let queryError as NonEmptyStringError {
-        return CallTool.Result(content: [.text(text: queryError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let criteriaError as SearchCriteria.Error {
-        return CallTool.Result(content: [.text(text: criteriaError.message, annotations: nil, _meta: nil)], isError: true)
-    } catch let kindError as Kind.Error {
-        return CallTool.Result(content: [.text(text: kindError.message, annotations: nil, _meta: nil)], isError: true)
+    } catch let failure as any ToolFailure {
+        return failureResult(failure)
     }
+}
+
+private func failureResult(_ failure: any ToolFailure) -> CallTool.Result {
+    CallTool.Result(content: [.text(text: failure.message, annotations: nil, _meta: nil)], isError: true)
 }
 
 private func pathsResult(query: String, limit: Int, spotlight: any Spotlight) async throws -> CallTool.Result {
@@ -92,7 +88,7 @@ private func pathsResult(query: String, limit: Int, spotlight: any Spotlight) as
     do {
         paths = try await spotlight.search(query: query, limit: limit)
     } catch let spotlightError {
-        return CallTool.Result(content: [.text(text: spotlightError.message, annotations: nil, _meta: nil)], isError: true)
+        return failureResult(spotlightError)
     }
     let response = paths.asOxusResponse
     let encoder = JSONEncoder()

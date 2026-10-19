@@ -25,7 +25,7 @@
 import MCP
 import Foundation
 
-enum NonEmptyStringError: Error {
+enum NonEmptyStringError: ToolFailure {
     case empty(argument: String)
     case missing(argument: String)
     case notAString(argument: String)

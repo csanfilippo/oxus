@@ -30,7 +30,7 @@ struct Limit {
     static let maximum = 100
     private static let defaultValue = 25
     
-    enum Error: Swift.Error {
+    enum Error: ToolFailure {
         case notAnInteger
         case belowMinimum(minimumAccepted: Int, received: Int)
         

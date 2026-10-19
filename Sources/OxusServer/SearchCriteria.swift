@@ -31,7 +31,7 @@ struct NameContains: NonEmptyStringArgument {
 }
 
 struct SearchCriteria {
-    enum Error: Swift.Error {
+    enum Error: ToolFailure {
         case noFilters
 
         var message: String {

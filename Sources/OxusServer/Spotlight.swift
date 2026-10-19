@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-public enum SpotlightError: Error {
+public enum SpotlightError: Error, ToolFailure {
     case malformedQuery(query: String)
     case executionFailed(query: String)
     
