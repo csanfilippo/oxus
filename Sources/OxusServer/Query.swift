@@ -22,7 +22,13 @@
  SOFTWARE.
  */
 
+import MCP
+
 struct Query: NonEmptyStringArgument {
     static let name = "query"
     let value: String
+
+    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
+        value = try Self.nonEmptyValue(in: arguments)
+    }
 }

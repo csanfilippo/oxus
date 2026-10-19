@@ -28,6 +28,10 @@ import Foundation
 struct NameContains: NonEmptyStringArgument {
     static let name = "name_contains"
     let value: String
+
+    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
+        value = try Self.nonEmptyValue(in: arguments)
+    }
 }
 
 struct SearchCriteria {

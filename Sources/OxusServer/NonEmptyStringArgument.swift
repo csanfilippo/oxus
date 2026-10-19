@@ -44,15 +44,13 @@ enum NonEmptyStringError: ToolFailure {
 
 protocol NonEmptyStringArgument {
     static var name: String { get }
-    var value: String { get }
-    init(value: String)
 }
 
 extension NonEmptyStringArgument {
-    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
-        guard let argument = arguments?[Self.name] else { throw .missing(argument: Self.name) }
-        guard let string = argument.stringValue else { throw .notAString(argument: Self.name) }
-        guard string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else { throw .empty(argument: Self.name) }
-        self.init(value: string)
+    static func nonEmptyValue(in arguments: [String: Value]?) throws(NonEmptyStringError) -> String {
+        guard let argument = arguments?[name] else { throw .missing(argument: name) }
+        guard let string = argument.stringValue else { throw .notAString(argument: name) }
+        guard string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else { throw .empty(argument: name) }
+        return string
     }
 }
