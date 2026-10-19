@@ -47,19 +47,23 @@ enum Kind: String, CaseIterable {
     }
     
     var spotlightQuery: String {
+        #"kMDItemContentTypeTree == "\#(contentType)""#
+    }
+
+    private var contentType: String {
         return switch self {
         case .image:
-            #"kMDItemContentTypeTree == "public.image""#
+            "public.image"
         case .movie:
-            #"kMDItemContentTypeTree == "public.movie""#
+            "public.movie"
         case .audio:
-            #"kMDItemContentTypeTree == "public.audio""#
+            "public.audio"
         case .pdf:
-            #"kMDItemContentTypeTree == "com.adobe.pdf""#
+            "com.adobe.pdf"
         case .folder:
-            #"kMDItemContentTypeTree == "public.folder""#
+            "public.folder"
         case .application:
-            #"kMDItemContentTypeTree == "com.apple.application""#
+            "com.apple.application"
         }
     }
     
