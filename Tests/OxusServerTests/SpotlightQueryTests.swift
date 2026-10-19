@@ -39,9 +39,7 @@ import OxusServer
         let client = try await connectedClient()
         
         let (tools, _) = try await client.listTools()
-        let schema = try #require(tools.first(where: { tool in
-            tool.name == "spotlight_query"
-        })?.inputSchema.objectValue)
+        let schema = try #require(toolWithName(tools: tools, name: "spotlight_query")?.inputSchema.objectValue)
         let properties = try #require(schema["properties"]?.objectValue)
         let limit = try #require(properties["limit"]?.objectValue)
         
@@ -50,6 +48,18 @@ import OxusServer
         #expect(limit["type"] == "integer")
         #expect(limit["maximum"] == 100)
         #expect(limit["minimum"] == 1)
+    }
+    
+    @Test func `spotlight_query advertises an output schema with a required array of string paths`() async throws {
+        let client = try await connectedClient()
+        
+        let (tools, _) = try await client.listTools()
+        let schema = try #require(toolWithName(tools: tools, name: "spotlight_query")?.outputSchema?.objectValue)
+        
+        let paths = try #require(schema["properties"]?.objectValue?["paths"]?.objectValue)
+        #expect(paths["type"] == "array")
+        #expect(paths["items"]?.objectValue?["type"] == "string")
+        #expect(schema["required"] == ["paths"])
     }
     
     @Test func `query returns one text block per matching path, in Spotlight's order`() async throws {

@@ -115,6 +115,17 @@ private let spotlightQuery = Tool(
             ]),
         ]),
         "required": [.string(Query.name)],
+    ]),
+    outputSchema: .object([
+        "type": "object",
+        "properties": .object([
+            "paths": .object([
+                "type": "array",
+                "items": .object(["type": "string"]),
+                "description": "Paths of the matching files, in Spotlight's order",
+            ]),
+        ]),
+        "required": ["paths"],
     ])
 )
 

@@ -64,3 +64,7 @@ func texts(in content: [Tool.Content]) -> [String] {
         if case .text(let text, _, _) = $0 { text } else { nil }
     }
 }
+
+func toolWithName(tools: [Tool], name: String) -> Tool? {
+    tools.first { $0.name == name }
+}

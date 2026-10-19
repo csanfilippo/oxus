@@ -40,7 +40,7 @@ import OxusServer
         
         let (tools, _) = try await client.listTools()
         
-        let search = try #require(tools.first(where: { $0.name == "search" }))
+        let search = try #require(toolWithName(tools: tools, name: "search"))
         let schema = try #require(search.inputSchema.objectValue)
         let properties = try #require(schema["properties"]?.objectValue)
         let limit = try #require(properties["limit"]?.objectValue)
@@ -56,7 +56,7 @@ import OxusServer
 
         let (tools, _) = try await client.listTools()
 
-        let search = try #require(tools.first(where: { $0.name == "search" }))
+        let search = try #require(toolWithName(tools: tools, name: "search"))
         let schema = try #require(search.inputSchema.objectValue)
         let properties = try #require(schema["properties"]?.objectValue)
         let kind = try #require(properties["kind"]?.objectValue)
