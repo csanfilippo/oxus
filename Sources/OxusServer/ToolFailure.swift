@@ -22,6 +22,15 @@
  SOFTWARE.
  */
 
+import MCP
+
 protocol ToolFailure: Error {
     var message: String { get }
+}
+
+
+extension ToolFailure {
+    var asResult: CallTool.Result {
+        CallTool.Result(content: [.text(text: message, annotations: nil, _meta: nil)], isError: true)
+    }
 }
