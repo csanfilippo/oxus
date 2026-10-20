@@ -25,48 +25,48 @@
 import MCP
 
 struct Limit {
-    
+
     static let schema: Value = .object([
         "type": "integer",
         "maximum": .int(Limit.maximum),
         "minimum": .int(Limit.minimum),
         "description": "The maximum number of paths to return",
     ])
-    
+
     static let minimum = 1
     static let maximum = 100
     private static let defaultValue = 25
-    
+
     enum Error: ToolFailure {
         case notAnInteger
         case belowMinimum(minimumAccepted: Int, received: Int)
-        
+
         var message: String {
             switch self {
             case .notAnInteger:
                 return "limit must be an integer"
-            case .belowMinimum(minimumAccepted: let minimumAccepted, received: let received):
+            case .belowMinimum(let minimumAccepted, let received):
                 return "limit must be at least \(minimumAccepted), got \(received)"
             }
         }
     }
-    
+
     let value: Int
-    
+
     init(_ argument: Value?) throws(Error) {
         guard let argument else {
             self.value = Self.defaultValue
             return
         }
-        
+
         guard let intValue = argument.intValue else {
             throw .notAnInteger
         }
-        
+
         guard intValue >= Self.minimum else {
             throw .belowMinimum(minimumAccepted: Self.minimum, received: intValue)
         }
-        
+
         self.value = min(intValue, Self.maximum)
     }
 }

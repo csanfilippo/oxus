@@ -24,6 +24,7 @@
 
 import MCP
 import Testing
+
 @testable import OxusServer
 
 @Suite struct KindTests {

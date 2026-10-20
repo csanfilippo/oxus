@@ -22,28 +22,28 @@
  SOFTWARE.
  */
 
-import OxusServer
-import Foundation
 import CoreServices
+import Foundation
+import OxusServer
 
 public struct CoreServicesSpotlight: Spotlight {
     public func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
-        
+
         guard let spotlightQuery = MDQueryCreate(kCFAllocatorDefault, query as CFString, nil, nil) else {
             throw .malformedQuery(query: query)
         }
-        
+
         MDQuerySetMaxCount(spotlightQuery, limit)
 
         guard MDQueryExecute(spotlightQuery, CFOptionFlags(kMDQuerySynchronous.rawValue)) else {
             throw .executionFailed(query: query)
         }
-        
+
         return (0..<MDQueryGetResultCount(spotlightQuery)).compactMap { index in
             let item = Unmanaged<MDItem>.fromOpaque(MDQueryGetResultAtIndex(spotlightQuery, index)).takeUnretainedValue()
             return MDItemCopyAttribute(item, kMDItemPath) as? String
         }
     }
-    
+
     public init() {}
 }

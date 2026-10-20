@@ -28,7 +28,7 @@ struct SpotlightQueryTool: SpotlightSearchTool {
     typealias Criteria = Query
 
     let spotlight: any Spotlight
-    
+
     let definition: Tool = Tool(
         name: "spotlight_query",
         description: "Perform raw Spotlight queries",

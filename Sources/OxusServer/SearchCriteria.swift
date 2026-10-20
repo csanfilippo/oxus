@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import MCP
 import Foundation
+import MCP
 
 struct NameContains: NonEmptyStringArgument {
     static let name = "name_contains"

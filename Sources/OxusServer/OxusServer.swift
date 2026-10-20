@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import MCP
 import Foundation
+import MCP
 
 public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     let server = Server(
@@ -31,7 +31,7 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
         version: "0.1.0",
         capabilities: .init(tools: .init())
     )
-    
+
     let tools: [any OxusTool] = [SpotlightQueryTool(spotlight: spotlight), SearchTool(spotlight: spotlight)]
 
     await server.withMethodHandler(ListTools.self) { _ in
@@ -39,15 +39,15 @@ public func makeOxusServer(spotlight: any Spotlight) async -> Server {
     }
 
     await server.withMethodHandler(CallTool.self) { params in
-        
+
         let selectedTool = tools.first { tool in
             tool.definition.name == params.name
         }
-        
+
         guard let selectedTool else {
             throw MCPError.invalidParams("Unknown tool: \(params.name)")
         }
-        
+
         return try await selectedTool.call(with: params.arguments)
     }
 

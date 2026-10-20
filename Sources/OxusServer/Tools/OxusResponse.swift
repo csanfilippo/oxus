@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import MCP
 import Foundation
+import MCP
 
 struct OxusResponse: Codable {
     let paths: [String]
@@ -35,14 +35,14 @@ struct OxusResponse: Codable {
                 "type": "array",
                 "items": .object(["type": "string"]),
                 "description": "Paths of the matching files, in Spotlight's order",
-            ]),
+            ])
         ]),
         "required": ["paths"],
     ])
 }
 
-private extension Array where Element == String {
-    var asOxusResponse: OxusResponse {
+extension Array where Element == String {
+    fileprivate var asOxusResponse: OxusResponse {
         .init(paths: self)
     }
 }

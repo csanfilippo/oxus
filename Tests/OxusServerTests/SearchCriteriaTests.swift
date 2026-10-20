@@ -24,6 +24,7 @@
 
 import MCP
 import Testing
+
 @testable import OxusServer
 
 @Suite struct SearchCriteriaTests {
@@ -32,7 +33,7 @@ import Testing
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*report*"cd"#)
     }
-    
+
     @Test(arguments: [
         (#"say "hi""#, #"say \"hi\""#),
         (#"C:\temp"#, #"C:\\temp"#),
@@ -44,11 +45,11 @@ import Testing
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
     }
-    
+
     @Test func `A name and a kind compile to both matches combined with AND`() throws {
         let criteria = try SearchCriteria(from: [
             "name_contains": "finde",
-            "kind": "application"
+            "kind": "application",
         ])
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*finde*"cd && kMDItemContentTypeTree == "com.apple.application""#)

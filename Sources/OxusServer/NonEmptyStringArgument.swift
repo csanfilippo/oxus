@@ -22,14 +22,14 @@
  SOFTWARE.
  */
 
-import MCP
 import Foundation
+import MCP
 
 enum NonEmptyStringError: ToolFailure {
     case empty(argument: String)
     case missing(argument: String)
     case notAString(argument: String)
-    
+
     var message: String {
         return switch self {
         case .empty(let argument):

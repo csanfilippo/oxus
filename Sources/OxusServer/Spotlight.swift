@@ -25,7 +25,7 @@
 public enum SpotlightError: Error, ToolFailure {
     case malformedQuery(query: String)
     case executionFailed(query: String)
-    
+
     var message: String {
         return switch self {
         case .malformedQuery(let query):
@@ -39,4 +39,3 @@ public enum SpotlightError: Error, ToolFailure {
 public protocol Spotlight: Sendable {
     func search(query: String, limit: Int) async throws(SpotlightError) -> [String]
 }
-

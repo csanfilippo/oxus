@@ -29,7 +29,8 @@ struct SearchTool: SpotlightSearchTool {
 
     let definition: Tool = Tool(
         name: "search",
-        description: "Finds files by name, kind, or both, without Spotlight query syntax. At least one of name_contains or kind is required; when both are given, a file must match both. Name matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
+        description:
+            "Finds files by name, kind, or both, without Spotlight query syntax. At least one of name_contains or kind is required; when both are given, a file must match both. Name matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
         inputSchema: .object([
             "type": "object",
             "properties": .object([
@@ -48,6 +49,6 @@ struct SearchTool: SpotlightSearchTool {
         ]),
         outputSchema: OxusResponse.schema
     )
-    
+
     let spotlight: any Spotlight
 }

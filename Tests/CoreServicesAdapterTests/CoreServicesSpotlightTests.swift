@@ -22,10 +22,10 @@
  SOFTWARE.
  */
 
-import Foundation
-import Testing
-import OxusServer
 import CoreServicesAdapter
+import Foundation
+import OxusServer
+import Testing
 
 @Suite struct CoreServicesAdapterTests {
     @Test func `Real Spotlight finds Finder.app by name`() async throws {
@@ -35,7 +35,7 @@ import CoreServicesAdapter
 
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
     }
-    
+
     @Test func `Real Spotlight returns at most the requested number of paths`() async throws {
         let spotlight = CoreServicesSpotlight()
 
@@ -43,7 +43,7 @@ import CoreServicesAdapter
 
         #expect(paths.count == 2)
     }
-    
+
     @Test func `Real Spotlight reports a malformed query as invalid`() async throws {
         let spotlight = CoreServicesSpotlight()
 
@@ -56,7 +56,7 @@ import CoreServicesAdapter
         }
         #expect(query == "kMDItemFSName ==")
     }
-    
+
     @Test func `Real Spotlight returns no paths for a nonexistent file name`() async throws {
         let spotlight = CoreServicesSpotlight()
         let nonexistentFileName = UUID().uuidString

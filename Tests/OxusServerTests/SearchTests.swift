@@ -22,10 +22,10 @@
  SOFTWARE.
  */
 
-import MCP
-import Testing
-import OxusServer
 import Foundation
+import MCP
+import OxusServer
+import Testing
 
 @Suite struct SearchTests {
     @Test func `The server advertises search alongside spotlight_query`() async throws {
@@ -35,12 +35,12 @@ import Foundation
 
         #expect(Set(tools.map(\.name)) == Set(["search", "spotlight_query"]))
     }
-    
+
     @Test func `search advertises a string name_contains and an optional limit between 1 and 100`() async throws {
         let client = try await connectedClient()
-        
+
         let (tools, _) = try await client.listTools()
-        
+
         let search = try #require(toolWithName(tools: tools, name: "search"))
         let schema = try #require(search.inputSchema.objectValue)
         let properties = try #require(schema["properties"]?.objectValue)
@@ -51,17 +51,17 @@ import Foundation
         #expect(limit["minimum"] == 1)
         #expect(limit["maximum"] == 100)
     }
-    
+
     @Test func `search advertises the same output schema as spotlight_query`() async throws {
         let client = try await connectedClient()
-        
+
         let (tools, _) = try await client.listTools()
-        
+
         let search = try #require(toolWithName(tools: tools, name: "search"))
         let spotlightQuery = try #require(toolWithName(tools: tools, name: "spotlight_query"))
         let searchSchema = try #require(search.outputSchema?.objectValue)
         let spotlightQuerySchema = try #require(spotlightQuery.outputSchema?.objectValue)
-        
+
         #expect(searchSchema == spotlightQuerySchema)
     }
 
@@ -119,43 +119,43 @@ import Foundation
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("name_contains must be a string") == true)
     }
-    
+
     @Test func `search asks Spotlight for 25 results when no limit is given`() async throws {
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
-        
+
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
-        
+
         #expect(spy.receivedLimit == 25)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
-    
+
     @Test func `search with only a kind returns the paths Spotlight finds for the compiled kind query`() async throws {
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
-        
+
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["kind": "image"]))).value
-        
+
         #expect(spy.receivedLimit == 25)
         #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
-    
+
     @Test func `An unknown kind is rejected as an error result that lists the accepted kinds`() async throws {
-        
+
         let client = try await connectedClient()
-        
+
         let (content, isError) = try await client.callTool(name: "search", arguments: ["kind": "unknown"])
-        
+
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)
     }
-    
+
     @Test func `A kind that is not a string is rejected as an error result`() async throws {
         let client = try await connectedClient()
-        
+
         let (content, isError) = try await client.callTool(name: "search", arguments: ["kind": 42])
-        
+
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("kind must be a string") == true)
         #expect(texts(in: content).first?.contains("accepted kinds are: image,movie,audio,pdf,folder,application") == true)

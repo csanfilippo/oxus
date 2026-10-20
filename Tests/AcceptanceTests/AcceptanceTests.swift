@@ -22,20 +22,27 @@
  SOFTWARE.
  */
 
+import CoreServicesAdapter
 import Foundation
 import MCP
-import Testing
 import OxusServer
-import CoreServicesAdapter
+import Testing
 
 @Suite struct AcceptanceTests {
-    @Test func `a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block`() async throws {
+    @Test
+    func
+        `a client queries kMDItemFSName == "Finder.app" with spotlight_query and receives Finder's path in structured content and in the text block`()
+        async throws
+    {
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-        let result = try await client.send(CallTool.request(.init(
-            name: "spotlight_query",
-            arguments: ["query": #"kMDItemFSName == "Finder.app""#]
-        ))).value
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "spotlight_query",
+                    arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+                ))
+        ).value
 
         let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
         let text = try #require(texts(in: result.content).first)
@@ -46,14 +53,17 @@ import CoreServicesAdapter
         #expect(result.content.count == 1)
         #expect(mirrored == result.structuredContent)
     }
-    
+
     @Test func `a client searches for "finde" and receives Finder's path in structured content and in the text block`() async throws {
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-        let result = try await client.send(CallTool.request(.init(
-            name: "search",
-            arguments: ["name_contains": "finde"]
-        ))).value
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["name_contains": "finde"]
+                ))
+        ).value
 
         let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
         let text = try #require(texts(in: result.content).first)
@@ -64,33 +74,39 @@ import CoreServicesAdapter
         #expect(result.content.count == 1)
         #expect(mirrored == result.structuredContent)
     }
-    
+
     @Test func `a client searches for "finde" with kind application over MCP and receives Finder's path`() async throws {
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
-        
-        let result = try await client.send(CallTool.request(.init(
-            name: "search",
-            arguments: ["name_contains": "finde", "kind": "application"]
-        ))).value
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["name_contains": "finde", "kind": "application"]
+                ))
+        ).value
         let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
-        
+
         #expect(result.isError != true)
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
     }
-    
+
     @Test func `a client searches for "finde" with kind folder over MCP and does not receive Finder's path`() async throws {
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
-        
-        let result = try await client.send(CallTool.request(.init(
-            name: "search",
-            arguments: ["name_contains": "finde", "kind": "folder"]
-        ))).value
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["name_contains": "finde", "kind": "folder"]
+                ))
+        ).value
         let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
-        
+
         #expect(result.isError != true)
         #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
     }
-    
+
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)

@@ -31,7 +31,7 @@ enum Kind: String, CaseIterable {
     case pdf
     case folder
     case application
-    
+
     enum Error: ToolFailure {
         case unknown(String)
         case wrongType(String)
@@ -45,7 +45,7 @@ enum Kind: String, CaseIterable {
             }
         }
     }
-    
+
     var spotlightQuery: String {
         #"kMDItemContentTypeTree == "\#(contentType)""#
     }
@@ -66,20 +66,20 @@ enum Kind: String, CaseIterable {
             "com.apple.application"
         }
     }
-    
+
     init?(from arg: [String: Value]?) throws(Error) {
-        
+
         guard let kind = arg?["kind"] else {
             return nil
         }
-        
+
         if let stringValue = kind.stringValue {
             try self.init(parsing: stringValue)
         } else {
             throw .wrongType(String(describing: kind))
         }
     }
-    
+
     init(parsing value: String) throws(Error) {
         guard let kind = Kind(rawValue: value) else { throw .unknown(value) }
         self = kind

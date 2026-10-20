@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import MCP
 import CoreServicesAdapter
+import MCP
 import OxusServer
 
 @main
