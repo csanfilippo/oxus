@@ -23,9 +23,10 @@
  */
 
 import MCP
-import Foundation
 
-struct SearchTool: OxusTool {
+struct SearchTool: SpotlightSearchTool {
+    typealias Criteria = SearchCriteria
+
     let definition: Tool = Tool(
         name: "search",
         description: "Finds files by name, kind, or both, without Spotlight query syntax. At least one of name_contains or kind is required; when both are given, a file must match both. Name matching ignores case and diacritics. Returns at most \(Limit.maximum) paths.",
@@ -36,12 +37,7 @@ struct SearchTool: OxusTool {
                     "type": "string",
                     "description": "Text the file's name must contain",
                 ]),
-                "limit": .object([
-                    "type": "integer",
-                    "maximum": .int(Limit.maximum),
-                    "minimum": .int(Limit.minimum),
-                    "description": "The maximum number of paths to return",
-                ]),
+                "limit": Limit.schema,
                 "kind": .object([
                     "type": "string",
                     "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
@@ -53,24 +49,5 @@ struct SearchTool: OxusTool {
         outputSchema: OxusResponse.schema
     )
     
-    private let spotlight: any Spotlight
-    
-    init(spotlight: any Spotlight) {
-        self.spotlight = spotlight
-    }
-    
-    func call(with arguments: [String : Value]?) async throws -> CallTool.Result {
-        do {
-            let (query, limit) = try searchQueryAndLimit(arguments: arguments)
-            return try await spotlight.pathsResult(query: query, limit: limit)
-        } catch let failure as any ToolFailure {
-            return failure.asResult
-        }
-    }
-    
-    private func searchQueryAndLimit(arguments: [String : Value]?) throws -> (query: String, limit: Int) {
-        let query = try SearchCriteria(from: arguments)
-        let limit = try Limit(arguments?["limit"])
-        return (query: query.spotlightQuery, limit: limit.value)
-    }
+    let spotlight: any Spotlight
 }

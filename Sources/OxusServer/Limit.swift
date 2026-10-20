@@ -26,6 +26,13 @@ import MCP
 
 struct Limit {
     
+    static let schema: Value = .object([
+        "type": "integer",
+        "maximum": .int(Limit.maximum),
+        "minimum": .int(Limit.minimum),
+        "description": "The maximum number of paths to return",
+    ])
+    
     static let minimum = 1
     static let maximum = 100
     private static let defaultValue = 25

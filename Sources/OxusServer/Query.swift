@@ -24,9 +24,11 @@
 
 import MCP
 
-struct Query: NonEmptyStringArgument {
+struct Query: NonEmptyStringArgument, SpotlightCriteria {
     static let name = "query"
     let value: String
+
+    var spotlightQuery: String { value }
 
     init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
         value = try Self.nonEmptyValue(in: arguments)

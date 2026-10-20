@@ -23,11 +23,11 @@
  */
 
 import MCP
-import Foundation
 
-struct SpotlightQueryTool: OxusTool {
-    
-    private let spotlight: any Spotlight
+struct SpotlightQueryTool: SpotlightSearchTool {
+    typealias Criteria = Query
+
+    let spotlight: any Spotlight
     
     let definition: Tool = Tool(
         name: "spotlight_query",
@@ -39,34 +39,10 @@ struct SpotlightQueryTool: OxusTool {
                     "type": "string",
                     "description": "The query to be performed",
                 ]),
-                "limit": .object([
-                    "type": "integer",
-                    "maximum": .int(Limit.maximum),
-                    "minimum": .int(Limit.minimum),
-                    "description": "The maximum number of paths to return",
-                ]),
+                "limit": Limit.schema,
             ]),
             "required": [.string(Query.name)],
         ]),
         outputSchema: OxusResponse.schema
     )
-    
-    init(spotlight: any Spotlight) {
-        self.spotlight = spotlight
-    }
-    
-    func call(with arguments: [String : Value]?) async throws -> CallTool.Result {
-        do {
-            let (query, limit) = try queryAndLimit(arguments: arguments)
-            return try await spotlight.pathsResult(query: query, limit: limit)
-        } catch let failure as any ToolFailure {
-            return failure.asResult
-        }
-    }
-    
-    private func queryAndLimit(arguments: [String : Value]?) throws -> (query: String, limit: Int) {
-        let query = try Query(from: arguments)
-        let limit = try Limit(arguments?["limit"])
-        return (query: query.value, limit: limit.value)
-    }
 }
