@@ -10,6 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```sh
 swift test --skip AcceptanceTests                # skip tests that hit real Spotlight
+swift format -i -r Sources Tests                 # format with the repo's .swift-format
+git config core.hooksPath .githooks              # once per clone: lint staged Swift files before each commit
 ```
 
 To exercise the server by hand, run the built binary directly instead of `swift run`, so that build output cannot mix with protocol traffic. The server stops as soon as stdin closes, before replying, so keep stdin open briefly with `sleep`:
