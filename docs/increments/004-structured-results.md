@@ -37,5 +37,5 @@ Metadata per path (name, kind, size, dates, photo information), structured error
 
 ## Risks
 
-- How clients other than Claude Code treat several text blocks is unverified; after this increment a result is a single block, so it no longer matters, but the fix itself needs a manual check in Claude Code.
+- How clients other than Claude Code treat several text blocks is unverified; after this increment a result is a single block, so it no longer matters. Checked by hand in Claude Code on 2026-10-19: a `search` for PDFs reached the model as separate paths, including names with spaces.
 - Clients that validate `structuredContent` against `outputSchema` reject a successful result that does not match; the unit tests must check the schema and the result together.
