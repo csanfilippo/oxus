@@ -34,6 +34,7 @@ Free-text search (increment 2), folder scopes, metadata in results, structured c
 - **Limit above the cap is clamped,** not rejected: a large limit means "as many as possible".
 - **No truncation signal yet:** it belongs with pagination.
 - **The description states the path cap:** `spotlight_query` shares `Limit` with `search`, so it has the same risk of presenting a truncated list as complete, and like `search` it states "Returns at most 100 paths".
+- **The tool is annotated `readOnlyHint: true`** (2026-10-21): it never modifies its environment, and the default is `false`. `destructiveHint` and `idempotentHint` are left unset because they are meaningful only when `readOnlyHint` is `false`. No protocol test covers the annotation yet.
 - **The port uses typed throws (`throws(SpotlightError)`):** the adapter must translate every CoreServices failure into a `SpotlightError` case, so the server knows the complete set of failures it has to report. `MDQueryCreate` returning `NULL` is `.malformedQuery`; `MDQueryExecute` returning `false` is `.executionFailed`, reported rather than passed off as "no matches". No known query triggers the latter, so only the server's handling of it is tested, through a stub.
 
 ## Test list

@@ -36,6 +36,7 @@ Filtering by kind (increment 3), starts with / ends with / exact name, dates, si
 - **Match the display name, not the file system name:** `kMDItemDisplayName` is what users see in Finder, localized and usually without extension; `kMDItemFSName` would miss "Calcolatrice" and match every `.pdf` for "pdf".
 - **`?` is not a wildcard:** `kMDItemFSName == "Finde?.app"` matches nothing, so only `\`, `"` and `*` are escaped.
 - **Limit is tested for wiring only:** its rules are already covered through `spotlight_query`.
+- **The tool is annotated `readOnlyHint: true`** (2026-10-21), like `spotlight_query`; see increment 1. No protocol test covers the annotation yet.
 
 ## Test list
 
