@@ -1,6 +1,6 @@
 # Increment 1 — `spotlight_query`
 
-**Status:** Done (2026-10-14)
+**Status:** Done (2026-10-14). The description contract was met only on 2026-10-21.
 
 ## Goal
 
@@ -33,6 +33,7 @@ Free-text search (increment 2), folder scopes, metadata in results, structured c
 - **No matches is success with empty content:** every content block is a path, so the result has a single meaning.
 - **Limit above the cap is clamped,** not rejected: a large limit means "as many as possible".
 - **No truncation signal yet:** it belongs with pagination.
+- **The description states the path cap:** `spotlight_query` shares `Limit` with `search`, so it has the same risk of presenting a truncated list as complete, and like `search` it states "Returns at most 100 paths".
 - **The port uses typed throws (`throws(SpotlightError)`):** the adapter must translate every CoreServices failure into a `SpotlightError` case, so the server knows the complete set of failures it has to report. `MDQueryCreate` returning `NULL` is `.malformedQuery`; `MDQueryExecute` returning `false` is `.executionFailed`, reported rather than passed off as "no matches". No known query triggers the latter, so only the server's handling of it is tested, through a stub.
 
 ## Test list
