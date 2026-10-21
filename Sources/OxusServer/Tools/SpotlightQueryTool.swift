@@ -31,13 +31,14 @@ struct SpotlightQueryTool: SpotlightSearchTool {
 
     let definition: Tool = Tool(
         name: "spotlight_query",
-        description: "Perform raw Spotlight queries",
+        description:
+            "Runs a raw Spotlight query and returns the paths of matching files. The query uses Spotlight query syntax (https://developer.apple.com/library/archive/documentation/Carbon/Conceptual/SpotlightQuery/Concepts/QueryFormat.html), e.g. kMDItemFSName == \"*.pdf\"c finds files whose name ends in .pdf, ignoring case. Returns at most \(Limit.maximum) paths.",
         inputSchema: .object([
             "type": "object",
             "properties": .object([
                 Query.name: .object([
                     "type": "string",
-                    "description": "The query to be performed",
+                    "description": "Spotlight query syntax, e.g. kMDItemFSName == \"*.pdf\"c",
                 ]),
                 "limit": Limit.schema,
             ]),
