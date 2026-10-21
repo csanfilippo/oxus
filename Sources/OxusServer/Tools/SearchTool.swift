@@ -47,7 +47,7 @@ struct SearchTool: SpotlightSearchTool {
             ]),
             "required": [],
         ]),
-        annotations: Tool.Annotations(readOnlyHint: true),
+        annotations: Tool.Annotations(readOnlyHint: true, openWorldHint: false),
         outputSchema: OxusResponse.schema
     )
 

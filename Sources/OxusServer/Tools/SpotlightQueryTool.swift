@@ -44,7 +44,7 @@ struct SpotlightQueryTool: SpotlightSearchTool {
             ]),
             "required": [.string(Query.name)],
         ]),
-        annotations: Tool.Annotations(readOnlyHint: true),
+        annotations: Tool.Annotations(readOnlyHint: true, openWorldHint: false),
         outputSchema: OxusResponse.schema
     )
 }
