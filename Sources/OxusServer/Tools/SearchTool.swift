@@ -44,6 +44,10 @@ struct SearchTool: SpotlightSearchTool {
                     "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
                     "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
                 ]),
+                "folder": .object([
+                    "type": "string",
+                    "description": "The path of the folder to search",
+                ]),
             ]),
             "required": [],
         ]),

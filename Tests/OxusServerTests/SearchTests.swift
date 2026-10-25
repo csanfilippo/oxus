@@ -82,6 +82,21 @@ import Testing
         #expect(!required.contains("name_contains"))
     }
 
+    @Test func `search advertises an optional string folder`() async throws {
+        let client = try await connectedClient()
+
+        let (tools, _) = try await client.listTools()
+
+        let search = try #require(toolWithName(tools: tools, name: "search"))
+        let schema = try #require(search.inputSchema.objectValue)
+        let properties = try #require(schema["properties"]?.objectValue)
+        let required = schema["required"]?.arrayValue ?? []
+        let folder = try #require(properties["folder"]?.objectValue)
+
+        #expect(folder["type"] == "string")
+        #expect(!required.contains("folder"))
+    }
+
     @Test func `search returns the paths Spotlight finds for the compiled name query`() async throws {
         let spy = SpySpotlight(result: ["/a", "/b"])
         let client = try await connectedClient(spotlight: spy)
