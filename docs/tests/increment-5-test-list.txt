@@ -16,7 +16,7 @@
 ## Test List (TDD)
 - [ ] Acceptance test: a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's
 - [ ] Acceptance test: a client searches /System/Applications/Utilities with only a folder and receives Terminal's path
-- [ ] search advertises an optional string folder
+- [x] search advertises an optional string folder
 - [ ] search with a name, a kind and a folder asks Spotlight for the compiled name and kind query within that folder
 - [ ] search without a folder asks Spotlight to search the whole index
 - [ ] spotlight_query asks Spotlight to search the whole index
