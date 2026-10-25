@@ -47,4 +47,14 @@ struct SpotlightQueryTool: SpotlightSearchTool {
         annotations: Tool.Annotations(readOnlyHint: true, openWorldHint: false),
         outputSchema: OxusResponse.schema
     )
+
+    func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
+        do {
+            let criteria = try Criteria(from: arguments)
+            let limit = try Limit(arguments?["limit"])
+            return try await search(criteria: criteria, limit: limit, folder: nil)
+        } catch let failure as any ToolFailure {
+            return failure.asResult
+        }
+    }
 }

@@ -48,10 +48,10 @@ extension Array where Element == String {
 }
 
 extension Spotlight {
-    func pathsResult(query: String, limit: Int) async throws -> CallTool.Result {
+    func pathsResult(query: String, limit: Int, folder: Folder?) async throws -> CallTool.Result {
         let paths: [String]
         do {
-            paths = try await search(query: query, limit: limit)
+            paths = try await search(query: query, limit: limit, folder: folder)
         } catch let spotlightError {
             return spotlightError.asResult
         }

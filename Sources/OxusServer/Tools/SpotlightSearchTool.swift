@@ -35,13 +35,7 @@ protocol SpotlightSearchTool: OxusTool {
 }
 
 extension SpotlightSearchTool {
-    func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
-        do {
-            let criteria = try Criteria(from: arguments)
-            let limit = try Limit(arguments?["limit"])
-            return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value)
-        } catch let failure as any ToolFailure {
-            return failure.asResult
-        }
+    func search(criteria: Criteria, limit: Limit, folder: Folder?) async throws -> CallTool.Result {
+        return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value, folder: folder)
     }
 }

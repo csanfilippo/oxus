@@ -26,13 +26,13 @@ import MCP
 import OxusServer
 
 final class MalformedQuerySpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
         throw SpotlightError.malformedQuery(query: query)
     }
 }
 
 final class FailingExecutionSpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
         throw SpotlightError.executionFailed(query: query)
     }
 }
@@ -40,12 +40,14 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
 final class SpySpotlight: Spotlight, @unchecked Sendable {
     private(set) var receivedQuery: String?
     private(set) var receivedLimit: Int?
+    private(set) var receivedFolder: Folder?
 
     private let result: [String]
     init(result: [String] = []) { self.result = result }
-    func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
         receivedQuery = query
         receivedLimit = limit
+        receivedFolder = folder
         return Array(result.prefix(limit))
     }
 }

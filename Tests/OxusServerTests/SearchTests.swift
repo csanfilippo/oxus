@@ -205,4 +205,28 @@ import Testing
         #expect(result.isError == true)
         #expect(result.structuredContent == nil)
     }
+
+    @Test func `search with a name, a kind and a folder asks Spotlight for the compiled name and kind query within that folder`()
+        async throws
+    {
+        let spy = SpySpotlight(result: ["/a", "/b"])
+        let client = try await connectedClient(spotlight: spy)
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: [
+                        "name_contains": "test",
+                        "kind": "image",
+                        "folder": "/test",
+                    ]
+                )
+            )
+        ).value
+
+        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*test*"cd && kMDItemContentTypeTree == "public.image""#)
+        #expect(spy.receivedFolder?.path == "/test")
+        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
+    }
 }

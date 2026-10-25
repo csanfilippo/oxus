@@ -220,4 +220,14 @@ import Testing
         #expect(result.isError == true)
         #expect(result.structuredContent == nil)
     }
+
+    @Test func `spotlight_query asks Spotlight to search the whole index`() async throws {
+        let spy = SpySpotlight()
+        let client = try await connectedClient(spotlight: spy)
+
+        _ = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test", "folder": "/test"]))).value
+
+        #expect(spy.receivedQuery == "test")
+        #expect(spy.receivedFolder == nil)
+    }
 }

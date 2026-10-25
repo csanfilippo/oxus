@@ -27,7 +27,7 @@ import Foundation
 import OxusServer
 
 public struct CoreServicesSpotlight: Spotlight {
-    public func search(query: String, limit: Int) async throws(SpotlightError) -> [String] {
+    public func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
 
         guard let spotlightQuery = MDQueryCreate(kCFAllocatorDefault, query as CFString, nil, nil) else {
             throw .malformedQuery(query: query)

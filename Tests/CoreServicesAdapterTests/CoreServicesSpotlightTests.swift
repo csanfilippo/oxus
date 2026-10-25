@@ -31,7 +31,7 @@ import Testing
     @Test func `Real Spotlight finds Finder.app by name`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(query: #"kMDItemFSName == "Finder.app""#, limit: 10)
+        let paths = try await spotlight.search(query: #"kMDItemFSName == "Finder.app""#, limit: 10, folder: nil)
 
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
     }
@@ -39,7 +39,7 @@ import Testing
     @Test func `Real Spotlight returns at most the requested number of paths`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(query: #"kMDItemContentType == "com.apple.application-bundle""#, limit: 2)
+        let paths = try await spotlight.search(query: #"kMDItemContentType == "com.apple.application-bundle""#, limit: 2, folder: nil)
 
         #expect(paths.count == 2)
     }
@@ -48,7 +48,7 @@ import Testing
         let spotlight = CoreServicesSpotlight()
 
         let error = try await #require(throws: SpotlightError.self) {
-            try await spotlight.search(query: "kMDItemFSName ==", limit: 2)
+            try await spotlight.search(query: "kMDItemFSName ==", limit: 2, folder: nil)
         }
         guard case .malformedQuery(let query) = error else {
             Issue.record("expected malformedQuery, got \(error)")
@@ -61,7 +61,7 @@ import Testing
         let spotlight = CoreServicesSpotlight()
         let nonexistentFileName = UUID().uuidString
 
-        let paths = try await spotlight.search(query: #"kMDItemFSName == "\#(nonexistentFileName)""#, limit: 2)
+        let paths = try await spotlight.search(query: #"kMDItemFSName == "\#(nonexistentFileName)""#, limit: 2, folder: nil)
 
         #expect(paths.isEmpty)
     }
