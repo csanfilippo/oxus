@@ -1,14 +1,14 @@
-# Increment 6 — Protected folders
+# Increment 7 — Protected folders
 
 **Status:** Draft (2026-10-25)
 
 ## Goal
 
-Stop macOS privacy protection (TCC) from silently shrinking search results, and tell the user exactly what to fix. Without access to `~/Downloads`, `~/Desktop` or `~/Documents`, Spotlight drops their files with no error, so the model reports "no files" as fact. Increment 5 turns a denied scope folder into a "cannot read" error carrying the reason macOS gives; this increment makes that error say what to grant, and covers the cases increment 5 leaves silent.
+Stop macOS privacy protection (TCC) from silently shrinking search results, and tell the user exactly what to fix. Without access to `~/Downloads`, `~/Desktop` or `~/Documents`, Spotlight drops their files with no error, so the model reports "no files" as fact. Increment 6 turns a denied scope folder into a "cannot read" error carrying the reason macOS gives; this increment makes that error say what to grant, and covers the cases increment 6 leaves silent.
 
 ## Contract
 
-- A scope folder denied by TCC and one denied by file permissions are separate errors, each naming what to fix: the permission to grant, and to which app, for TCC; the missing read permission for file permissions. Replaces increment 5's single "cannot read" error.
+- A scope folder denied by TCC and one denied by file permissions are separate errors, each naming what to fix: the permission to grant, and to which app, for TCC; the missing read permission for file permissions. Replaces increment 6's single "cannot read" error.
 
 ## Out of scope
 
@@ -27,7 +27,7 @@ To be decided once the open decisions below are settled.
 
 ## Test list
 
-`docs/tests/increment-6-test-list.txt`
+`docs/tests/increment-7-test-list.txt`
 
 ## Risks
 

@@ -1,0 +1,33 @@
+# Increment 5: folder scope - Test List
+
+## Specifications
+- Tool: `search` gains `folder` (string, optional): the folder to search in, including its subfolders; `spotlight_query` keeps searching the whole index
+- Accepted forms: an absolute path, `~` alone, or a path starting with `~/`; `~` expands to a home folder the server is given, never read from the environment
+- Rejected forms: relative paths (`Downloads`) and other `~` forms (`~alice/Downloads`), as a result with isError saying which forms are accepted
+- Blank or non-string `folder`: result with isError, as for `name_contains`
+- Filters: `folder` is combined with `name_contains` and `kind` by AND; the folder itself is never a result
+- Folder alone is a valid search and matches every indexed file in the folder (`kMDItemDisplayName == "*"`)
+- Neither of the three filters: result with isError naming `name_contains`, `kind` and `folder`
+- Description: says the scope includes subfolders, which forms `folder` accepts, and that unindexed files cannot be found
+- Output, limits and other error messages unchanged
+- A folder that does not exist, is a file, is a package or cannot be read returns no paths and no error until increment 6
+- Adapter and acceptance tests scope to `/System/Applications`: indexed, not protected by TCC, holds Terminal.app in Utilities, excludes Finder.app
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's
+- [ ] Acceptance test: a client searches /System/Applications/Utilities with only a folder and receives Terminal's path
+- [ ] search advertises an optional string folder
+- [ ] search with a name, a kind and a folder asks Spotlight for the compiled name and kind query within that folder
+- [ ] search without a folder asks Spotlight to search the whole index
+- [ ] spotlight_query asks Spotlight to search the whole index
+- [ ] ~ alone and paths starting with ~/ are searched inside the given home folder
+- [ ] search with only a folder asks Spotlight for every file in that folder
+- [ ] A relative folder or another user's ~ is rejected as an error result listing the accepted forms
+- [ ] A blank folder is rejected as an error result
+- [ ] A folder that is not a string is rejected as an error result
+- [ ] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
+- [ ] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
+- [ ] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
+- [ ] Adapter: the scope folder is never a result: Utilities is not found under /System/Applications/Utilities
+- [ ] Adapter: the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications
+- [ ] Adapter: a scope through a symlink finds the same paths as the folder it points to
