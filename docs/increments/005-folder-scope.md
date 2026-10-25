@@ -17,11 +17,11 @@ Let `search` look only inside a given folder, so a request like "find the PDFs i
 - A `folder` that cannot be read returns a result with `isError: true` naming the path and the reason macOS gives, never an empty success.
 - `folder` alone is a valid search: `search(folder: "~/Downloads")` returns the files in Downloads. The "at least one filter" error and the tool description name `folder` alongside `name_contains` and `kind`.
 - Output, limits and error messages of existing arguments stay unchanged, apart from the "at least one filter" message.
-- The tool description states that the scope includes subfolders.
+- The tool description states that the scope includes subfolders, which forms `folder` accepts, and that files Spotlight does not index cannot be found.
 
 ## Out of scope
 
-Several folders in one call, excluding folders, limiting depth (e.g. top level only), scoping `spotlight_query`, Spotlight's predefined scopes (home, computer, network), pagination. macOS privacy protection (TCC) beyond reporting a folder that cannot be read: telling the user what to grant, protected subfolders inside a readable scope, and unscoped searches losing results are increment 6.
+Several folders in one call, excluding folders, limiting depth (e.g. top level only), scoping `spotlight_query`, Spotlight's predefined scopes (home, computer, network), pagination, sorting (results keep Spotlight's order, which is neither newest first nor alphabetical), detecting folders Spotlight does not index. macOS privacy protection (TCC) beyond reporting a folder that cannot be read: telling the user what to grant, protected subfolders inside a readable scope, and unscoped searches losing results are increment 6.
 
 ## Design
 
@@ -52,6 +52,7 @@ None.
 ## Risks
 
 - `~/Downloads`, `~/Desktop` and `~/Documents` are protected by TCC, and without access Spotlight drops their files silently (measurements in increment 6). The listing turns a denied scope folder into a "cannot read" error, but the message says only what macOS reports, not what to grant; increment 6 makes it precise.
+- A folder Spotlight does not index passes every check and returns no paths with no error, which the model would report as "no files". Checked on 2026-10-25: a folder under `/private/tmp` (18 files on disk) and a `.noindex` folder in the home (1 file) both returned 0 paths. Folders excluded in System Settings › Spotlight › Privacy and volumes with indexing turned off probably behave the same (not checked). There is no simple, reliable way to ask Spotlight whether a folder is indexed, so the tool description warns instead.
 - The folder is listed on every scoped search, which costs time in proportion to its entries. Measured on 2026-10-25: listing `~/Downloads` (191 entries) took 0.1 ms.
 - Adapter and acceptance tests need a scope that is always indexed and not protected by TCC, e.g. `/System/Applications` (Finder is in `/System/Library/CoreServices`, so it is outside that scope and can prove that the scope excludes files). `SpySpotlight` assumes the scope includes subfolders, excludes files outside it and excludes the folder itself, so adapter tests must cover all three, e.g. `Terminal.app` is found under `/System/Applications` (it is in `Utilities`), `Finder.app` is not, and a search for `Utilities` under `/System/Applications/Utilities` returns no paths (checked with `mdfind -onlyin` and `MDQuerySetSearchScope` on 2026-10-25).
 - Paths with symlinks (e.g. `/tmp` → `/private/tmp`) may not match how Spotlight stores paths. Checked on 2026-10-25 with `mdfind -onlyin` and with `MDQuerySetSearchScope` directly: a scope through a symlink to `/System/Applications` returns the same paths as the real folder, so a symlinked scope behaves like the folder it points to. An adapter test with a symlinked scope keeps this verified.
