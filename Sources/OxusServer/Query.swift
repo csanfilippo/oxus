@@ -24,7 +24,7 @@
 
 import MCP
 
-struct Query: NonEmptyStringArgument, SpotlightCriteria {
+struct Query: NonEmptyStringArgument {
     static let name = "query"
     let value: String
 

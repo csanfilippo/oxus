@@ -24,9 +24,7 @@
 
 import MCP
 
-struct SpotlightQueryTool: SpotlightSearchTool {
-    typealias Criteria = Query
-
+struct SpotlightQueryTool: OxusTool {
     let spotlight: any Spotlight
 
     let definition: Tool = Tool(
@@ -50,7 +48,7 @@ struct SpotlightQueryTool: SpotlightSearchTool {
 
     func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
         do {
-            let criteria = try Criteria(from: arguments)
+            let criteria = try Query(from: arguments)
             let limit = try Limit(arguments?["limit"])
             return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value, folder: nil)
         } catch let failure as any ToolFailure {

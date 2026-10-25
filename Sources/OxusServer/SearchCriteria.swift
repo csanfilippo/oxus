@@ -34,7 +34,7 @@ struct NameContains: NonEmptyStringArgument {
     }
 }
 
-struct SearchCriteria: SpotlightCriteria {
+struct SearchCriteria {
     enum Error: ToolFailure {
         case noFilters
 
