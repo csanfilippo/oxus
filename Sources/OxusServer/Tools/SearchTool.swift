@@ -62,7 +62,7 @@ struct SearchTool: SpotlightSearchTool {
             let criteria = try Criteria(from: arguments)
             let limit = try Limit(arguments?["limit"])
             let folder = Folder(arguments?["folder"])
-            return try await search(criteria: criteria, limit: limit, folder: folder)
+            return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value, folder: folder)
         } catch let failure as any ToolFailure {
             return failure.asResult
         }

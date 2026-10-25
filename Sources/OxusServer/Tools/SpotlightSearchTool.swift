@@ -33,9 +33,3 @@ protocol SpotlightSearchTool: OxusTool {
     associatedtype Criteria: SpotlightCriteria
     var spotlight: any Spotlight { get }
 }
-
-extension SpotlightSearchTool {
-    func search(criteria: Criteria, limit: Limit, folder: Folder?) async throws -> CallTool.Result {
-        return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value, folder: folder)
-    }
-}
