@@ -132,6 +132,26 @@ import Testing
         }
     }
 
+    @Test func `a client searches /System/Applications/Utilities with only a folder and receives Terminal's path`()
+        async throws
+    {
+        await withKnownIssue {
+            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+            let result = try await client.send(
+                CallTool.request(
+                    .init(
+                        name: "search",
+                        arguments: ["folder": "/System/Applications/Utilities"]
+                    ))
+            ).value
+            let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+
+            #expect(result.isError != true)
+            #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+        }
+    }
+
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight)
