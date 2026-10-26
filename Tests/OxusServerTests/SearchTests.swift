@@ -229,4 +229,23 @@ import Testing
         #expect(spy.receivedFolder?.path == "/test")
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
+
+    @Test func `search without a folder asks Spotlight to search the whole index`() async throws {
+        let spy = SpySpotlight()
+        let client = try await connectedClient(spotlight: spy)
+
+        _ = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: [
+                        "name_contains": "test",
+                        "kind": "image",
+                    ]
+                )
+            )
+        ).value
+
+        #expect(spy.receivedFolder == nil)
+    }
 }
