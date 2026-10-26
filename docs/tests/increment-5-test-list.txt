@@ -18,7 +18,7 @@
 - [ ] Acceptance test: a client searches /System/Applications/Utilities with only a folder and receives Terminal's path
 - [x] search advertises an optional string folder
 - [x] search with a name, a kind and a folder asks Spotlight for the compiled name and kind query within that folder
-- [ ] search without a folder asks Spotlight to search the whole index
+- [x] search without a folder asks Spotlight to search the whole index
 - [x] spotlight_query asks Spotlight to search the whole index
 - [ ] ~ alone and paths starting with ~/ are searched inside the given home folder
 - [ ] search with only a folder asks Spotlight for every file in that folder
