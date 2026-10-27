@@ -67,16 +67,11 @@ enum Kind: String, CaseIterable {
         }
     }
 
-    init?(from arg: [String: Value]?) throws(Error) {
-
-        guard let kind = arg?["kind"] else {
-            return nil
-        }
-
-        if let stringValue = kind.stringValue {
+    init(_ argument: Value) throws(Error) {
+        if let stringValue = argument.stringValue {
             try self.init(parsing: stringValue)
         } else {
-            throw .wrongType(String(describing: kind))
+            throw .wrongType(String(describing: argument))
         }
     }
 

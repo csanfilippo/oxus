@@ -29,7 +29,7 @@ import Testing
 
 @Suite struct SearchCriteriaTests {
     @Test func `A name compiles to a case- and diacritic-insensitive contains match on the display name`() throws {
-        let criteria = try SearchCriteria(from: ["name_contains": .string("report")])
+        let criteria = try SearchCriteria(nameContains: NameContains("report"))
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*report*"cd"#)
     }
@@ -41,16 +41,13 @@ import Testing
         (#"\""#, #"\\\""#),
     ])
     func `Quotes, backslashes and asterisks in the name are matched literally`(name: String, escapedName: String) throws {
-        let criteria = try SearchCriteria(from: ["name_contains": .string(name)])
+        let criteria = try SearchCriteria(nameContains: NameContains(.string(name)))
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
     }
 
     @Test func `A name and a kind compile to both matches combined with AND`() throws {
-        let criteria = try SearchCriteria(from: [
-            "name_contains": "finde",
-            "kind": "application",
-        ])
+        let criteria = try SearchCriteria(nameContains: NameContains("finde"), kind: .application)
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*finde*"cd && kMDItemContentTypeTree == "com.apple.application""#)
     }

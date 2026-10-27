@@ -288,4 +288,14 @@ import Testing
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("at least one of name_contains or kind or folder is required") == true)
     }
+
+    @Test(arguments: ["Downloads", "~alice/Downloads"])
+    func `A relative folder or a ~name folder is rejected as an error result listing the accepted forms`(folder: String) async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": .string(folder)])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("folder must be an absolute path, ~ alone, or a path starting with ~/") == true)
+    }
 }

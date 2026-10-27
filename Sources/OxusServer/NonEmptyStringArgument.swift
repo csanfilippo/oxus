@@ -49,6 +49,10 @@ protocol NonEmptyStringArgument {
 extension NonEmptyStringArgument {
     static func nonEmptyValue(in arguments: [String: Value]?) throws(NonEmptyStringError) -> String {
         guard let argument = arguments?[name] else { throw .missing(argument: name) }
+        return try nonEmptyValue(of: argument)
+    }
+
+    static func nonEmptyValue(of argument: Value) throws(NonEmptyStringError) -> String {
         guard let string = argument.stringValue else { throw .notAString(argument: name) }
         guard string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else { throw .empty(argument: name) }
         return string

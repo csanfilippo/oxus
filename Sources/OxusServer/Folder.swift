@@ -25,25 +25,31 @@
 import MCP
 
 public struct Folder: Sendable {
+    enum Error: ToolFailure {
+        case unacceptedForm
+
+        var message: String {
+            "folder must be an absolute path, ~ alone, or a path starting with ~/"
+        }
+    }
+
     public let path: String
 
     public init(path: String) {
         self.path = path
     }
 
-    public init?(_ argument: Value?, home: String) {
-        guard let argument else {
-            return nil
-        }
-
+    init(_ argument: Value, home: String) throws(Error) {
         guard let path = argument.stringValue else {
-            return nil
+            throw .unacceptedForm
         }
 
         if path == "~" || path.hasPrefix("~/") {
             self.init(path: home + path.dropFirst())
-        } else {
+        } else if path.hasPrefix("/") {
             self.init(path: path)
+        } else {
+            throw .unacceptedForm
         }
     }
 }

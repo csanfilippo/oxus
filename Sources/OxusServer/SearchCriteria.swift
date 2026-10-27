@@ -29,8 +29,8 @@ struct NameContains: NonEmptyStringArgument {
     static let name = "name_contains"
     let value: String
 
-    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
-        value = try Self.nonEmptyValue(in: arguments)
+    init(_ argument: Value) throws(NonEmptyStringError) {
+        value = try Self.nonEmptyValue(of: argument)
     }
 }
 
@@ -50,16 +50,12 @@ struct SearchCriteria {
         nameContains == nil && kind == nil
     }
 
-    init(from arguments: [String: Value]?, folder: Folder? = nil) throws {
-        if arguments?[NameContains.name] != nil {
-            nameContains = try NameContains(from: arguments)
-        } else {
-            nameContains = nil
-        }
-        kind = try Kind(from: arguments)
+    init(nameContains: NameContains? = nil, kind: Kind? = nil, folder: Folder? = nil) throws(Error) {
+        self.nameContains = nameContains
+        self.kind = kind
 
         guard nameContains != nil || kind != nil || folder != nil else {
-            throw Error.noFilters
+            throw .noFilters
         }
     }
 
