@@ -24,7 +24,7 @@
 - [x] search with only a folder asks Spotlight for every file in that folder
 - [x] A relative folder or a ~name folder is rejected as an error result listing the accepted forms
 - [ ] A blank folder is rejected as an error result
-- [ ] A folder that is not a string is rejected as an error result
+- [x] A folder that is not a string is rejected as an error result
 - [x] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
 - [x] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
 - [x] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
