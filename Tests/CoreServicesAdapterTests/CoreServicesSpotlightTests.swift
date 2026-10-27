@@ -89,4 +89,50 @@ import Testing
 
         #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
     }
+
+    @Test func `the scope folder is never a result: Utilities is not found under /Applications/Utilities`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let paths = try await spotlight.search(
+            query: #"kMDItemFSName == "Utilities""#,
+            limit: 10,
+            folder: Folder(path: "/Applications/Utilities")
+        )
+
+        #expect(!paths.contains("/Applications/Utilities"))
+    }
+
+    @Test func `the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications`()
+        async throws
+    {
+        let spotlight = CoreServicesSpotlight()
+
+        let paths = try await spotlight.search(
+            query: #"kMDItemDisplayName == "*""#,
+            limit: 100,
+            folder: Folder(path: "/System/Applications")
+        )
+
+        #expect(paths.contains("/System/Applications/Calculator.app"))
+        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+    }
+
+    @Test func `a scope through a symlink finds the same paths as the folder it points to`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let link = directory.appending(path: "Utilities").path
+        try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Utilities")
+
+        let pathsThroughLink = try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link))
+        let paths = try await spotlight.search(
+            query: #"kMDItemDisplayName == "*""#,
+            limit: 100,
+            folder: Folder(path: "/System/Applications/Utilities")
+        )
+
+        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+        #expect(Set(pathsThroughLink) == Set(paths))
+    }
 }
