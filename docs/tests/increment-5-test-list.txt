@@ -25,7 +25,7 @@
 - [ ] A relative folder or another user's ~ is rejected as an error result listing the accepted forms
 - [ ] A blank folder is rejected as an error result
 - [ ] A folder that is not a string is rejected as an error result
-- [ ] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
+- [x] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
 - [x] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
 - [x] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
 - [ ] Adapter: the scope folder is never a result: Utilities is not found under /System/Applications/Utilities
