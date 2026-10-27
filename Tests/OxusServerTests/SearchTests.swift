@@ -268,4 +268,23 @@ import Testing
 
         #expect(spy.receivedFolder?.path == expected)
     }
+
+    @Test func `search with only a folder asks Spotlight for every file in that folder`() async throws {
+        let spy = SpySpotlight()
+        let client = try await connectedClient(spotlight: spy)
+
+        _ = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: [
+                        "folder": "/test"
+                    ]
+                )
+            )
+        ).value
+
+        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*""#)
+        #expect(spy.receivedFolder?.path == "/test")
+    }
 }

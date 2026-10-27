@@ -46,7 +46,11 @@ struct SearchCriteria {
     private let nameContains: NameContains?
     private let kind: Kind?
 
-    init(from arguments: [String: Value]?) throws {
+    private var onlyFolder: Bool {
+        nameContains == nil && kind == nil
+    }
+
+    init(from arguments: [String: Value]?, folder: Folder? = nil) throws {
         if arguments?[NameContains.name] != nil {
             nameContains = try NameContains(from: arguments)
         } else {
@@ -54,13 +58,18 @@ struct SearchCriteria {
         }
         kind = try Kind(from: arguments)
 
-        guard nameContains != nil || kind != nil else {
+        guard nameContains != nil || kind != nil || folder != nil else {
             throw Error.noFilters
         }
     }
 
     var spotlightQuery: String {
-        [
+
+        guard !onlyFolder else {
+            return #"kMDItemDisplayName == "*""#
+        }
+
+        return [
             nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.value))*"cd"# },
             kind?.spotlightQuery,
         ]
