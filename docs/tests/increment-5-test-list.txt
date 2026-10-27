@@ -14,8 +14,8 @@
 - Adapter and acceptance tests scope to `/System/Applications`: indexed, not protected by TCC, holds Terminal.app in Utilities, excludes Finder.app
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's
-- [ ] Acceptance test: a client searches /System/Applications/Utilities with only a folder and receives Terminal's path
+- [x] Acceptance test: a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's
+- [x] Acceptance test: a client searches /System/Applications/Utilities with only a folder and receives Terminal's path
 - [x] search advertises an optional string folder
 - [x] search with a name, a kind and a folder asks Spotlight for the compiled name and kind query within that folder
 - [x] search without a folder asks Spotlight to search the whole index
@@ -27,7 +27,7 @@
 - [ ] A folder that is not a string is rejected as an error result
 - [ ] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
 - [x] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
-- [ ] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
+- [x] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
 - [ ] Adapter: the scope folder is never a result: Utilities is not found under /System/Applications/Utilities
 - [ ] Adapter: the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications
 - [ ] Adapter: a scope through a symlink finds the same paths as the folder it points to
