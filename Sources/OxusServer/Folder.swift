@@ -24,7 +24,9 @@
 
 import MCP
 
-public struct Folder: Sendable {
+public struct Folder: NonEmptyStringArgument, Sendable {
+    static let name: String = "folder"
+
     enum Error: ToolFailure {
         case unacceptedForm
 
@@ -39,17 +41,16 @@ public struct Folder: Sendable {
         self.path = path
     }
 
-    init(_ argument: Value, home: String) throws(Error) {
-        guard let path = argument.stringValue else {
-            throw .unacceptedForm
-        }
+    init(_ argument: Value, home: String) throws {
+
+        let path = try Self.nonEmptyValue(of: argument)
 
         if path == "~" || path.hasPrefix("~/") {
             self.init(path: home + path.dropFirst())
         } else if path.hasPrefix("/") {
             self.init(path: path)
         } else {
-            throw .unacceptedForm
+            throw Error.unacceptedForm
         }
     }
 }

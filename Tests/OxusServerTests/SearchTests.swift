@@ -298,4 +298,13 @@ import Testing
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("folder must be an absolute path, ~ alone, or a path starting with ~/") == true)
     }
+
+    @Test func `A folder that is not a string is rejected as an error result`() async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": 42])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("folder must be a string") == true)
+    }
 }
