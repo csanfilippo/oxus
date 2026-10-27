@@ -22,7 +22,7 @@
 - [x] spotlight_query asks Spotlight to search the whole index
 - [x] ~ alone and paths starting with ~/ are searched inside the given home folder
 - [x] search with only a folder asks Spotlight for every file in that folder
-- [ ] A relative folder or another user's ~ is rejected as an error result listing the accepted forms
+- [x] A relative folder or a ~name folder is rejected as an error result listing the accepted forms
 - [ ] A blank folder is rejected as an error result
 - [ ] A folder that is not a string is rejected as an error result
 - [x] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
