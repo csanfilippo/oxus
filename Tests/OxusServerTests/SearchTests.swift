@@ -107,15 +107,6 @@ import Testing
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
 
-    @Test func `A search with neither name_contains nor kind is rejected as an error result`() async throws {
-        let client = try await connectedClient()
-
-        let (content, isError) = try await client.callTool(name: "search", arguments: [:])
-
-        #expect(isError == true)
-        #expect(texts(in: content).first?.contains("at least one of name_contains or kind is required") == true)
-    }
-
     @Test(arguments: ["", "   "])
     func `A blank name_contains is rejected as an error result`(name: String) async throws {
         let client = try await connectedClient()
@@ -286,5 +277,15 @@ import Testing
 
         #expect(spy.receivedQuery == #"kMDItemDisplayName == "*""#)
         #expect(spy.receivedFolder?.path == "/test")
+    }
+
+    @Test func `A search with neither name_contains, kind nor folder is rejected as an error result naming all three`() async throws {
+
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: [:])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("at least one of name_contains or kind or folder is required") == true)
     }
 }
