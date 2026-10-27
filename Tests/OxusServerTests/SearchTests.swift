@@ -307,4 +307,14 @@ import Testing
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("folder must be a string") == true)
     }
+
+    @Test(arguments: ["", "   "])
+    func `A blank folder is rejected as an error result`(folder: String) async throws {
+        let client = try await connectedClient()
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": .string(folder)])
+
+        #expect(isError == true)
+        #expect(texts(in: content).first?.contains("folder cannot be empty") == true)
+    }
 }
