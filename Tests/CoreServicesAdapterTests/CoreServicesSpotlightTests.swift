@@ -65,4 +65,16 @@ import Testing
 
         #expect(paths.isEmpty)
     }
+
+    @Test func `a scope includes its subfolders: Terminal.app is found under /System/Applications`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let paths = try await spotlight.search(
+            query: #"kMDItemFSName == "Terminal.app""#,
+            limit: 10,
+            folder: Folder(path: "/System/Applications")
+        )
+
+        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+    }
 }
