@@ -1,6 +1,6 @@
 # Increment 5 — Folder scope
 
-**Status:** Draft (2026-10-21). Split on 2026-10-25: checking the folder before searching moved to increment 6.
+**Status:** Done (2026-10-27). Split on 2026-10-25: checking the folder before searching moved to increment 6.
 
 ## Goal
 
