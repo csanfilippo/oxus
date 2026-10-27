@@ -52,9 +52,9 @@ final class SpySpotlight: Spotlight, @unchecked Sendable {
     }
 }
 
-func connectedClient(spotlight: any Spotlight = SpySpotlight()) async throws -> Client {
+func connectedClient(spotlight: any Spotlight = SpySpotlight(), home: String = "") async throws -> Client {
     let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-    let server = await makeOxusServer(spotlight: spotlight)
+    let server = await makeOxusServer(spotlight: spotlight, home: home)
     try await server.start(transport: serverTransport)
     let client = Client(name: "oxus-tests", version: "0")
     try await client.connect(transport: clientTransport)

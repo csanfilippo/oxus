@@ -154,7 +154,7 @@ import Testing
 
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-        let server = await makeOxusServer(spotlight: spotlight)
+        let server = await makeOxusServer(spotlight: spotlight, home: "")
         try await server.start(transport: serverTransport)
         let client = Client(name: "oxus-tests", version: "0")
         try await client.connect(transport: clientTransport)

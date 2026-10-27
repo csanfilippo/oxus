@@ -31,7 +31,7 @@ public struct Folder: Sendable {
         self.path = path
     }
 
-    public init?(_ argument: Value?) {
+    public init?(_ argument: Value?, home: String) {
         guard let argument else {
             return nil
         }
@@ -40,6 +40,10 @@ public struct Folder: Sendable {
             return nil
         }
 
-        self.init(path: path)
+        if path == "~" || path.hasPrefix("~/") {
+            self.init(path: home + path.dropFirst())
+        } else {
+            self.init(path: path)
+        }
     }
 }

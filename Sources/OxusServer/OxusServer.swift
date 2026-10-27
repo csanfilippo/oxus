@@ -25,14 +25,14 @@
 import Foundation
 import MCP
 
-public func makeOxusServer(spotlight: any Spotlight) async -> Server {
+public func makeOxusServer(spotlight: any Spotlight, home: String) async -> Server {
     let server = Server(
         name: "oxus",
         version: "0.1.0",
         capabilities: .init(tools: .init())
     )
 
-    let tools: [any OxusTool] = [SpotlightQueryTool(spotlight: spotlight), SearchTool(spotlight: spotlight)]
+    let tools: [any OxusTool] = [SpotlightQueryTool(spotlight: spotlight), SearchTool(spotlight: spotlight, home: home)]
 
     await server.withMethodHandler(ListTools.self) { _ in
         .init(tools: tools.map(\.definition))

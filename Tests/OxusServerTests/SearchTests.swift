@@ -248,4 +248,24 @@ import Testing
 
         #expect(spy.receivedFolder == nil)
     }
+
+    @Test(arguments: [("~", "/Users/test"), ("~/Downloads", "/Users/test/Downloads")])
+    func `~ alone and paths starting with ~/ are searched inside the given home folder`(folder: String, expected: String) async throws {
+        let spy = SpySpotlight()
+        let client = try await connectedClient(spotlight: spy, home: "/Users/test")
+
+        _ = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: [
+                        "kind": "image",
+                        "folder": .string(folder),
+                    ]
+                )
+            )
+        ).value
+
+        #expect(spy.receivedFolder?.path == expected)
+    }
 }
