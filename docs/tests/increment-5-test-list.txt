@@ -26,7 +26,7 @@
 - [ ] A blank folder is rejected as an error result
 - [ ] A folder that is not a string is rejected as an error result
 - [ ] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
-- [ ] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
+- [x] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
 - [ ] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
 - [ ] Adapter: the scope folder is never a result: Utilities is not found under /System/Applications/Utilities
 - [ ] Adapter: the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications
