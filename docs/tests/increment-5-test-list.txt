@@ -11,7 +11,7 @@
 - Description: says the scope includes subfolders, which forms `folder` accepts, and that unindexed files cannot be found
 - Output, limits and other error messages unchanged
 - A folder that does not exist, is a file, is a package or cannot be read returns no paths and no error until increment 6
-- Adapter and acceptance tests scope to `/System/Applications`: indexed, not protected by TCC, holds Terminal.app in Utilities, excludes Finder.app
+- Adapter and acceptance tests scope to `/System/Applications`: indexed, not protected by TCC, holds Terminal.app in Utilities, excludes Finder.app. The exception is the test that the scope folder is never a result: Spotlight does not index the `/System/Applications/Utilities` folder, so it scopes to `/Applications/Utilities`, which is indexed
 
 ## Test List (TDD)
 - [x] Acceptance test: a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's
@@ -28,6 +28,6 @@
 - [x] A search with neither name_contains, kind nor folder is rejected as an error result naming all three
 - [x] Adapter: a scope includes its subfolders: Terminal.app is found under /System/Applications
 - [x] Adapter: a scope excludes files outside it: Finder.app is not found under /System/Applications
-- [ ] Adapter: the scope folder is never a result: Utilities is not found under /System/Applications/Utilities
-- [ ] Adapter: the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications
-- [ ] Adapter: a scope through a symlink finds the same paths as the folder it points to
+- [x] Adapter: the scope folder is never a result: Utilities is not found under /Applications/Utilities
+- [x] Adapter: the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications
+- [x] Adapter: a scope through a symlink finds the same paths as the folder it points to
