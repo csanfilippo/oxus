@@ -110,46 +110,46 @@ import Testing
     @Test func `a client searches for kind application in /System/Applications and receives Calculator's path but not Finder's`()
         async throws
     {
-        await withKnownIssue {
-            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-            let result = try await client.send(
-                CallTool.request(
-                    .init(
-                        name: "search",
-                        arguments: [
-                            "folder": "/System/Applications",
-                            "kind": "application",
-                            "limit": 100,
-                        ]
-                    ))
-            ).value
-            let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-            #expect(result.isError != true)
-            #expect(paths.contains("/System/Applications/Calculator.app"))
-            #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
-        }
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: [
+                        "folder": "/System/Applications",
+                        "kind": "application",
+                        "limit": 100,
+                    ]
+                ))
+        ).value
+        let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+
+        #expect(result.isError != true)
+        #expect(paths.contains("/System/Applications/Calculator.app"))
+        #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
+
     }
 
     @Test func `a client searches /System/Applications/Utilities with only a folder and receives Terminal's path`()
         async throws
     {
-        await withKnownIssue {
-            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-            let result = try await client.send(
-                CallTool.request(
-                    .init(
-                        name: "search",
-                        arguments: ["folder": "/System/Applications/Utilities"]
-                    ))
-            ).value
-            let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-            #expect(result.isError != true)
-            #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
-        }
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["folder": "/System/Applications/Utilities"]
+                ))
+        ).value
+        let paths = try #require(result.structuredContent?.objectValue?["paths"]?.arrayValue)
+
+        #expect(result.isError != true)
+        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+
     }
 
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {

@@ -35,6 +35,10 @@ public struct CoreServicesSpotlight: Spotlight {
 
         MDQuerySetMaxCount(spotlightQuery, limit)
 
+        if let folder {
+            MDQuerySetSearchScope(spotlightQuery, [folder.path] as CFArray, 0)
+        }
+
         guard MDQueryExecute(spotlightQuery, CFOptionFlags(kMDQuerySynchronous.rawValue)) else {
             throw .executionFailed(query: query)
         }

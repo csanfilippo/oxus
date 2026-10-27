@@ -77,4 +77,16 @@ import Testing
 
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
     }
+
+    @Test func `a scope excludes files outside it: Finder.app is not found under /System/Applications`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let paths = try await spotlight.search(
+            query: #"kMDItemFSName == "Finder.app""#,
+            limit: 10,
+            folder: Folder(path: "/System/Applications")
+        )
+
+        #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
+    }
 }
