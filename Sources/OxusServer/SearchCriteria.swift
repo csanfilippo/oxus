@@ -45,6 +45,7 @@ struct SearchCriteria {
 
     private let nameContains: NameContains?
     private let kind: Kind?
+    let folder: Folder?
 
     private var onlyFolder: Bool {
         nameContains == nil && kind == nil
@@ -53,6 +54,7 @@ struct SearchCriteria {
     init(nameContains: NameContains? = nil, kind: Kind? = nil, folder: Folder? = nil) throws(Error) {
         self.nameContains = nameContains
         self.kind = kind
+        self.folder = folder
 
         guard nameContains != nil || kind != nil || folder != nil else {
             throw .noFilters
