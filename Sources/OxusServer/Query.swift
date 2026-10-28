@@ -30,7 +30,7 @@ struct Query: NonEmptyStringArgument {
 
     var spotlightQuery: String { value }
 
-    init(from arguments: [String: Value]?) throws(NonEmptyStringError) {
-        value = try Self.nonEmptyValue(in: arguments)
+    init(_ argument: Value) throws(NonEmptyStringError) {
+        value = try Self.nonEmptyValue(of: argument)
     }
 }

@@ -24,7 +24,7 @@
 
 import MCP
 
-enum Kind: String, CaseIterable {
+enum Kind: String, CaseIterable, ToolArgument {
     case image
     case movie
     case audio

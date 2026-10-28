@@ -24,8 +24,16 @@
 
 import MCP
 
-public struct Folder: NonEmptyStringArgument, Sendable {
-    static let name: String = "folder"
+public struct Folder: Sendable {
+    public let path: String
+
+    public init(path: String) {
+        self.path = path
+    }
+}
+
+struct FolderArgument: NonEmptyStringArgument {
+    static let name = "folder"
 
     enum Error: ToolFailure {
         case unacceptedForm
@@ -35,22 +43,21 @@ public struct Folder: NonEmptyStringArgument, Sendable {
         }
     }
 
-    public let path: String
+    private let path: String
 
-    public init(path: String) {
-        self.path = path
+    private var isInHome: Bool {
+        path == "~" || path.hasPrefix("~/")
     }
 
-    init(_ argument: Value, home: String) throws {
+    init(_ argument: Value) throws {
+        path = try Self.nonEmptyValue(of: argument)
 
-        let path = try Self.nonEmptyValue(of: argument)
-
-        if path == "~" || path.hasPrefix("~/") {
-            self.init(path: home + path.dropFirst())
-        } else if path.hasPrefix("/") {
-            self.init(path: path)
-        } else {
+        guard isInHome || path.hasPrefix("/") else {
             throw Error.unacceptedForm
         }
+    }
+
+    func folder(home: String) -> Folder {
+        Folder(path: isInHome ? home + path.dropFirst() : path)
     }
 }

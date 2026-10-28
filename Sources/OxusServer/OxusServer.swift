@@ -48,7 +48,7 @@ public func makeOxusServer(spotlight: any Spotlight, home: String) async -> Serv
             throw MCPError.invalidParams("Unknown tool: \(params.name)")
         }
 
-        return try await selectedTool.call(with: params.arguments)
+        return try await selectedTool.call(with: params.arguments ?? [:])
     }
 
     return server

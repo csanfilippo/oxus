@@ -24,7 +24,7 @@
 
 import MCP
 
-struct Limit {
+struct Limit: ToolArgument {
 
     static let name = "limit"
 
@@ -37,7 +37,7 @@ struct Limit {
 
     static let minimum = 1
     static let maximum = 100
-    private static let defaultValue = 25
+    static let `default` = Limit(value: 25)
 
     enum Error: ToolFailure {
         case notAnInteger
@@ -55,12 +55,11 @@ struct Limit {
 
     let value: Int
 
-    init(_ argument: Value?) throws(Error) {
-        guard let argument else {
-            self.value = Self.defaultValue
-            return
-        }
+    private init(value: Int) {
+        self.value = value
+    }
 
+    init(_ argument: Value) throws(Error) {
         guard let intValue = argument.intValue else {
             throw .notAnInteger
         }

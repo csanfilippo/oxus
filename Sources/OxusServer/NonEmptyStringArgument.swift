@@ -27,31 +27,21 @@ import MCP
 
 enum NonEmptyStringError: ToolFailure {
     case empty(argument: String)
-    case missing(argument: String)
     case notAString(argument: String)
 
     var message: String {
         return switch self {
         case .empty(let argument):
             "\(argument) cannot be empty"
-        case .missing(let argument):
-            "\(argument) is missing"
         case .notAString(let argument):
             "\(argument) must be a string"
         }
     }
 }
 
-protocol NonEmptyStringArgument {
-    static var name: String { get }
-}
+protocol NonEmptyStringArgument: ToolArgument {}
 
 extension NonEmptyStringArgument {
-    static func nonEmptyValue(in arguments: [String: Value]?) throws(NonEmptyStringError) -> String {
-        guard let argument = arguments?[name] else { throw .missing(argument: name) }
-        return try nonEmptyValue(of: argument)
-    }
-
     static func nonEmptyValue(of argument: Value) throws(NonEmptyStringError) -> String {
         guard let string = argument.stringValue else { throw .notAString(argument: name) }
         guard string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else { throw .empty(argument: name) }

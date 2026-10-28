@@ -46,10 +46,10 @@ struct SpotlightQueryTool: OxusTool {
         outputSchema: OxusResponse.schema
     )
 
-    func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
+    func call(with arguments: [String: Value]) async throws -> CallTool.Result {
         do {
-            let query = try Query(from: arguments)
-            let limit = try Limit(arguments?[Limit.name])
+            let query = try arguments.required(Query.self)
+            let limit = try arguments.optional(Limit.self) ?? .default
             let paths = try await spotlight.search(query: query.spotlightQuery, limit: limit.value, folder: nil)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {

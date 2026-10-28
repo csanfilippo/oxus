@@ -26,5 +26,5 @@ import MCP
 
 protocol OxusTool: Sendable {
     var definition: Tool { get }
-    func call(with arguments: [String: Value]?) async throws -> CallTool.Result
+    func call(with arguments: [String: Value]) async throws -> CallTool.Result
 }
