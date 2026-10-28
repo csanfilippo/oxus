@@ -36,13 +36,13 @@ struct SearchTool: OxusTool {
                     "type": "string",
                     "description": "Text the file's name must contain",
                 ]),
-                "limit": Limit.schema,
-                "kind": .object([
+                Limit.name: Limit.schema,
+                Kind.name: .object([
                     "type": "string",
                     "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
                     "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
                 ]),
-                "folder": .object([
+                Folder.name: .object([
                     "type": "string",
                     "description": "The path of the folder to search",
                 ]),
@@ -58,13 +58,13 @@ struct SearchTool: OxusTool {
 
     func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
         do {
-            let folder = try arguments?["folder"].map { try Folder($0, home: home) }
+            let folder = try arguments?[Folder.name].map { try Folder($0, home: home) }
             let criteria = try SearchCriteria(
                 nameContains: arguments?[NameContains.name].map { try NameContains($0) },
-                kind: arguments?["kind"].map { try Kind($0) },
+                kind: arguments?[Kind.name].map { try Kind($0) },
                 folder: folder
             )
-            let limit = try Limit(arguments?["limit"])
+            let limit = try Limit(arguments?[Limit.name])
             let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit.value, folder: criteria.folder)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {

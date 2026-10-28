@@ -26,6 +26,8 @@ import MCP
 
 struct Limit {
 
+    static let name = "limit"
+
     static let schema: Value = .object([
         "type": "integer",
         "maximum": .int(Limit.maximum),

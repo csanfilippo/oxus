@@ -32,6 +32,8 @@ enum Kind: String, CaseIterable {
     case folder
     case application
 
+    static let name = "kind"
+
     enum Error: ToolFailure {
         case unknown(String)
         case wrongType(String)

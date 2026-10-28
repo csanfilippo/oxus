@@ -38,7 +38,7 @@ struct SpotlightQueryTool: OxusTool {
                     "type": "string",
                     "description": "Spotlight query syntax, e.g. kMDItemFSName == \"*.pdf\"c",
                 ]),
-                "limit": Limit.schema,
+                Limit.name: Limit.schema,
             ]),
             "required": [.string(Query.name)],
         ]),
@@ -49,7 +49,7 @@ struct SpotlightQueryTool: OxusTool {
     func call(with arguments: [String: Value]?) async throws -> CallTool.Result {
         do {
             let criteria = try Query(from: arguments)
-            let limit = try Limit(arguments?["limit"])
+            let limit = try Limit(arguments?[Limit.name])
             let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit.value, folder: nil)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {
