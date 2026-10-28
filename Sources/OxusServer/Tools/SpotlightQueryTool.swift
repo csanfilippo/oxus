@@ -50,7 +50,8 @@ struct SpotlightQueryTool: OxusTool {
         do {
             let criteria = try Query(from: arguments)
             let limit = try Limit(arguments?["limit"])
-            return try await spotlight.pathsResult(query: criteria.spotlightQuery, limit: limit.value, folder: nil)
+            let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit.value, folder: nil)
+            return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
         }

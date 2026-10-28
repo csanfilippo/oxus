@@ -39,26 +39,13 @@ struct OxusResponse: Codable {
         ]),
         "required": ["paths"],
     ])
-}
 
-extension Array where Element == String {
-    fileprivate var asOxusResponse: OxusResponse {
-        .init(paths: self)
-    }
-}
-
-extension Spotlight {
-    func pathsResult(query: String, limit: Int, folder: Folder?) async throws -> CallTool.Result {
-        let paths: [String]
-        do {
-            paths = try await search(query: query, limit: limit, folder: folder)
-        } catch let spotlightError {
-            return spotlightError.asResult
+    var asResult: CallTool.Result {
+        get throws {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .withoutEscapingSlashes
+            let text = String(decoding: try encoder.encode(self), as: UTF8.self)
+            return try CallTool.Result(content: [.text(text: text, annotations: nil, _meta: nil)], structuredContent: self, isError: false)
         }
-        let response = paths.asOxusResponse
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .withoutEscapingSlashes
-        let text = String(decoding: try encoder.encode(response), as: UTF8.self)
-        return try CallTool.Result(content: [.text(text: text, annotations: nil, _meta: nil)], structuredContent: response, isError: false)
     }
 }
