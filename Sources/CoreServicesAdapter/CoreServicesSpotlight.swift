@@ -35,9 +35,7 @@ public struct CoreServicesSpotlight: Spotlight {
 
         MDQuerySetMaxCount(spotlightQuery, limit)
 
-        if let folder {
-            MDQuerySetSearchScope(spotlightQuery, [folder.path] as CFArray, 0)
-        }
+        try setSearchScopeOf(query: spotlightQuery, with: folder)
 
         guard MDQueryExecute(spotlightQuery, CFOptionFlags(kMDQuerySynchronous.rawValue)) else {
             throw .executionFailed(query: query)
@@ -50,4 +48,19 @@ public struct CoreServicesSpotlight: Spotlight {
     }
 
     public init() {}
+
+    private func setSearchScopeOf(query: MDQuery, with folder: Folder?) throws(SpotlightError) {
+        guard let folder else {
+            return
+        }
+
+        do {
+            _ = try FileManager.default.contentsOfDirectory(atPath: folder.path)
+        } catch CocoaError.fileReadNoSuchFile {
+            throw .folderNotFound(path: folder.path)
+        } catch {
+        }
+
+        MDQuerySetSearchScope(query, [folder.path] as CFArray, 0)
+    }
 }

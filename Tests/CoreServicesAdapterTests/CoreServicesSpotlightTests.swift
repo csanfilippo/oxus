@@ -135,4 +135,19 @@ import Testing
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
         #expect(Set(pathsThroughLink) == Set(paths))
     }
+
+    @Test func `a folder that does not exist is reported as not found, with its path`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let error = await #expect(throws: SpotlightError.self) {
+            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/not/existing"))
+        }
+
+        guard case .folderNotFound(let path) = error else {
+            Issue.record("expected .folderNotFound, got \(String(describing: error))")
+            return
+        }
+
+        #expect(path == "/not/existing")
+    }
 }
