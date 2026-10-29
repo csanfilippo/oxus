@@ -135,7 +135,6 @@ import Testing
     @Test func `a client searches /System/Applications/Utilities with only a folder and receives Terminal's path`()
         async throws
     {
-
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
         let result = try await client.send(
@@ -150,6 +149,27 @@ import Testing
         #expect(result.isError != true)
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
 
+    }
+
+    @Test func `a client searches a folder that does not exist and receives an error result saying the path does not exist`()
+        async throws
+    {
+        await withKnownIssue {
+            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+            let result = try await client.send(
+                CallTool.request(
+                    .init(
+                        name: "search",
+                        arguments: ["folder": "/nonexistent-oxus-folder"]
+                    ))
+            ).value
+            let text = try #require(texts(in: result.content).first)
+
+            #expect(result.isError == true)
+            #expect(text.contains("/nonexistent-oxus-folder"))
+            #expect(text.contains("does not exist"))
+        }
     }
 
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
