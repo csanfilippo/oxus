@@ -333,4 +333,20 @@ import Testing
         #expect(text.contains("does not exist"))
         #expect(text.contains("correct the path"))
     }
+
+    @Test
+    func
+        `A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: NotAFolderSpotlight())
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/report.pdf"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("/Users/test/report.pdf"))
+        #expect(text.contains("is a file"))
+        #expect(text.contains("parent folder"))
+    }
 }

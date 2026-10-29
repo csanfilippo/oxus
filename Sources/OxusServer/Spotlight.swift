@@ -26,6 +26,7 @@ public enum SpotlightError: Error, ToolFailure {
     case malformedQuery(query: String)
     case executionFailed(query: String)
     case folderNotFound(path: String)
+    case notAFolder(path: String)
 
     var message: String {
         return switch self {
@@ -35,6 +36,8 @@ public enum SpotlightError: Error, ToolFailure {
             "Spotlight could not run the query '\(query)'"
         case .folderNotFound(let path):
             "'\(path)' does not exist. Please correct the path"
+        case .notAFolder(let path):
+            "'\(path)' is a file. Search its parent folder instead"
         }
     }
 }
