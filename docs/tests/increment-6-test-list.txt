@@ -19,7 +19,7 @@
 - [ ] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere
 - [ ] A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives
 - [x] Adapter: a folder that does not exist is reported as not found, with its path
-- [ ] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
+- [x] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
 - [ ] Adapter: a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied
 - [ ] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
 - [ ] Adapter: a symlink to /System/Applications/Calculator.app is reported as a package
