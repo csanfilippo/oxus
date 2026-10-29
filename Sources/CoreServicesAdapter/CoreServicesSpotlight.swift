@@ -58,8 +58,9 @@ public struct CoreServicesSpotlight: Spotlight {
             _ = try FileManager.default.contentsOfDirectory(atPath: folder.path)
         } catch CocoaError.fileReadNoSuchFile {
             throw .folderNotFound(path: folder.path)
-        } catch {
-        }
+        } catch let error as CocoaError where (error.underlying as? POSIXError)?.code == .ENOTDIR {
+            throw .notAFolder(path: folder.path)
+        } catch {}
 
         MDQuerySetSearchScope(query, [folder.path] as CFArray, 0)
     }

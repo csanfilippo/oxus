@@ -150,4 +150,20 @@ import Testing
 
         #expect(path == "/not/existing")
     }
+
+    @Test func `/System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let error = await #expect(throws: SpotlightError.self) {
+            try await spotlight.search(
+                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/System/Library/CoreServices/SystemVersion.plist"))
+        }
+
+        guard case .notAFolder(let path) = error else {
+            Issue.record("expected .notAFolder, got \(String(describing: error))")
+            return
+        }
+
+        #expect(path == "/System/Library/CoreServices/SystemVersion.plist")
+    }
 }
