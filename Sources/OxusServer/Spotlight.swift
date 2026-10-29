@@ -25,6 +25,7 @@
 public enum SpotlightError: Error, ToolFailure {
     case malformedQuery(query: String)
     case executionFailed(query: String)
+    case folderNotFound(path: String)
 
     var message: String {
         return switch self {
@@ -32,6 +33,8 @@ public enum SpotlightError: Error, ToolFailure {
             #"malformed Spotlight query: '\#(query)'. Use Spotlight query syntax, e.g. kMDItemFSName == "*.pdf"c."#
         case .executionFailed(let query):
             "Spotlight could not run the query '\(query)'"
+        case .folderNotFound(let path):
+            "'\(path)' does not exist. Please correct the path"
         }
     }
 }

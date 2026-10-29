@@ -317,4 +317,20 @@ import Testing
         #expect(isError == true)
         #expect(texts(in: content).first?.contains("folder cannot be empty") == true)
     }
+
+    @Test
+    func
+        `A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: FolderNotFoundSpotlight())
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/Dowloads"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("/Users/test/Dowloads"))
+        #expect(text.contains("does not exist"))
+        #expect(text.contains("correct the path"))
+    }
 }

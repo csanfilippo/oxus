@@ -37,6 +37,12 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
     }
 }
 
+final class FolderNotFoundSpotlight: Sendable, Spotlight {
+    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
+        throw SpotlightError.folderNotFound(path: folder!.path)
+    }
+}
+
 final class SpySpotlight: Spotlight, @unchecked Sendable {
     private(set) var receivedQuery: String?
     private(set) var receivedLimit: Int?
