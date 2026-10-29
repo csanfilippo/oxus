@@ -1,4 +1,4 @@
-// Run from the repository root: swift docs/tool-argument-hierarchy.swift docs/tool-argument-hierarchy.png
+// Run from the repository root: swift docs/diagrams/tool-argument-hierarchy.swift docs/diagrams/tool-argument-hierarchy.png
 
 import AppKit
 
