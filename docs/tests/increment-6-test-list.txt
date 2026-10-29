@@ -12,13 +12,13 @@
 - Adapter tests use a path that does not exist, `/System/Library/CoreServices/SystemVersion.plist`, a `chmod 000` folder, and `/System/Applications/Calculator.app` directly and through a symlink
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches a folder that does not exist and receives an error result saying the path does not exist
+- [x] Acceptance test: a client searches a folder that does not exist and receives an error result saying the path does not exist
 - [ ] Acceptance test: a client searches /System/Applications/Calculator.app and receives an error result saying it is a package
 - [x] A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path
 - [ ] A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder
 - [ ] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere
 - [ ] A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives
-- [ ] Adapter: a folder that does not exist is reported as not found, with its path
+- [x] Adapter: a folder that does not exist is reported as not found, with its path
 - [ ] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
 - [ ] Adapter: a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied
 - [ ] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
