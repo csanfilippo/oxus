@@ -1,0 +1,25 @@
+# Increment 6: folder checks - Test List
+
+## Specifications
+- Tool: `search` with a `folder`; `spotlight_query` and unscoped searches are unaffected
+- Checked cases: a scope folder that does not exist, is a file, is a package, or cannot be read; each returns a result with isError instead of an empty success
+- Messages: each names the path, the case, and the fix: correct the path (not found), search the parent folder (is a file), search elsewhere (package); cannot read carries the reason macOS gives instead of a fix
+- Path named: the expanded path the adapter searches, e.g. `/Users/me/Dowloads` for `~/Dowloads`
+- Cannot-read reason: the POSIX description, e.g. `Permission denied` (EACCES) or `Operation not permitted` (EPERM)
+- A package is detected on the resolved path, so a symlink to a package is a package too
+- Only the scope folder itself is checked: a folder inside a package (e.g. `Calculator.app/Contents`) still returns no paths and no error
+- Output, limits and the error messages of increment 5 unchanged
+- Adapter tests use a path that does not exist, `/System/Library/CoreServices/SystemVersion.plist`, a `chmod 000` folder, and `/System/Applications/Calculator.app` directly and through a symlink
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches a folder that does not exist and receives an error result saying the path does not exist
+- [ ] Acceptance test: a client searches /System/Applications/Calculator.app and receives an error result saying it is a package
+- [ ] A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path
+- [ ] A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder
+- [ ] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere
+- [ ] A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives
+- [ ] Adapter: a folder that does not exist is reported as not found, with its path
+- [ ] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
+- [ ] Adapter: a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied
+- [ ] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
+- [ ] Adapter: a symlink to /System/Applications/Calculator.app is reported as a package

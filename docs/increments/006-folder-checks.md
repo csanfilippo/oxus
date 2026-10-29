@@ -8,13 +8,14 @@ Tell the model when the `folder` of a `search` cannot be searched, so it can cor
 
 ## Contract
 
-- A `folder` that does not exist, is a file, or is a package (e.g. an `.app` bundle) returns a result with `isError: true` naming the path and which of the three it is, so the model can correct itself.
-- A `folder` that cannot be read returns a result with `isError: true` naming the path and the reason macOS gives, never an empty success.
+- A `folder` that does not exist, is a file, or is a package (e.g. an `.app` bundle) returns a result with `isError: true` naming the path, which of the three it is, and the fix (correct the path, search the parent folder, search elsewhere), so the model can correct itself.
+- A `folder` that cannot be read returns a result with `isError: true` naming the path and the reason macOS gives as its POSIX description (e.g. `Permission denied`, `Operation not permitted`), never an empty success.
+- Errors name the expanded path the adapter searches, e.g. `/Users/me/Dowloads` for `~/Dowloads`.
 - Output and error messages of increment 5 stay unchanged.
 
 ## Out of scope
 
-Telling the user what to grant for a folder protected by TCC, protected subfolders inside a readable scope, and unscoped searches losing results are increment 7. Detecting folders Spotlight does not index (see increment 5's risks).
+Telling the user what to grant for a folder protected by TCC, protected subfolders inside a readable scope, and unscoped searches losing results are increment 7. A folder inside a package (e.g. `Calculator.app/Contents`): only the scope folder itself is checked, so it still returns no paths and no error (decided on 2026-10-29). Detecting folders Spotlight does not index (see increment 5's risks).
 
 ## Design
 
@@ -31,11 +32,11 @@ Telling the user what to grant for a folder protected by TCC, protected subfolde
 
 ## Open decisions
 
-None.
+None. Decided on 2026-10-29: messages carry the fix, name the expanded path, and give the POSIX description as the reason; a folder inside a package is out of scope.
 
 ## Test list
 
-`docs/tests/increment-6-test-list.txt` (not written yet). Acceptance tests chosen on 2026-10-25: a folder that does not exist, and `/System/Applications/Calculator.app` as a package.
+`docs/tests/increment-6-test-list.txt` (written on 2026-10-29). Acceptance tests chosen on 2026-10-25: a folder that does not exist, and `/System/Applications/Calculator.app` as a package.
 
 ## Risks
 
