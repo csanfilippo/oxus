@@ -54,12 +54,14 @@ public struct CoreServicesSpotlight: Spotlight {
             return
         }
 
-        try check(folder)
+        try throwIfNotAReadableFolder(folder)
+
+        try throwIfPackage(folder)
 
         MDQuerySetSearchScope(query, [folder.path] as CFArray, 0)
     }
 
-    private func check(_ folder: Folder) throws(SpotlightError) {
+    private func throwIfNotAReadableFolder(_ folder: Folder) throws(SpotlightError) {
         do {
             _ = try FileManager.default.contentsOfDirectory(atPath: folder.path)
         } catch let error as CocoaError {
@@ -75,5 +77,15 @@ public struct CoreServicesSpotlight: Spotlight {
                 break
             }
         } catch {}
+    }
+
+    private func throwIfPackage(_ folder: Folder) throws(SpotlightError) {
+        let resourceValues = try? URL(fileURLWithPath: folder.path).resourceValues(forKeys: [.isPackageKey])
+
+        guard resourceValues?.isPackage == true else {
+            return
+        }
+
+        throw SpotlightError.packageFound(path: folder.path)
     }
 }

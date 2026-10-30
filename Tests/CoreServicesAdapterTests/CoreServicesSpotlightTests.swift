@@ -166,4 +166,20 @@ import Testing
 
         #expect(path == "/System/Library/CoreServices/SystemVersion.plist")
     }
+
+    @Test func `/System/Applications/Calculator.app is reported as a package, with its path`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let error = await #expect(throws: SpotlightError.self) {
+            try await spotlight.search(
+                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/System/Applications/Calculator.app"))
+        }
+
+        guard case .packageFound(let path) = error else {
+            Issue.record("expected .packageFound, got \(String(describing: error))")
+            return
+        }
+
+        #expect(path == "/System/Applications/Calculator.app")
+    }
 }
