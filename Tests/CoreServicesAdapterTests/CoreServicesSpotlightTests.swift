@@ -182,4 +182,24 @@ import Testing
 
         #expect(path == "/System/Applications/Calculator.app")
     }
+
+    @Test func `a symlink to /System/Applications/Calculator.app is reported as a package`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let link = directory.appending(path: "Calculator.app").path
+        try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Calculator.app")
+
+        let error = await #expect(throws: SpotlightError.self) {
+            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link))
+        }
+
+        guard case .packageFound(let path) = error else {
+            Issue.record("expected .packageFound, got \(String(describing: error))")
+            return
+        }
+
+        #expect(path == link)
+    }
 }

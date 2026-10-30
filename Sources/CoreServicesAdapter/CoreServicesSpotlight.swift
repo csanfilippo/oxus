@@ -80,7 +80,7 @@ public struct CoreServicesSpotlight: Spotlight {
     }
 
     private func throwIfPackage(_ folder: Folder) throws(SpotlightError) {
-        let resourceValues = try? URL(fileURLWithPath: folder.path).resourceValues(forKeys: [.isPackageKey])
+        let resourceValues = try? URL(fileURLWithPath: folder.path).resolvingSymlinksInPath().resourceValues(forKeys: [.isPackageKey])
 
         guard resourceValues?.isPackage == true else {
             return
