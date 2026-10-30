@@ -16,7 +16,7 @@
 - [ ] Acceptance test: a client searches /System/Applications/Calculator.app and receives an error result saying it is a package
 - [x] A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path
 - [x] A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder
-- [ ] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere
+- [x] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere
 - [ ] A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives
 - [x] Adapter: a folder that does not exist is reported as not found, with its path
 - [x] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
