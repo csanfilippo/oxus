@@ -349,4 +349,20 @@ import Testing
         #expect(text.contains("is a file"))
         #expect(text.contains("parent folder"))
     }
+
+    @Test
+    func
+        `A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: PackagePathSpotlight())
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/System/Applications/Calculator.app"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("/System/Applications/Calculator.app"))
+        #expect(text.contains("is a package"))
+        #expect(text.contains("Search elsewhere"))
+    }
 }

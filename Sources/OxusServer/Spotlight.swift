@@ -27,6 +27,7 @@ public enum SpotlightError: Error, ToolFailure {
     case executionFailed(query: String)
     case folderNotFound(path: String)
     case notAFolder(path: String)
+    case packageFound(path: String)
 
     var message: String {
         return switch self {
@@ -38,6 +39,8 @@ public enum SpotlightError: Error, ToolFailure {
             "'\(path)' does not exist. Please correct the path"
         case .notAFolder(let path):
             "'\(path)' is a file. Search its parent folder instead"
+        case .packageFound(let path):
+            "'\(path)' is a package. Search elsewhere"
         }
     }
 }
