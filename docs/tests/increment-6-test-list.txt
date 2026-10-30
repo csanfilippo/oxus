@@ -21,5 +21,5 @@
 - [x] Adapter: a folder that does not exist is reported as not found, with its path
 - [x] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
 - [ ] Adapter: a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied
-- [ ] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
+- [x] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
 - [ ] Adapter: a symlink to /System/Applications/Calculator.app is reported as a package
