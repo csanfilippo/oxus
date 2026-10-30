@@ -22,4 +22,4 @@
 - [x] Adapter: /System/Library/CoreServices/SystemVersion.plist is reported as not a folder, with its path
 - [ ] Adapter: a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied
 - [x] Adapter: /System/Applications/Calculator.app is reported as a package, with its path
-- [ ] Adapter: a symlink to /System/Applications/Calculator.app is reported as a package
+- [x] Adapter: a symlink to /System/Applications/Calculator.app is reported as a package
