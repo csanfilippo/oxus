@@ -202,4 +202,25 @@ import Testing
 
         #expect(path == link)
     }
+
+    @Test func `a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: folder.path())
+
+        let error = await #expect(throws: SpotlightError.self) {
+            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: folder.path()))
+        }
+
+        guard case .unreadable(let path, let reason) = error else {
+            Issue.record("expected .unreadable, got \(String(describing: error))")
+            return
+        }
+
+        #expect(path == folder.path())
+        #expect(reason == "Permission denied")
+    }
 }
