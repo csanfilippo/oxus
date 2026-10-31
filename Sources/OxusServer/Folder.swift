@@ -62,7 +62,7 @@ struct FolderArgument: NonEmptyStringArgument {
         path == "~" || path.hasPrefix("~/")
     }
 
-    init(_ argument: Value) throws {
+    init(_ argument: Value) throws(NonEmptyStringError) {
         path = try Self.nonEmptyValue(of: argument)
     }
 
