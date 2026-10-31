@@ -23,9 +23,10 @@
  */
 
 import Foundation
-import MacOSAdapters
 import OxusServer
 import Testing
+
+@testable import MacOSAdapters
 
 @Suite struct LocalFileSystemTests {
     @Test func `a folder that does not exist is reported as not found, with its path`() throws {
@@ -112,5 +113,33 @@ import Testing
 
         #expect(path == folder.path())
         #expect(reason == "Permission denied")
+    }
+
+    @Test func `a read failure macOS explains with a POSIX error is reported as unreadable, with that error's description`() {
+        let failure = CocoaError(.fileReadUnknown, userInfo: [NSUnderlyingErrorKey: POSIXError(.EIO)])
+
+        let error = FolderError(readFailure: failure, path: "/Volumes/Share")
+
+        guard case .unreadable(let path, let reason) = error else {
+            Issue.record("expected .unreadable, got \(error)")
+            return
+        }
+
+        #expect(path == "/Volumes/Share")
+        #expect(reason == "Input/output error")
+    }
+
+    @Test func `a read failure with no POSIX error is reported as unreadable, with Foundation's description`() {
+        let failure = CocoaError(.fileReadUnknown)
+
+        let error = FolderError(readFailure: failure, path: "/Volumes/Share")
+
+        guard case .unreadable(let path, let reason) = error else {
+            Issue.record("expected .unreadable, got \(error)")
+            return
+        }
+
+        #expect(path == "/Volumes/Share")
+        #expect(reason == failure.localizedDescription)
     }
 }

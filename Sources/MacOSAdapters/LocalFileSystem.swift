@@ -37,30 +37,41 @@ public struct LocalFileSystem: FileSystem {
     private func throwIfNotAReadableFolder(_ folder: Folder) throws(FolderError) {
         do {
             _ = try FileManager.default.contentsOfDirectory(atPath: folder.path)
-        } catch let error as CocoaError {
-
-            let posixError = error.underlying as? POSIXError
-            let posixErrorCode = posixError?.code
-            switch (error.code, posixErrorCode) {
-            case (.fileReadNoSuchFile, _):
-                throw .notFound(path: folder.path)
-            case (_, .ENOTDIR):
-                throw .notAFolder(path: folder.path)
-            case (.fileReadNoPermission, let errorCode?):
-                throw .unreadable(path: folder.path, reason: String(cString: strerror(errorCode.rawValue)))
-            default:
-                break
-            }
-        } catch {}
+        } catch {
+            throw FolderError(readFailure: error, path: folder.path)
+        }
     }
 
     private func throwIfPackage(_ folder: Folder) throws(FolderError) {
-        let resourceValues = try? URL(filePath: folder.path).resolvingSymlinksInPath().resourceValues(forKeys: [.isPackageKey])
+        let resourceValues: URLResourceValues
+        do {
+            resourceValues = try URL(filePath: folder.path).resolvingSymlinksInPath().resourceValues(forKeys: [.isPackageKey])
+        } catch {
+            throw FolderError(readFailure: error, path: folder.path)
+        }
 
-        guard resourceValues?.isPackage == true else {
+        guard resourceValues.isPackage == true else {
             return
         }
 
         throw .package(path: folder.path)
+    }
+}
+
+extension FolderError {
+    init(readFailure: any Error, path: String) {
+        let cocoaError = readFailure as? CocoaError
+        let posixErrorCode = (cocoaError?.underlying as? POSIXError)?.code
+
+        switch (cocoaError?.code, posixErrorCode) {
+        case (.fileReadNoSuchFile?, _):
+            self = .notFound(path: path)
+        case (_, .ENOTDIR?):
+            self = .notAFolder(path: path)
+        case (_, let errorCode?):
+            self = .unreadable(path: path, reason: String(cString: strerror(errorCode.rawValue)))
+        case (_, nil):
+            self = .unreadable(path: path, reason: readFailure.localizedDescription)
+        }
     }
 }
