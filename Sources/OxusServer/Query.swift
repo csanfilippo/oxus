@@ -24,15 +24,24 @@
 
 import MCP
 
-struct Query: NonEmptyStringArgument {
+public struct Query: Sendable {
+    public let text: String
+
+    public init(_ text: String) {
+        self.text = text
+    }
+}
+
+struct QueryArgument: NonEmptyStringArgument {
     static let name = "query"
     static let schema: Value = .object([
         "type": "string",
         "description": "Spotlight query syntax, e.g. kMDItemFSName == \"*.pdf\"c",
     ])
-    let value: String
+
+    let query: Query
 
     init(_ argument: Value) throws(NonEmptyStringError) {
-        value = try Self.nonEmptyValue(of: argument)
+        query = Query(try Self.nonEmptyValue(of: argument))
     }
 }

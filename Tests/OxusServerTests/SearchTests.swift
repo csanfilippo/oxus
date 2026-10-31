@@ -103,7 +103,7 @@ import Testing
 
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
 
-        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*test*"cd"#)
+        #expect(spy.receivedQuery?.text == #"kMDItemDisplayName == "*test*"cd"#)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
 
@@ -143,7 +143,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["kind": "image"]))).value
 
         #expect(spy.receivedLimit?.value == 25)
-        #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
+        #expect(spy.receivedQuery?.text == #"kMDItemContentTypeTree == "public.image""#)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
 
@@ -216,7 +216,7 @@ import Testing
             )
         ).value
 
-        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*test*"cd && kMDItemContentTypeTree == "public.image""#)
+        #expect(spy.receivedQuery?.text == #"kMDItemDisplayName == "*test*"cd && kMDItemContentTypeTree == "public.image""#)
         #expect(spy.receivedFolder?.path == "/test")
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
@@ -275,7 +275,7 @@ import Testing
             )
         ).value
 
-        #expect(spy.receivedQuery == #"kMDItemDisplayName == "*""#)
+        #expect(spy.receivedQuery?.text == #"kMDItemDisplayName == "*""#)
         #expect(spy.receivedFolder?.path == "/test")
     }
 

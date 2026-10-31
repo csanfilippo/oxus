@@ -59,7 +59,7 @@ struct SearchTool: OxusTool {
             if let folder {
                 try fileSystem.checkSearchable(folder)
             }
-            let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit, folder: criteria.folder)
+            let paths = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult

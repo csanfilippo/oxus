@@ -51,18 +51,19 @@ struct SearchCriteria {
         }
     }
 
-    var spotlightQuery: String {
+    var query: Query {
 
         guard !onlyFolder else {
-            return #"kMDItemDisplayName == "*""#
+            return Query(#"kMDItemDisplayName == "*""#)
         }
 
-        return [
-            nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.text))*"cd"# },
-            kind?.spotlightQuery,
-        ]
-        .compactMap { $0 }
-        .joined(separator: " && ")
+        return Query(
+            [
+                nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.text))*"cd"# },
+                kind?.spotlightQuery,
+            ]
+            .compactMap { $0 }
+            .joined(separator: " && "))
     }
 }
 

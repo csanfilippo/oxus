@@ -227,7 +227,7 @@ import Testing
 
         _ = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test", "folder": "/test"]))).value
 
-        #expect(spy.receivedQuery == "test")
+        #expect(spy.receivedQuery?.text == "test")
         #expect(spy.receivedFolder == nil)
     }
 }

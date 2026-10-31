@@ -27,10 +27,10 @@ import Foundation
 import OxusServer
 
 public struct CoreServicesSpotlight: Spotlight {
-    public func search(query: String, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    public func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
 
-        guard let spotlightQuery = MDQueryCreate(kCFAllocatorDefault, query as CFString, nil, nil) else {
-            throw .malformedQuery(query: query)
+        guard let spotlightQuery = MDQueryCreate(kCFAllocatorDefault, query.text as CFString, nil, nil) else {
+            throw .malformedQuery(query: query.text)
         }
 
         MDQuerySetMaxCount(spotlightQuery, limit.value)
@@ -40,7 +40,7 @@ public struct CoreServicesSpotlight: Spotlight {
         }
 
         guard MDQueryExecute(spotlightQuery, CFOptionFlags(kMDQuerySynchronous.rawValue)) else {
-            throw .executionFailed(query: query)
+            throw .executionFailed(query: query.text)
         }
 
         return (0..<MDQueryGetResultCount(spotlightQuery)).compactMap { index in
