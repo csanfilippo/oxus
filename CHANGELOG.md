@@ -1,0 +1,13 @@
+# Changelog
+
+All notable changes to oxus are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- `spotlight_query` tool: runs a raw Spotlight query and returns the paths of matching files, in Spotlight's order.
+- `search` tool: finds files by `name_contains` (ignoring case and diacritics), `kind` (`image`, `movie`, `audio`, `pdf`, `folder`, `application`) and `folder` (an absolute path, `~`, or a path starting with `~/`), or any combination of them, without Spotlight query syntax.
+- Both tools take an optional `limit`, default 25, capped at 100.
+- Both tools return `{"paths": [...]}` as structured content, described by an `outputSchema`, and as JSON in a single text block.
+- A `search` `folder` that does not exist, is a file, is a package, or cannot be read returns an error result naming the path and the fix, instead of an empty list.

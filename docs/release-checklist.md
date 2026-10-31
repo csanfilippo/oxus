@@ -10,7 +10,7 @@ Steps to publish oxus as a public, installable MCP server.
 ## Versioning
 
 - [ ] Keep the version in one place; `"0.1.0"` is hard-coded in `Sources/OxusServer/OxusServer.swift` and will drift from git tags.
-- [ ] Add `CHANGELOG.md`.
+- [x] Add `CHANGELOG.md`.
 - [ ] Replace the README's "Status: early" with what is supported.
 - [ ] Tag `v0.1.0`.
 
