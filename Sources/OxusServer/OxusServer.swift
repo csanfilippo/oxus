@@ -22,7 +22,6 @@
  SOFTWARE.
  */
 
-import Foundation
 import MCP
 
 public func makeOxusServer(spotlight: any Spotlight, fileSystem: any FileSystem, home: Folder) async -> Server {
