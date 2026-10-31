@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```sh
-swift test --skip AcceptanceTests                # skip tests that hit real Spotlight
+swift test --skip AcceptanceTests                # skip the end-to-end tests; MacOSAdaptersTests still hit real Spotlight
 swift format -i -r Sources Tests                 # format with the repo's .swift-format
 git config core.hooksPath .githooks              # once per clone: lint staged Swift files before each commit
 ```

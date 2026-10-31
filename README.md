@@ -8,7 +8,7 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** early. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name and kind without query syntax.
+> **Status:** early. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name, kind and folder without query syntax.
 
 ## Requirements
 
@@ -94,7 +94,9 @@ A `folder` that cannot be searched returns an error result naming the expanded p
 ## Development
 
 ```sh
-swift test
+swift test                                # all tests
+swift test --skip AcceptanceTests         # skip the end-to-end tests
+git config core.hooksPath .githooks       # once per clone: lint staged Swift files before each commit
 ```
 
 | Target | Role |
@@ -104,7 +106,7 @@ swift test
 | `oxus` | Executable; wires the adapters into the server over stdio |
 | `OxusServerTests` | Protocol tests through an MCP client, against a fake Spotlight and fake file systems |
 | `MacOSAdaptersTests` | Adapter tests against real Spotlight and real folders |
-| `AcceptanceTests` | End-to-end tests through an MCP client, against real Spotlight |
+| `AcceptanceTests` | End-to-end tests through an MCP client, against real Spotlight and real folders |
 
 Work is planned in increments: each one is described in [`docs/increments`](docs/increments) and its TDD test list lives in [`docs/tests`](docs/tests).
 
