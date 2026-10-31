@@ -32,20 +32,10 @@ struct SearchTool: OxusTool {
         inputSchema: .object([
             "type": "object",
             "properties": .object([
-                NameContains.name: .object([
-                    "type": "string",
-                    "description": "Text the file's name must contain",
-                ]),
+                NameContains.name: NameContains.schema,
                 Limit.name: Limit.schema,
-                Kind.name: .object([
-                    "type": "string",
-                    "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
-                    "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
-                ]),
-                FolderArgument.name: .object([
-                    "type": "string",
-                    "description": "The path of the folder to search",
-                ]),
+                Kind.name: Kind.schema,
+                FolderArgument.name: FolderArgument.schema,
             ]),
             "required": [],
         ]),

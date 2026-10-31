@@ -35,6 +35,10 @@ public struct Folder: Sendable {
 struct FolderArgument: NonEmptyStringArgument {
     static let name = "folder"
     static let acceptedForms = "an absolute path, ~ alone, or a path starting with ~/"
+    static let schema: Value = .object([
+        "type": "string",
+        "description": "The path of the folder to search",
+    ])
 
     enum Error: ToolFailure {
         case unacceptedForm

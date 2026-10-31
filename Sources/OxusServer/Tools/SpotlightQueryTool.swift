@@ -34,10 +34,7 @@ struct SpotlightQueryTool: OxusTool {
         inputSchema: .object([
             "type": "object",
             "properties": .object([
-                Query.name: .object([
-                    "type": "string",
-                    "description": "Spotlight query syntax, e.g. kMDItemFSName == \"*.pdf\"c",
-                ]),
+                Query.name: Query.schema,
                 Limit.name: Limit.schema,
             ]),
             "required": [.string(Query.name)],

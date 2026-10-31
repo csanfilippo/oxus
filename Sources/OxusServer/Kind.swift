@@ -33,6 +33,11 @@ enum Kind: String, CaseIterable, ToolArgument {
     case application
 
     static let name = "kind"
+    static let schema: Value = .object([
+        "type": "string",
+        "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
+        "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
+    ])
 
     enum Error: ToolFailure {
         case unknown(String)

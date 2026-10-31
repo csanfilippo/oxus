@@ -26,6 +26,7 @@ import MCP
 
 protocol ToolArgument {
     static var name: String { get }
+    static var schema: Value { get }
     init(_ argument: Value) throws
 }
 

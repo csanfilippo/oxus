@@ -26,6 +26,10 @@ import MCP
 
 struct Query: NonEmptyStringArgument {
     static let name = "query"
+    static let schema: Value = .object([
+        "type": "string",
+        "description": "Spotlight query syntax, e.g. kMDItemFSName == \"*.pdf\"c",
+    ])
     let value: String
 
     var spotlightQuery: String { value }

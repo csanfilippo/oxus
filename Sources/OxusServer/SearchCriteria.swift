@@ -27,6 +27,10 @@ import MCP
 
 struct NameContains: NonEmptyStringArgument {
     static let name = "name_contains"
+    static let schema: Value = .object([
+        "type": "string",
+        "description": "Text the file's name must contain",
+    ])
     let value: String
 
     init(_ argument: Value) throws(NonEmptyStringError) {
