@@ -72,7 +72,7 @@ import Testing
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Terminal.app""#,
             limit: 10,
-            folder: Folder(path: "/System/Applications")
+            folder: Folder(path: "/System/Applications", home: "/Users/unused")
         )
 
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
@@ -84,7 +84,7 @@ import Testing
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Finder.app""#,
             limit: 10,
-            folder: Folder(path: "/System/Applications")
+            folder: Folder(path: "/System/Applications", home: "/Users/unused")
         )
 
         #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
@@ -96,7 +96,7 @@ import Testing
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Utilities""#,
             limit: 10,
-            folder: Folder(path: "/Applications/Utilities")
+            folder: Folder(path: "/Applications/Utilities", home: "/Users/unused")
         )
 
         #expect(!paths.contains("/Applications/Utilities"))
@@ -110,7 +110,7 @@ import Testing
         let paths = try await spotlight.search(
             query: #"kMDItemDisplayName == "*""#,
             limit: 100,
-            folder: Folder(path: "/System/Applications")
+            folder: Folder(path: "/System/Applications", home: "/Users/unused")
         )
 
         #expect(paths.contains("/System/Applications/Calculator.app"))
@@ -125,11 +125,12 @@ import Testing
         let link = directory.appending(path: "Utilities").path()
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Utilities")
 
-        let pathsThroughLink = try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link))
+        let pathsThroughLink = try await spotlight.search(
+            query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link, home: "/Users/unused"))
         let paths = try await spotlight.search(
             query: #"kMDItemDisplayName == "*""#,
             limit: 100,
-            folder: Folder(path: "/System/Applications/Utilities")
+            folder: Folder(path: "/System/Applications/Utilities", home: "/Users/unused")
         )
 
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
@@ -140,7 +141,8 @@ import Testing
         let spotlight = CoreServicesSpotlight()
 
         let error = await #expect(throws: SpotlightError.self) {
-            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/not/existing"))
+            try await spotlight.search(
+                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/not/existing", home: "/Users/unused"))
         }
 
         guard case .folderNotFound(let path) = error else {
@@ -156,7 +158,8 @@ import Testing
 
         let error = await #expect(throws: SpotlightError.self) {
             try await spotlight.search(
-                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/System/Library/CoreServices/SystemVersion.plist"))
+                query: #"kMDItemDisplayName == "*""#, limit: 100,
+                folder: Folder(path: "/System/Library/CoreServices/SystemVersion.plist", home: "/Users/unused"))
         }
 
         guard case .notAFolder(let path) = error else {
@@ -172,7 +175,8 @@ import Testing
 
         let error = await #expect(throws: SpotlightError.self) {
             try await spotlight.search(
-                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: "/System/Applications/Calculator.app"))
+                query: #"kMDItemDisplayName == "*""#, limit: 100,
+                folder: Folder(path: "/System/Applications/Calculator.app", home: "/Users/unused"))
         }
 
         guard case .packageFound(let path) = error else {
@@ -192,7 +196,7 @@ import Testing
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Calculator.app")
 
         let error = await #expect(throws: SpotlightError.self) {
-            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link))
+            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link, home: "/Users/unused"))
         }
 
         guard case .packageFound(let path) = error else {
@@ -212,7 +216,8 @@ import Testing
         try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: folder.path())
 
         let error = await #expect(throws: SpotlightError.self) {
-            try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: folder.path()))
+            try await spotlight.search(
+                query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: folder.path(), home: "/Users/unused"))
         }
 
         guard case .unreadable(let path, let reason) = error else {
