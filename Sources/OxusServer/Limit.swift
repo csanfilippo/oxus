@@ -41,14 +41,14 @@ struct Limit: ToolArgument {
 
     enum Error: ToolFailure {
         case notAnInteger
-        case belowMinimum(minimumAccepted: Int, received: Int)
+        case belowMinimum(received: Int)
 
         var message: String {
             switch self {
             case .notAnInteger:
                 return "limit must be an integer"
-            case .belowMinimum(let minimumAccepted, let received):
-                return "limit must be at least \(minimumAccepted), got \(received)"
+            case .belowMinimum(let received):
+                return "limit must be at least \(Limit.minimum), got \(received)"
             }
         }
     }
@@ -65,7 +65,7 @@ struct Limit: ToolArgument {
         }
 
         guard intValue >= Self.minimum else {
-            throw .belowMinimum(minimumAccepted: Self.minimum, received: intValue)
+            throw .belowMinimum(received: intValue)
         }
 
         self.value = min(intValue, Self.maximum)
