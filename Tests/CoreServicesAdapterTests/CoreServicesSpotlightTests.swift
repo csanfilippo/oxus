@@ -122,7 +122,7 @@ import Testing
         let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let link = directory.appending(path: "Utilities").path
+        let link = directory.appending(path: "Utilities").path()
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Utilities")
 
         let pathsThroughLink = try await spotlight.search(query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(path: link))
@@ -188,7 +188,7 @@ import Testing
         let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let link = directory.appending(path: "Calculator.app").path
+        let link = directory.appending(path: "Calculator.app").path()
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Calculator.app")
 
         let error = await #expect(throws: SpotlightError.self) {
