@@ -73,8 +73,8 @@ public struct CoreServicesSpotlight: Spotlight {
                 throw .folderNotFound(path: folder.path)
             case (_, .ENOTDIR):
                 throw .notAFolder(path: folder.path)
-            case (.fileReadNoPermission, .EACCES):
-                throw .unreadable(path: folder.path, reason: "Permission denied")
+            case (.fileReadNoPermission, let errorCode?):
+                throw .unreadable(path: folder.path, reason: String(cString: strerror(errorCode.rawValue)))
             default:
                 break
             }
