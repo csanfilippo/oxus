@@ -13,7 +13,7 @@
 
 ## Test List (TDD)
 - [x] Acceptance test: a client searches a folder that does not exist and receives an error result saying the path does not exist
-- [ ] Acceptance test: a client searches /System/Applications/Calculator.app and receives an error result saying it is a package
+- [x] Acceptance test: a client searches /System/Applications/Calculator.app and receives an error result saying it is a package
 - [x] A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path
 - [x] A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder
 - [x] A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere

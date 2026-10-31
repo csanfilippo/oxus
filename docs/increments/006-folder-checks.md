@@ -1,6 +1,6 @@
 # Increment 6 — Folder checks
 
-**Status:** Draft (2026-10-25), split from increment 5.
+**Status:** Done (2026-10-31), split from increment 5.
 
 ## Goal
 
