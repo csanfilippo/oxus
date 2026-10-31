@@ -26,26 +26,23 @@ import MCP
 
 public struct Folder: Sendable {
     public enum Error: Swift.Error {
-        case unacceptedForm
+        case notAbsolute
     }
-
-    static let acceptedForms = "an absolute path, ~ alone, or a path starting with ~/"
 
     public let path: String
 
-    public init(path: String, home: String) throws(Error) {
-        if path == "~" || path.hasPrefix("~/") {
-            self.path = home + path.dropFirst()
-        } else if path.hasPrefix("/") {
-            self.path = path
-        } else {
-            throw .unacceptedForm
+    public init(absolutePath path: String) throws(Error) {
+        guard path.hasPrefix("/") else {
+            throw .notAbsolute
         }
+
+        self.path = path
     }
 }
 
 struct FolderArgument: NonEmptyStringArgument {
     static let name = "folder"
+    static let acceptedForms = "an absolute path, ~ alone, or a path starting with ~/"
     static let schema: Value = .object([
         "type": "string",
         "description": "The path of the folder to search",
@@ -55,11 +52,15 @@ struct FolderArgument: NonEmptyStringArgument {
         case unacceptedForm
 
         var message: String {
-            "\(FolderArgument.name) must be \(Folder.acceptedForms)"
+            "\(FolderArgument.name) must be \(FolderArgument.acceptedForms)"
         }
     }
 
     private let path: String
+
+    private var isInHome: Bool {
+        path == "~" || path.hasPrefix("~/")
+    }
 
     init(_ argument: Value) throws {
         path = try Self.nonEmptyValue(of: argument)
@@ -67,7 +68,7 @@ struct FolderArgument: NonEmptyStringArgument {
 
     func folder(home: String) throws(Error) -> Folder {
         do {
-            return try Folder(path: path, home: home)
+            return try Folder(absolutePath: isInHome ? home + path.dropFirst() : path)
         } catch {
             throw .unacceptedForm
         }
