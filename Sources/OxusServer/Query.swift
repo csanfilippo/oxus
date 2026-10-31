@@ -32,8 +32,6 @@ struct Query: NonEmptyStringArgument {
     ])
     let value: String
 
-    var spotlightQuery: String { value }
-
     init(_ argument: Value) throws(NonEmptyStringError) {
         value = try Self.nonEmptyValue(of: argument)
     }
