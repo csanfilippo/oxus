@@ -28,13 +28,13 @@ struct SearchTool: OxusTool {
     let definition: Tool = Tool(
         name: "search",
         description:
-            "Finds files by name, kind, folder, or any combination of them, without Spotlight query syntax. At least one of \(NameContains.name), \(Kind.name) or \(FolderArgument.name) is required; when several are given, a file must match all of them. Name matching ignores case and diacritics. A folder search includes its subfolders; \(FolderArgument.name) must be \(FolderArgument.acceptedForms). Only files Spotlight has indexed can be found. Returns at most \(Limit.maximum) paths.",
+            "Finds files by name, kind, folder, or any combination of them, without Spotlight query syntax. At least one of \(NameContains.name), \(KindArgument.name) or \(FolderArgument.name) is required; when several are given, a file must match all of them. Name matching ignores case and diacritics. A folder search includes its subfolders; \(FolderArgument.name) must be \(FolderArgument.acceptedForms). Only files Spotlight has indexed can be found. Returns at most \(Limit.maximum) paths.",
         inputSchema: .object([
             "type": "object",
             "properties": .object([
                 NameContains.name: NameContains.schema,
                 Limit.name: Limit.schema,
-                Kind.name: Kind.schema,
+                KindArgument.name: KindArgument.schema,
                 FolderArgument.name: FolderArgument.schema,
             ]),
             "required": [],
@@ -51,7 +51,7 @@ struct SearchTool: OxusTool {
             let folder = try arguments.optional(FolderArgument.self)?.folder(home: home)
             let criteria = try SearchCriteria(
                 nameContains: arguments.optional(NameContains.self),
-                kind: arguments.optional(Kind.self),
+                kind: arguments.optional(KindArgument.self)?.kind,
                 folder: folder
             )
             let limit = try arguments.optional(Limit.self) ?? .default

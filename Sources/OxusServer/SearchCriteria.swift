@@ -43,7 +43,7 @@ struct SearchCriteria {
         case noFilters
 
         var message: String {
-            "at least one of \(NameContains.name) or \(Kind.name) or \(FolderArgument.name) is required"
+            "at least one of \(NameContains.name) or \(KindArgument.name) or \(FolderArgument.name) is required"
         }
     }
 

@@ -21,14 +21,14 @@ let toolArgument = Node(name: "ToolArgument", stereotype: "protocol", file: "Too
 let nonEmpty = Node(
     name: "NonEmptyStringArgument", stereotype: "protocol", file: "NonEmptyStringArgument.swift", center: .init(x: 300, y: 270), width: 250)
 let limit = Node(name: "Limit", stereotype: "struct", file: "Limit.swift", center: .init(x: 640, y: 270), width: 170)
-let kind = Node(name: "Kind", stereotype: "enum", file: "Kind.swift", center: .init(x: 840, y: 270), width: 170)
+let kindArgument = Node(name: "KindArgument", stereotype: "struct", file: "Kind.swift", center: .init(x: 840, y: 270), width: 170)
 let query = Node(name: "Query", stereotype: "struct", file: "Query.swift", center: .init(x: 120, y: 430), width: 170)
 let nameContains = Node(name: "NameContains", stereotype: "struct", file: "SearchCriteria.swift", center: .init(x: 300, y: 430), width: 170)
 let folderArgument = Node(name: "FolderArgument", stereotype: "struct", file: "Folder.swift", center: .init(x: 480, y: 430), width: 170)
 
-let nodes = [toolArgument, nonEmpty, limit, kind, query, nameContains, folderArgument]
+let nodes = [toolArgument, nonEmpty, limit, kindArgument, query, nameContains, folderArgument]
 let edges: [(parent: Node, children: [Node])] = [
-    (toolArgument, [nonEmpty, limit, kind]),
+    (toolArgument, [nonEmpty, limit, kindArgument]),
     (nonEmpty, [query, nameContains, folderArgument]),
 ]
 

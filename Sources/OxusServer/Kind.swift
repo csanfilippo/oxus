@@ -24,35 +24,13 @@
 
 import MCP
 
-enum Kind: String, CaseIterable, ToolArgument {
+enum Kind: String, CaseIterable {
     case image
     case movie
     case audio
     case pdf
     case folder
     case application
-
-    static let name = "kind"
-    private static let acceptedKinds = allCases.map(\.rawValue)
-    static let schema: Value = .object([
-        "type": "string",
-        "enum": .array(acceptedKinds.map { .string($0) }),
-        "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
-    ])
-
-    enum Error: ToolFailure {
-        case unknown(String)
-        case wrongType(String)
-
-        var message: String {
-            switch self {
-            case .unknown(let value):
-                "unknown kind \(value); accepted kinds are: \(Kind.acceptedKinds.joined(separator: ","))"
-            case .wrongType(let value):
-                "wrong kind \(value); kind must be a string; accepted kinds are: \(Kind.acceptedKinds.joined(separator: ","))"
-            }
-        }
-    }
 
     var spotlightQuery: String {
         #"kMDItemContentTypeTree == "\#(contentType)""#
@@ -74,6 +52,32 @@ enum Kind: String, CaseIterable, ToolArgument {
             "com.apple.application"
         }
     }
+}
+
+struct KindArgument: ToolArgument {
+    static let name = "kind"
+    private static let acceptedKinds = Kind.allCases.map(\.rawValue)
+    static let schema: Value = .object([
+        "type": "string",
+        "enum": .array(acceptedKinds.map { .string($0) }),
+        "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
+    ])
+
+    enum Error: ToolFailure {
+        case unknown(String)
+        case wrongType(String)
+
+        var message: String {
+            switch self {
+            case .unknown(let value):
+                "unknown kind \(value); accepted kinds are: \(KindArgument.acceptedKinds.joined(separator: ","))"
+            case .wrongType(let value):
+                "wrong kind \(value); kind must be a string; accepted kinds are: \(KindArgument.acceptedKinds.joined(separator: ","))"
+            }
+        }
+    }
+
+    let kind: Kind
 
     init(_ argument: Value) throws(Error) {
         guard let value = argument.stringValue else {
@@ -84,6 +88,6 @@ enum Kind: String, CaseIterable, ToolArgument {
             throw .unknown(value)
         }
 
-        self = kind
+        self.kind = kind
     }
 }
