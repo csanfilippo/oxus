@@ -51,13 +51,14 @@ struct SearchCriteria {
         }
     }
 
+    // Never blank: the match-all query is a constant, and otherwise a name or a kind contributes a clause.
     var query: Query {
 
         guard !onlyFolder else {
-            return Query(#"kMDItemDisplayName == "*""#)
+            return try! Query(#"kMDItemDisplayName == "*""#)
         }
 
-        return Query(
+        return try! Query(
             [
                 nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.text))*"cd"# },
                 kind?.spotlightQuery,

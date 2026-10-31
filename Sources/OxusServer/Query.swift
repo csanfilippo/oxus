@@ -25,9 +25,17 @@
 import MCP
 
 public struct Query: Sendable {
+    public enum Error: Swift.Error {
+        case blank
+    }
+
     public let text: String
 
-    public init(_ text: String) {
+    public init(_ text: String) throws(Error) {
+        guard !text.isBlank else {
+            throw .blank
+        }
+
         self.text = text
     }
 }
@@ -42,6 +50,12 @@ struct QueryArgument: NonEmptyStringArgument {
     let query: Query
 
     init(_ argument: Value) throws(NonEmptyStringError) {
-        query = Query(try Self.nonEmptyValue(of: argument))
+        let text = try Self.stringValue(of: argument)
+
+        do {
+            query = try Query(text)
+        } catch {
+            throw .empty(argument: Self.name)
+        }
     }
 }

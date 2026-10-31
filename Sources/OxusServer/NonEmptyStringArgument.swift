@@ -42,9 +42,20 @@ enum NonEmptyStringError: ToolFailure {
 protocol NonEmptyStringArgument: ToolArgument {}
 
 extension NonEmptyStringArgument {
-    static func nonEmptyValue(of argument: Value) throws(NonEmptyStringError) -> String {
+    static func stringValue(of argument: Value) throws(NonEmptyStringError) -> String {
         guard let string = argument.stringValue else { throw .notAString(argument: name) }
-        guard string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else { throw .empty(argument: name) }
         return string
+    }
+
+    static func nonEmptyValue(of argument: Value) throws(NonEmptyStringError) -> String {
+        let string = try stringValue(of: argument)
+        guard !string.isBlank else { throw .empty(argument: name) }
+        return string
+    }
+}
+
+extension String {
+    var isBlank: Bool {
+        trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }

@@ -25,9 +25,17 @@
 import MCP
 
 struct NameContains {
+    enum Error: Swift.Error {
+        case blank
+    }
+
     let text: String
 
-    init(_ text: String) {
+    init(_ text: String) throws(Error) {
+        guard !text.isBlank else {
+            throw .blank
+        }
+
         self.text = text
     }
 }
@@ -42,6 +50,12 @@ struct NameContainsArgument: NonEmptyStringArgument {
     let nameContains: NameContains
 
     init(_ argument: Value) throws(NonEmptyStringError) {
-        nameContains = NameContains(try Self.nonEmptyValue(of: argument))
+        let text = try Self.stringValue(of: argument)
+
+        do {
+            nameContains = try NameContains(text)
+        } catch {
+            throw .empty(argument: Self.name)
+        }
     }
 }
