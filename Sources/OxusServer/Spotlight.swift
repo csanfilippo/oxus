@@ -28,6 +28,7 @@ public enum SpotlightError: Error, ToolFailure {
     case folderNotFound(path: String)
     case notAFolder(path: String)
     case packageFound(path: String)
+    case unreadable(path: String, reason: String)
 
     var message: String {
         return switch self {
@@ -41,6 +42,8 @@ public enum SpotlightError: Error, ToolFailure {
             "'\(path)' is a file. Search its parent folder instead"
         case .packageFound(let path):
             "'\(path)' is a package. Search elsewhere"
+        case .unreadable(let path, let reason):
+            "'\(path)' is not readable. Reason '\(reason)'"
         }
     }
 }

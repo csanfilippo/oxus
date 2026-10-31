@@ -55,6 +55,18 @@ final class PackagePathSpotlight: Sendable, Spotlight {
     }
 }
 
+final class UnreadablePathSpotlight: Sendable, Spotlight {
+    private let reason: String
+
+    init(reason: String) {
+        self.reason = reason
+    }
+
+    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
+        throw SpotlightError.unreadable(path: folder!.path, reason: reason)
+    }
+}
+
 final class SpySpotlight: Spotlight, @unchecked Sendable {
     private(set) var receivedQuery: String?
     private(set) var receivedLimit: Int?

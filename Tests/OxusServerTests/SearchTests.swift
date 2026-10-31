@@ -365,4 +365,17 @@ import Testing
         #expect(text.contains("is a package"))
         #expect(text.contains("Search elsewhere"))
     }
+
+    @Test func `A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives`() async throws
+    {
+        let client = try await connectedClient(spotlight: UnreadablePathSpotlight(reason: "Permission denied"))
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/Private"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("/Users/test/Private"))
+        #expect(text.contains("is not readable"))
+        #expect(text.contains("Permission denied"))
+    }
 }
