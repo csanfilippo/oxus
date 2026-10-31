@@ -41,7 +41,7 @@ import Testing
         (#"\""#, #"\\\""#),
     ])
     func `Quotes, backslashes and asterisks in the name are matched literally`(name: String, escapedName: String) throws {
-        let criteria = try SearchCriteria(nameContains: NameContains(.string(name)))
+        let criteria = try SearchCriteria(nameContains: NameContains(name))
 
         #expect(criteria.spotlightQuery == #"kMDItemDisplayName == "*\#(escapedName)*"cd"#)
     }

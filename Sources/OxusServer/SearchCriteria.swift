@@ -23,27 +23,13 @@
  */
 
 import Foundation
-import MCP
-
-struct NameContains: NonEmptyStringArgument {
-    static let name = "name_contains"
-    static let schema: Value = .object([
-        "type": "string",
-        "description": "Text the file's name must contain",
-    ])
-    let value: String
-
-    init(_ argument: Value) throws(NonEmptyStringError) {
-        value = try Self.nonEmptyValue(of: argument)
-    }
-}
 
 struct SearchCriteria {
     enum Error: ToolFailure {
         case noFilters
 
         var message: String {
-            "at least one of \(NameContains.name) or \(KindArgument.name) or \(FolderArgument.name) is required"
+            "at least one of \(NameContainsArgument.name) or \(KindArgument.name) or \(FolderArgument.name) is required"
         }
     }
 
@@ -72,7 +58,7 @@ struct SearchCriteria {
         }
 
         return [
-            nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.value))*"cd"# },
+            nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.text))*"cd"# },
             kind?.spotlightQuery,
         ]
         .compactMap { $0 }

@@ -19,17 +19,18 @@ let boxHeight: CGFloat = 78
 
 let toolArgument = Node(name: "ToolArgument", stereotype: "protocol", file: "ToolArgument.swift", center: .init(x: 560, y: 110), width: 220)
 let nonEmpty = Node(
-    name: "NonEmptyStringArgument", stereotype: "protocol", file: "NonEmptyStringArgument.swift", center: .init(x: 300, y: 270), width: 250)
+    name: "NonEmptyStringArgument", stereotype: "protocol", file: "NonEmptyStringArgument.swift", center: .init(x: 345, y: 270), width: 250)
 let limit = Node(name: "Limit", stereotype: "struct", file: "Limit.swift", center: .init(x: 640, y: 270), width: 170)
 let kindArgument = Node(name: "KindArgument", stereotype: "struct", file: "Kind.swift", center: .init(x: 840, y: 270), width: 170)
-let query = Node(name: "Query", stereotype: "struct", file: "Query.swift", center: .init(x: 120, y: 430), width: 170)
-let nameContains = Node(name: "NameContains", stereotype: "struct", file: "SearchCriteria.swift", center: .init(x: 300, y: 430), width: 170)
-let folderArgument = Node(name: "FolderArgument", stereotype: "struct", file: "Folder.swift", center: .init(x: 480, y: 430), width: 170)
+let query = Node(name: "Query", stereotype: "struct", file: "Query.swift", center: .init(x: 125, y: 430), width: 210)
+let nameContainsArgument = Node(
+    name: "NameContainsArgument", stereotype: "struct", file: "NameContains.swift", center: .init(x: 345, y: 430), width: 210)
+let folderArgument = Node(name: "FolderArgument", stereotype: "struct", file: "Folder.swift", center: .init(x: 565, y: 430), width: 210)
 
-let nodes = [toolArgument, nonEmpty, limit, kindArgument, query, nameContains, folderArgument]
+let nodes = [toolArgument, nonEmpty, limit, kindArgument, query, nameContainsArgument, folderArgument]
 let edges: [(parent: Node, children: [Node])] = [
     (toolArgument, [nonEmpty, limit, kindArgument]),
-    (nonEmpty, [query, nameContains, folderArgument]),
+    (nonEmpty, [query, nameContainsArgument, folderArgument]),
 ]
 
 let rep = NSBitmapImageRep(
