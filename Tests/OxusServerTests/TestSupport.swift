@@ -87,10 +87,10 @@ final class UnreadableFolderFileSystem: Sendable, FileSystem {
 }
 
 func connectedClient(
-    spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = ""
+    spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = "/"
 ) async throws -> Client {
     let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-    let server = await makeOxusServer(spotlight: spotlight, fileSystem: fileSystem, home: home)
+    let server = try await makeOxusServer(spotlight: spotlight, fileSystem: fileSystem, home: Folder(absolutePath: home))
     try await server.start(transport: serverTransport)
     let client = Client(name: "oxus-tests", version: "0")
     try await client.connect(transport: clientTransport)

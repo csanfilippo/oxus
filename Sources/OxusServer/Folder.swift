@@ -66,9 +66,9 @@ struct FolderArgument: NonEmptyStringArgument {
         path = try Self.nonEmptyValue(of: argument)
     }
 
-    func folder(home: String) throws(Error) -> Folder {
+    func folder(home: Folder) throws(Error) -> Folder {
         do {
-            return try Folder(absolutePath: isInHome ? home + path.dropFirst() : path)
+            return try Folder(absolutePath: isInHome ? home.path + path.dropFirst() : path)
         } catch {
             throw .unacceptedForm
         }

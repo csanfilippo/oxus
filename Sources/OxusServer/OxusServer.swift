@@ -25,7 +25,7 @@
 import Foundation
 import MCP
 
-public func makeOxusServer(spotlight: any Spotlight, fileSystem: any FileSystem, home: String) async -> Server {
+public func makeOxusServer(spotlight: any Spotlight, fileSystem: any FileSystem, home: Folder) async -> Server {
     let server = Server(
         name: "oxus",
         version: "0.1.0",

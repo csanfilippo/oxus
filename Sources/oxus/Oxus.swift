@@ -30,7 +30,8 @@ import OxusServer
 @main
 struct Oxus {
     static func main() async throws {
-        let server = await makeOxusServer(spotlight: CoreServicesSpotlight(), fileSystem: LocalFileSystem(), home: NSHomeDirectory())
+        let home = try Folder(absolutePath: NSHomeDirectory())
+        let server = await makeOxusServer(spotlight: CoreServicesSpotlight(), fileSystem: LocalFileSystem(), home: home)
         try await server.start(transport: StdioTransport())
         await server.waitUntilCompleted()
     }

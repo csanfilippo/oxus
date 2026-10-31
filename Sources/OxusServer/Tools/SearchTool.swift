@@ -45,7 +45,7 @@ struct SearchTool: OxusTool {
 
     let spotlight: any Spotlight
     let fileSystem: any FileSystem
-    let home: String
+    let home: Folder
 
     func call(with arguments: [String: Value]) async throws -> CallTool.Result {
         do {
