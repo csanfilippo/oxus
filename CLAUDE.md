@@ -32,10 +32,10 @@ To exercise the server by hand, run the built binary directly instead of `swift 
 ## Structure
 
 - `OxusServer` (library) builds the MCP `Server` through `makeOxusServer(spotlight:fileSystem:home:)`, registers the tool handlers, and defines the `Spotlight` and `FileSystem` ports. All behaviour lives here; it never imports CoreServices.
-- `CoreServicesAdapter` (library) implements `Spotlight` as `CoreServicesSpotlight` on `MDQuery`, and `FileSystem` as `LocalFileSystem` on `FileManager`. It depends on `OxusServer`, never the other way round, and never imports `MCP`.
+- `MacOSAdapters` (library) implements `Spotlight` as `CoreServicesSpotlight` on `MDQuery`, and `FileSystem` as `LocalFileSystem` on `FileManager`. It depends on `OxusServer`, never the other way round, and never imports `MCP`.
 - `oxus` (executable) is the composition root: it passes `CoreServicesSpotlight()`, `LocalFileSystem()` and the home folder to `makeOxusServer(spotlight:fileSystem:home:)` and connects the server to `StdioTransport`. Keep it a thin adapter.
 - `OxusServerTests` drives the server through the SDK's `InMemoryTransport` and `Client`, against `SpySpotlight` and fake `FileSystem`s. Tests exercise the protocol a real client sees, not handler internals.
-- `CoreServicesAdapterTests` tests `CoreServicesSpotlight` directly against real Spotlight, querying always-indexed system files (e.g. `Finder.app`), and `LocalFileSystem` against real folders. Every behaviour a test double assumes (such as `SpySpotlight` honouring `limit`, or each `FolderError` a fake `FileSystem` throws) needs a matching test here.
+- `MacOSAdaptersTests` tests `CoreServicesSpotlight` directly against real Spotlight, querying always-indexed system files (e.g. `Finder.app`), and `LocalFileSystem` against real folders. Every behaviour a test double assumes (such as `SpySpotlight` honouring `limit`, or each `FolderError` a fake `FileSystem` throws) needs a matching test here.
 - `AcceptanceTests` drives the server through an MCP `Client` wired to the real `CoreServicesSpotlight` and `LocalFileSystem`.
 - Stdout carries JSON-RPC only. Never `print` from the server; anything diagnostic goes to stderr.
 - Unknown tool names throw `MCPError.invalidParams`, which becomes a protocol error. Failures of a known tool are returned as a result with `isError: true`.

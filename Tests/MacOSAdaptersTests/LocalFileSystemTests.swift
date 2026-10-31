@@ -22,8 +22,8 @@
  SOFTWARE.
  */
 
-import CoreServicesAdapter
 import Foundation
+import MacOSAdapters
 import OxusServer
 import Testing
 

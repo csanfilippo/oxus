@@ -22,12 +22,12 @@
  SOFTWARE.
  */
 
-import CoreServicesAdapter
 import Foundation
+import MacOSAdapters
 import OxusServer
 import Testing
 
-@Suite struct CoreServicesAdapterTests {
+@Suite struct CoreServicesSpotlightTests {
     @Test func `Real Spotlight finds Finder.app by name`() async throws {
         let spotlight = CoreServicesSpotlight()
 

@@ -22,9 +22,9 @@
  SOFTWARE.
  */
 
-import CoreServicesAdapter
 import Foundation
 import MCP
+import MacOSAdapters
 import OxusServer
 import Testing
 

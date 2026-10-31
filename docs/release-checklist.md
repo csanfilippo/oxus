@@ -17,7 +17,7 @@ Steps to publish oxus as a public, installable MCP server.
 ## CI
 
 - [ ] GitHub Actions workflow running `swift test --skip AcceptanceTests` and `swift format lint`.
-  - Risk: `CoreServicesAdapterTests` hit real Spotlight, which may be disabled or unindexed on hosted runners; a hosted macOS 27 / Swift 6.4 image may not exist yet. Either skip that target in CI or use a self-hosted runner.
+  - Risk: `MacOSAdaptersTests` hit real Spotlight, which may be disabled or unindexed on hosted runners; a hosted macOS 27 / Swift 6.4 image may not exist yet. Either skip that target in CI or use a self-hosted runner.
 
 ## Distribution
 

@@ -4,25 +4,25 @@
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ApproachableConcurrency"),
+    .enableUpcomingFeature("ApproachableConcurrency")
 ]
 
 let package = Package(
     name: "oxus",
     platforms: [.macOS(.v27)],
     dependencies: [
-        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.12.1"),
+        .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.12.1")
     ],
     targets: [
         .target(
             name: "OxusServer",
             dependencies: [
-                .product(name: "MCP", package: "swift-sdk"),
+                .product(name: "MCP", package: "swift-sdk")
             ],
             swiftSettings: swiftSettings,
         ),
         .target(
-            name: "CoreServicesAdapter",
+            name: "MacOSAdapters",
             dependencies: [
                 "OxusServer"
             ],
@@ -32,7 +32,7 @@ let package = Package(
             name: "oxus",
             dependencies: [
                 "OxusServer",
-                "CoreServicesAdapter",
+                "MacOSAdapters",
                 .product(name: "MCP", package: "swift-sdk"),
             ],
             swiftSettings: swiftSettings,
@@ -46,9 +46,9 @@ let package = Package(
             swiftSettings: swiftSettings,
         ),
         .testTarget(
-            name: "CoreServicesAdapterTests",
+            name: "MacOSAdaptersTests",
             dependencies: [
-                "CoreServicesAdapter",
+                "MacOSAdapters",
                 "OxusServer",
             ],
             swiftSettings: swiftSettings,
@@ -56,11 +56,11 @@ let package = Package(
         .testTarget(
             name: "AcceptanceTests",
             dependencies: [
-                "CoreServicesAdapter",
+                "MacOSAdapters",
                 "OxusServer",
                 .product(name: "MCP", package: "swift-sdk"),
             ],
             swiftSettings: swiftSettings,
-        )
+        ),
     ]
 )
