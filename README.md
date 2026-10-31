@@ -71,15 +71,25 @@ mdfind 'kMDItemFSName == "Finder.app"'
 
 ### `search`
 
-Finds files by name, kind, or both, without Spotlight query syntax. At least one of `name_contains` and `kind` is required; when both are given, a file must match both.
+Finds files by name, kind, folder, or any combination of them, without Spotlight query syntax. At least one of `name_contains`, `kind` and `folder` is required; when several are given, a file must match all of them.
 
 | Argument | Type | Required | Description |
 |---|---|---|---|
 | `name_contains` | string | no | Text the file's name must contain, ignoring case and diacritics |
 | `kind` | string | no | One of `image`, `movie`, `audio`, `pdf`, `folder`, `application`; a kind includes its subtypes, e.g. `image` matches PNG, JPEG and HEIC |
+| `folder` | string | no | The folder to search, including its subfolders: an absolute path, `~` alone, or a path starting with `~/` |
 | `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
 
 The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
+
+A `folder` that cannot be searched returns an error result naming the expanded path and the fix, instead of an empty list:
+
+| `folder` | Error result |
+|---|---|
+| does not exist | asks to correct the path |
+| is a file | suggests searching its parent folder |
+| is a package, e.g. an `.app` bundle | suggests searching elsewhere, since Spotlight indexes nothing inside packages |
+| cannot be read | gives the reason macOS reports, e.g. `Permission denied` |
 
 ## Development
 
