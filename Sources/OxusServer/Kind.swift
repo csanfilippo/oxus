@@ -33,9 +33,10 @@ enum Kind: String, CaseIterable, ToolArgument {
     case application
 
     static let name = "kind"
+    private static let acceptedKinds = allCases.map(\.rawValue)
     static let schema: Value = .object([
         "type": "string",
-        "enum": .array(Kind.allCases.map { .string($0.rawValue) }),
+        "enum": .array(acceptedKinds.map { .string($0) }),
         "description": "The kind of file to find; a kind includes all its subtypes, e.g. image matches PNG, JPEG and HEIC",
     ])
 
@@ -46,9 +47,9 @@ enum Kind: String, CaseIterable, ToolArgument {
         var message: String {
             switch self {
             case .unknown(let value):
-                "unknown kind \(value); accepted kinds are: \(Kind.allCases.map(\.rawValue).joined(separator: ","))"
+                "unknown kind \(value); accepted kinds are: \(Kind.acceptedKinds.joined(separator: ","))"
             case .wrongType(let value):
-                "wrong kind \(value); kind must be a string; accepted kinds are: \(Kind.allCases.map(\.rawValue).joined(separator: ","))"
+                "wrong kind \(value); kind must be a string; accepted kinds are: \(Kind.acceptedKinds.joined(separator: ","))"
             }
         }
     }
