@@ -171,6 +171,23 @@ import Testing
 
     }
 
+    @Test func `a client searches /System/Applications/Calculator.app and receives an error result saying it is a package`() async throws {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["folder": "/System/Applications/Calculator.app"]
+                ))
+        ).value
+        let text = try #require(texts(in: result.content).first)
+
+        #expect(result.isError == true)
+        #expect(text.contains("/System/Applications/Calculator.app"))
+        #expect(text.contains("is a package"))
+    }
+
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = await makeOxusServer(spotlight: spotlight, home: "")
