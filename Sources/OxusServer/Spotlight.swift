@@ -37,5 +37,5 @@ public enum SpotlightError: Error, ToolFailure {
 }
 
 public protocol Spotlight: Sendable {
-    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String]
+    func search(query: String, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String]
 }

@@ -33,7 +33,7 @@ struct SearchTool: OxusTool {
             "type": "object",
             "properties": .object([
                 NameContainsArgument.name: NameContainsArgument.schema,
-                Limit.name: Limit.schema,
+                LimitArgument.name: LimitArgument.schema,
                 KindArgument.name: KindArgument.schema,
                 FolderArgument.name: FolderArgument.schema,
             ]),
@@ -55,11 +55,11 @@ struct SearchTool: OxusTool {
                 kind: arguments.optional(KindArgument.self)?.kind,
                 folder: folder
             )
-            let limit = try arguments.optional(Limit.self) ?? .default
+            let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
             if let folder {
                 try fileSystem.checkSearchable(folder)
             }
-            let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit.value, folder: criteria.folder)
+            let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit, folder: criteria.folder)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult

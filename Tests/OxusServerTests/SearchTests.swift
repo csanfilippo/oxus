@@ -132,7 +132,7 @@ import Testing
 
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
 
-        #expect(spy.receivedLimit == 25)
+        #expect(spy.receivedLimit?.value == 25)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }
 
@@ -142,7 +142,7 @@ import Testing
 
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["kind": "image"]))).value
 
-        #expect(spy.receivedLimit == 25)
+        #expect(spy.receivedLimit?.value == 25)
         #expect(spy.receivedQuery == #"kMDItemContentTypeTree == "public.image""#)
         #expect(result.structuredContent == ["paths": ["/a", "/b"]])
     }

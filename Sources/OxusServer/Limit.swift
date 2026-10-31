@@ -24,20 +24,38 @@
 
 import MCP
 
-struct Limit: ToolArgument {
+public struct Limit: Sendable {
+    public enum Error: Swift.Error {
+        case belowMinimum
+    }
 
+    static let minimum = 1
+    static let maximum = 100
+    static let `default` = Limit(value: 25)
+
+    public let value: Int
+
+    private init(value: Int) {
+        self.value = value
+    }
+
+    public init(_ requested: Int) throws(Error) {
+        guard requested >= Self.minimum else {
+            throw .belowMinimum
+        }
+
+        self.value = min(requested, Self.maximum)
+    }
+}
+
+struct LimitArgument: ToolArgument {
     static let name = "limit"
-
     static let schema: Value = .object([
         "type": "integer",
         "maximum": .int(Limit.maximum),
         "minimum": .int(Limit.minimum),
         "description": "The maximum number of paths to return",
     ])
-
-    static let minimum = 1
-    static let maximum = 100
-    static let `default` = Limit(value: 25)
 
     enum Error: ToolFailure {
         case notAnInteger
@@ -53,21 +71,17 @@ struct Limit: ToolArgument {
         }
     }
 
-    let value: Int
-
-    private init(value: Int) {
-        self.value = value
-    }
+    let limit: Limit
 
     init(_ argument: Value) throws(Error) {
         guard let intValue = argument.intValue else {
             throw .notAnInteger
         }
 
-        guard intValue >= Self.minimum else {
+        do {
+            limit = try Limit(intValue)
+        } catch {
             throw .belowMinimum(received: intValue)
         }
-
-        self.value = min(intValue, Self.maximum)
     }
 }

@@ -31,7 +31,7 @@ import Testing
     @Test func `Real Spotlight finds Finder.app by name`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(query: #"kMDItemFSName == "Finder.app""#, limit: 10, folder: nil)
+        let paths = try await spotlight.search(query: #"kMDItemFSName == "Finder.app""#, limit: Limit(10), folder: nil)
 
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
     }
@@ -39,7 +39,8 @@ import Testing
     @Test func `Real Spotlight returns at most the requested number of paths`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(query: #"kMDItemContentType == "com.apple.application-bundle""#, limit: 2, folder: nil)
+        let paths = try await spotlight.search(
+            query: #"kMDItemContentType == "com.apple.application-bundle""#, limit: Limit(2), folder: nil)
 
         #expect(paths.count == 2)
     }
@@ -48,7 +49,7 @@ import Testing
         let spotlight = CoreServicesSpotlight()
 
         let error = try await #require(throws: SpotlightError.self) {
-            try await spotlight.search(query: "kMDItemFSName ==", limit: 2, folder: nil)
+            try await spotlight.search(query: "kMDItemFSName ==", limit: Limit(2), folder: nil)
         }
         guard case .malformedQuery(let query) = error else {
             Issue.record("expected malformedQuery, got \(error)")
@@ -61,7 +62,7 @@ import Testing
         let spotlight = CoreServicesSpotlight()
         let nonexistentFileName = UUID().uuidString
 
-        let paths = try await spotlight.search(query: #"kMDItemFSName == "\#(nonexistentFileName)""#, limit: 2, folder: nil)
+        let paths = try await spotlight.search(query: #"kMDItemFSName == "\#(nonexistentFileName)""#, limit: Limit(2), folder: nil)
 
         #expect(paths.isEmpty)
     }
@@ -71,7 +72,7 @@ import Testing
 
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Terminal.app""#,
-            limit: 10,
+            limit: Limit(10),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
@@ -83,7 +84,7 @@ import Testing
 
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Finder.app""#,
-            limit: 10,
+            limit: Limit(10),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
@@ -95,7 +96,7 @@ import Testing
 
         let paths = try await spotlight.search(
             query: #"kMDItemFSName == "Utilities""#,
-            limit: 10,
+            limit: Limit(10),
             folder: Folder(absolutePath: "/Applications/Utilities")
         )
 
@@ -109,7 +110,7 @@ import Testing
 
         let paths = try await spotlight.search(
             query: #"kMDItemDisplayName == "*""#,
-            limit: 100,
+            limit: Limit(100),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
@@ -126,10 +127,10 @@ import Testing
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Utilities")
 
         let pathsThroughLink = try await spotlight.search(
-            query: #"kMDItemDisplayName == "*""#, limit: 100, folder: Folder(absolutePath: link))
+            query: #"kMDItemDisplayName == "*""#, limit: Limit(100), folder: Folder(absolutePath: link))
         let paths = try await spotlight.search(
             query: #"kMDItemDisplayName == "*""#,
-            limit: 100,
+            limit: Limit(100),
             folder: Folder(absolutePath: "/System/Applications/Utilities")
         )
 
