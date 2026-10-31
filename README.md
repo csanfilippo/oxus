@@ -99,11 +99,11 @@ swift test
 
 | Target | Role |
 |---|---|
-| `OxusServer` | Builds the MCP server and defines the `Spotlight` port |
-| `CoreServicesAdapter` | Implements the port on CoreServices (`MDQuery`) |
-| `oxus` | Executable; wires the adapter into the server over stdio |
-| `OxusServerTests` | Protocol tests through an MCP client, against a fake Spotlight |
-| `CoreServicesAdapterTests` | Adapter tests against real Spotlight |
+| `OxusServer` | Builds the MCP server and defines the `Spotlight` and `FileSystem` ports |
+| `CoreServicesAdapter` | Implements `Spotlight` on CoreServices (`MDQuery`) and `FileSystem` on `FileManager` |
+| `oxus` | Executable; wires the adapters into the server over stdio |
+| `OxusServerTests` | Protocol tests through an MCP client, against a fake Spotlight and fake file systems |
+| `CoreServicesAdapterTests` | Adapter tests against real Spotlight and real folders |
 | `AcceptanceTests` | End-to-end tests through an MCP client, against real Spotlight |
 
 Work is planned in increments: each one is described in [`docs/increments`](docs/increments) and its TDD test list lives in [`docs/tests`](docs/tests).

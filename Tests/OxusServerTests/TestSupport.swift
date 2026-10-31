@@ -37,36 +37,6 @@ final class FailingExecutionSpotlight: Sendable, Spotlight {
     }
 }
 
-final class FolderNotFoundSpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.folderNotFound(path: folder!.path)
-    }
-}
-
-final class NotAFolderSpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.notAFolder(path: folder!.path)
-    }
-}
-
-final class PackagePathSpotlight: Sendable, Spotlight {
-    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.packageFound(path: folder!.path)
-    }
-}
-
-final class UnreadablePathSpotlight: Sendable, Spotlight {
-    private let reason: String
-
-    init(reason: String) {
-        self.reason = reason
-    }
-
-    func search(query: String, limit: Int, folder: Folder?) async throws(SpotlightError) -> [String] {
-        throw SpotlightError.unreadable(path: folder!.path, reason: reason)
-    }
-}
-
 final class SpySpotlight: Spotlight, @unchecked Sendable {
     private(set) var receivedQuery: String?
     private(set) var receivedLimit: Int?
@@ -82,9 +52,45 @@ final class SpySpotlight: Spotlight, @unchecked Sendable {
     }
 }
 
-func connectedClient(spotlight: any Spotlight = SpySpotlight(), home: String = "") async throws -> Client {
+final class SearchableFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {}
+}
+
+final class FolderNotFoundFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.notFound(path: folder.path)
+    }
+}
+
+final class NotAFolderFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.notAFolder(path: folder.path)
+    }
+}
+
+final class PackageFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.package(path: folder.path)
+    }
+}
+
+final class UnreadableFolderFileSystem: Sendable, FileSystem {
+    private let reason: String
+
+    init(reason: String) {
+        self.reason = reason
+    }
+
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.unreadable(path: folder.path, reason: reason)
+    }
+}
+
+func connectedClient(
+    spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = ""
+) async throws -> Client {
     let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
-    let server = await makeOxusServer(spotlight: spotlight, home: home)
+    let server = await makeOxusServer(spotlight: spotlight, fileSystem: fileSystem, home: home)
     try await server.start(transport: serverTransport)
     let client = Client(name: "oxus-tests", version: "0")
     try await client.connect(transport: clientTransport)

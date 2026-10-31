@@ -44,6 +44,7 @@ struct SearchTool: OxusTool {
     )
 
     let spotlight: any Spotlight
+    let fileSystem: any FileSystem
     let home: String
 
     func call(with arguments: [String: Value]) async throws -> CallTool.Result {
@@ -55,6 +56,9 @@ struct SearchTool: OxusTool {
                 folder: folder
             )
             let limit = try arguments.optional(Limit.self) ?? .default
+            if let folder {
+                try fileSystem.checkSearchable(folder)
+            }
             let paths = try await spotlight.search(query: criteria.spotlightQuery, limit: limit.value, folder: criteria.folder)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {

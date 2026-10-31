@@ -35,7 +35,9 @@ public struct CoreServicesSpotlight: Spotlight {
 
         MDQuerySetMaxCount(spotlightQuery, limit)
 
-        try setSearchScopeOf(query: spotlightQuery, with: folder)
+        if let folder {
+            MDQuerySetSearchScope(spotlightQuery, [folder.path] as CFArray, 0)
+        }
 
         guard MDQueryExecute(spotlightQuery, CFOptionFlags(kMDQuerySynchronous.rawValue)) else {
             throw .executionFailed(query: query)
@@ -48,46 +50,4 @@ public struct CoreServicesSpotlight: Spotlight {
     }
 
     public init() {}
-
-    private func setSearchScopeOf(query: MDQuery, with folder: Folder?) throws(SpotlightError) {
-        guard let folder else {
-            return
-        }
-
-        try throwIfNotAReadableFolder(folder)
-
-        try throwIfPackage(folder)
-
-        MDQuerySetSearchScope(query, [folder.path] as CFArray, 0)
-    }
-
-    private func throwIfNotAReadableFolder(_ folder: Folder) throws(SpotlightError) {
-        do {
-            _ = try FileManager.default.contentsOfDirectory(atPath: folder.path)
-        } catch let error as CocoaError {
-
-            let posixError = error.underlying as? POSIXError
-            let posixErrorCode = posixError?.code
-            switch (error.code, posixErrorCode) {
-            case (.fileReadNoSuchFile, _):
-                throw .folderNotFound(path: folder.path)
-            case (_, .ENOTDIR):
-                throw .notAFolder(path: folder.path)
-            case (.fileReadNoPermission, let errorCode?):
-                throw .unreadable(path: folder.path, reason: String(cString: strerror(errorCode.rawValue)))
-            default:
-                break
-            }
-        } catch {}
-    }
-
-    private func throwIfPackage(_ folder: Folder) throws(SpotlightError) {
-        let resourceValues = try? URL(filePath: folder.path).resolvingSymlinksInPath().resourceValues(forKeys: [.isPackageKey])
-
-        guard resourceValues?.isPackage == true else {
-            return
-        }
-
-        throw SpotlightError.packageFound(path: folder.path)
-    }
 }

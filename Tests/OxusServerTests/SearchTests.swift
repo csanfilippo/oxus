@@ -320,10 +320,10 @@ import Testing
 
     @Test
     func
-        `A folder Spotlight reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path`()
+        `A folder the file system reports as not found returns an error result naming the path, saying it does not exist, and asking to correct the path`()
         async throws
     {
-        let client = try await connectedClient(spotlight: FolderNotFoundSpotlight())
+        let client = try await connectedClient(fileSystem: FolderNotFoundFileSystem())
 
         let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/Dowloads"])
         let text = try #require(texts(in: content).first)
@@ -336,10 +336,10 @@ import Testing
 
     @Test
     func
-        `A folder Spotlight reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder`()
+        `A folder the file system reports as not a folder returns an error result naming the path, saying it is a file, and suggesting its parent folder`()
         async throws
     {
-        let client = try await connectedClient(spotlight: NotAFolderSpotlight())
+        let client = try await connectedClient(fileSystem: NotAFolderFileSystem())
 
         let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/report.pdf"])
         let text = try #require(texts(in: content).first)
@@ -352,10 +352,10 @@ import Testing
 
     @Test
     func
-        `A folder Spotlight reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere`()
+        `A folder the file system reports as a package returns an error result naming the path, saying it is a package, and suggesting to search elsewhere`()
         async throws
     {
-        let client = try await connectedClient(spotlight: PackagePathSpotlight())
+        let client = try await connectedClient(fileSystem: PackageFileSystem())
 
         let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/System/Applications/Calculator.app"])
         let text = try #require(texts(in: content).first)
@@ -366,9 +366,10 @@ import Testing
         #expect(text.contains("Search elsewhere"))
     }
 
-    @Test func `A folder Spotlight reports as unreadable returns an error result naming the path and the reason macOS gives`() async throws
+    @Test func `A folder the file system reports as unreadable returns an error result naming the path and the reason macOS gives`()
+        async throws
     {
-        let client = try await connectedClient(spotlight: UnreadablePathSpotlight(reason: "Permission denied"))
+        let client = try await connectedClient(fileSystem: UnreadableFolderFileSystem(reason: "Permission denied"))
 
         let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/Private"])
         let text = try #require(texts(in: content).first)
