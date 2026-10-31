@@ -34,12 +34,13 @@ public struct Folder: Sendable {
 
 struct FolderArgument: NonEmptyStringArgument {
     static let name = "folder"
+    static let acceptedForms = "an absolute path, ~ alone, or a path starting with ~/"
 
     enum Error: ToolFailure {
         case unacceptedForm
 
         var message: String {
-            "folder must be an absolute path, ~ alone, or a path starting with ~/"
+            "\(FolderArgument.name) must be \(FolderArgument.acceptedForms)"
         }
     }
 
