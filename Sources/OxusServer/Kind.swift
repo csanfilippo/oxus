@@ -76,15 +76,14 @@ enum Kind: String, CaseIterable, ToolArgument {
     }
 
     init(_ argument: Value) throws(Error) {
-        if let stringValue = argument.stringValue {
-            try self.init(parsing: stringValue)
-        } else {
+        guard let value = argument.stringValue else {
             throw .wrongType(String(describing: argument))
         }
-    }
 
-    init(parsing value: String) throws(Error) {
-        guard let kind = Kind(rawValue: value) else { throw .unknown(value) }
+        guard let kind = Kind(rawValue: value) else {
+            throw .unknown(value)
+        }
+
         self = kind
     }
 }
