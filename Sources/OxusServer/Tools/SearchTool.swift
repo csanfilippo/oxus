@@ -56,7 +56,7 @@ struct SearchTool: OxusTool {
                 folder: folder
             )
             let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
-            if let folder {
+            if let folder = criteria.folder {
                 try fileSystem.checkSearchable(folder)
             }
             let paths = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
