@@ -15,7 +15,7 @@
 - [x] Acceptance test: a client searches a chmod 000 folder and receives an error result naming the path and saying it lacks read permission
 - [x] A folder denied by file permissions returns an error result naming the path and saying it lacks read permission
 - [x] ~/Downloads, ~/Documents or ~/Desktop denied by privacy protection returns an error result naming the path and the Files and Folders setting for that folder, granted to oxus if listed, otherwise to the app that launched oxus
-- [ ] A folder inside ~/Downloads denied by privacy protection returns an error result naming the scope path and the Files and Folders › Downloads setting
+- [x] A folder inside ~/Downloads denied by privacy protection returns an error result naming the scope path and the Files and Folders › Downloads setting
 - [ ] A folder outside the three protected folders denied by privacy protection returns an error result naming the path and the generic Privacy & Security fix, with no folder setting
 - [ ] A folder whose name starts with Downloads but sits beside it (~/Downloads Archive) denied by privacy protection gets the generic fix
 - [x] Adapter: a chmod 000 folder is reported as denied by file permissions, with its path
