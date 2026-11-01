@@ -392,4 +392,22 @@ import Testing
         #expect(text.contains("/Users/test/Private"))
         #expect(text.contains("lacks read permission"))
     }
+
+    @Test(arguments: ["Downloads", "Documents", "Desktop"])
+    func
+        `A protected folder denied by privacy protection returns an error result naming the path and the Files and Folders setting for that folder, granted to oxus if listed, otherwise to the app that launched oxus`(
+            protectedFolder: String
+        )
+        async throws
+    {
+        let client = try await connectedClient(fileSystem: PrivacyProtectionDeniedFileSystem(), home: "/Users/test")
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": .string("~/\(protectedFolder)")])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("'/Users/test/\(protectedFolder)'"))
+        #expect(text.contains("System Settings › Privacy & Security › Files and Folders › \(protectedFolder)"))
+        #expect(text.contains("oxus if it is listed there, otherwise the app that launched oxus"))
+    }
 }

@@ -57,12 +57,26 @@ struct SearchTool: OxusTool {
             )
             let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
             if let folder = criteria.folder {
-                try fileSystem.checkSearchable(folder)
+                try checkSearchable(folder)
             }
             let paths = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
             return try OxusResponse(paths: paths).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
+        }
+    }
+
+    private func checkSearchable(_ folder: Folder) throws {
+        do {
+            try fileSystem.checkSearchable(folder)
+        } catch {
+            guard case .deniedByPrivacyProtection(let path) = error,
+                let protectedFolder = ProtectedFolder(containing: folder, home: home)
+            else {
+                throw error
+            }
+
+            throw ProtectedFolderDenial(path: path, protectedFolder: protectedFolder)
         }
     }
 }

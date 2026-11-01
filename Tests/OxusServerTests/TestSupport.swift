@@ -92,6 +92,12 @@ final class FilePermissionsDeniedFileSystem: Sendable, FileSystem {
     }
 }
 
+final class PrivacyProtectionDeniedFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.deniedByPrivacyProtection(path: folder.path)
+    }
+}
+
 func connectedClient(
     spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = "/"
 ) async throws -> Client {

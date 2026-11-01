@@ -26,6 +26,7 @@ public enum FolderError: Error, ToolFailure {
     case notFound(path: String)
     case notAFolder(path: String)
     case package(path: String)
+    case deniedByPrivacyProtection(path: String)
     case deniedByFilePermissions(path: String)
     case unreadable(path: String, reason: String)
 
@@ -37,6 +38,8 @@ public enum FolderError: Error, ToolFailure {
             "'\(path)' is a file. Search its parent folder instead"
         case .package(let path):
             "'\(path)' is a package. Search elsewhere"
+        case .deniedByPrivacyProtection(let path):
+            "'\(path)' is denied by macOS privacy protection. Allow access in System Settings › Privacy & Security, for \(privacyProtectionGrantee)"
         case .deniedByFilePermissions(let path):
             "'\(path)' lacks read permission. Grant your user read permission on it"
         case .unreadable(let path, let reason):
