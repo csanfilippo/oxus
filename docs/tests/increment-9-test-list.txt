@@ -12,14 +12,14 @@
 - Tests cannot make TCC deny a folder: server tests use a fake file system, and the real denial is checked by hand for both tools
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client runs spotlight_query for Finder.app with a temporary home whose protected folders are readable and receives Finder's path without unreadableFolders
-- [ ] Acceptance test: a client searches for "finde" without a folder, with a temporary home whose protected folders are readable, and receives Finder's path without unreadableFolders
-- [ ] An unscoped search with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix
-- [ ] An unscoped search with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting
-- [ ] spotlight_query with ~/Desktop denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Desktop path and the Files and Folders › Desktop fix
-- [ ] spotlight_query with all three protected folders readable returns no unreadableFolders key
-- [ ] For spotlight_query and an unscoped search, a protected folder that is missing, lacks read permission or fails with another reason adds no entry
-- [ ] spotlight_query and an unscoped search probe the protected folders before Spotlight runs the query
-- [ ] A spotlight_query or search with a rejected argument returns its error and probes no protected folder
-- [ ] spotlight_query returns a single text block that decodes to its structured content, including unreadableFolders
-- [ ] Manual: with Downloads denied to oxus, Claude Desktop's unscoped search and spotlight_query for documento2 each return unreadableFolders naming the Downloads path and Files and Folders › Downloads; results recorded in the increment doc
+- [x] Acceptance test: a client runs spotlight_query for Finder.app with a temporary home whose protected folders are readable and receives Finder's path without unreadableFolders
+- [x] Acceptance test: a client searches for "finde" without a folder, with a temporary home whose protected folders are readable, and receives Finder's path without unreadableFolders
+- [x] An unscoped search with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix
+- [x] An unscoped search with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting
+- [x] spotlight_query with ~/Desktop denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Desktop path and the Files and Folders › Desktop fix
+- [x] spotlight_query with all three protected folders readable returns no unreadableFolders key
+- [x] For spotlight_query and an unscoped search, a protected folder that is missing, lacks read permission or fails with another reason adds no entry
+- [x] spotlight_query and an unscoped search probe the protected folders before Spotlight runs the query
+- [x] A spotlight_query or search with a rejected argument returns its error and probes no protected folder
+- [x] spotlight_query returns a single text block that decodes to its structured content, including unreadableFolders
+- [x] Manual: with Downloads denied to oxus, Claude Desktop's unscoped search and spotlight_query for documento2 each return unreadableFolders naming the Downloads path and Files and Folders › Downloads; results recorded in the increment doc
