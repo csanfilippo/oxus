@@ -68,6 +68,8 @@ extension FolderError {
             self = .notFound(path: path)
         case (_, .ENOTDIR?):
             self = .notAFolder(path: path)
+        case (_, .EPERM?):
+            self = .deniedByPrivacyProtection(path: path)
         case (_, .EACCES?):
             self = .deniedByFilePermissions(path: path)
         case (_, let errorCode?):

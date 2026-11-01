@@ -114,6 +114,19 @@ import Testing
         #expect(path == folder.path())
     }
 
+    @Test func `a read failure wrapping POSIX EPERM is reported as denied by privacy protection, with its path`() {
+        let failure = CocoaError(.fileReadNoPermission, userInfo: [NSUnderlyingErrorKey: POSIXError(.EPERM)])
+
+        let error = FolderError(readFailure: failure, path: "/Users/test/Downloads")
+
+        guard case .deniedByPrivacyProtection(let path) = error else {
+            Issue.record("expected .deniedByPrivacyProtection, got \(error)")
+            return
+        }
+
+        #expect(path == "/Users/test/Downloads")
+    }
+
     @Test func `a read failure macOS explains with a POSIX error is reported as unreadable, with that error's description`() {
         let failure = CocoaError(.fileReadUnknown, userInfo: [NSUnderlyingErrorKey: POSIXError(.EIO)])
 
