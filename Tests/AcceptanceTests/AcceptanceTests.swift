@@ -188,6 +188,29 @@ import Testing
         #expect(text.contains("is a package"))
     }
 
+    @Test func `a client searches a chmod 000 folder and receives an error result naming the path and saying it lacks read permission`()
+        async throws
+    {
+        let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try FileManager.default.setAttributes([.posixPermissions: 0o000], ofItemAtPath: folder.path())
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["folder": .string(folder.path())]
+                ))
+        ).value
+        let text = try #require(texts(in: result.content).first)
+
+        #expect(result.isError == true)
+        #expect(text.contains(folder.path()))
+        #expect(text.contains("lacks read permission"))
+    }
+
     private func connectedClient(spotlight: any Spotlight) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = try await makeOxusServer(
