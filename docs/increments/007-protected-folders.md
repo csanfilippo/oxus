@@ -1,6 +1,6 @@
 # Increment 7 — Protected folders
 
-**Status:** Draft (2026-10-25)
+**Status:** In progress (2026-11-01): every automated test passes; the manual check with Downloads denied to oxus in Claude Desktop remains.
 
 ## Goal
 

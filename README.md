@@ -89,7 +89,9 @@ A `folder` that cannot be searched returns an error result naming the expanded p
 | does not exist | asks to correct the path |
 | is a file | suggests searching its parent folder |
 | is a package, e.g. an `.app` bundle | suggests searching elsewhere, since Spotlight indexes nothing inside packages |
-| cannot be read | gives the reason macOS reports, e.g. `Permission denied` |
+| is denied by macOS privacy protection | names the setting to change: System Settings › Privacy & Security › Files and Folders › Downloads, Documents or Desktop when the folder is in one of them, otherwise Privacy & Security; granted to `oxus` if it is listed there, otherwise to the app that launched oxus |
+| lacks read permission | asks to grant your user read permission on it |
+| cannot be read for another reason | gives the reason macOS reports, e.g. `Input/output error` |
 
 ## Development
 
