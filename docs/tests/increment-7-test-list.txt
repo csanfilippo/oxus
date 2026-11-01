@@ -1,0 +1,24 @@
+# Increment 7: protected folders - Test List
+
+## Specifications
+- Tool: `search` with a `folder`; `spotlight_query` and unscoped searches are unaffected
+- Replaces increment 6's single "cannot read" error with two errors for a denied scope folder; not found, is a file, and package errors unchanged
+- Denied by macOS privacy protection (TCC, POSIX `EPERM`): names the path and the fix: System Settings › Privacy & Security › Files and Folders › <folder>, granted to `oxus` if it is listed there, otherwise to the app that launched oxus
+- <folder> is the protected folder containing the scope: Downloads for `~/Downloads` and anything inside it, likewise Documents and Desktop
+- Denied by TCC outside `~/Downloads`, `~/Documents` and `~/Desktop`: names the path and a generic fix: System Settings › Privacy & Security, granted to `oxus` or the app that launched it, no folder setting named
+- Denied by file permissions (POSIX `EACCES`): names the path and the missing read permission
+- Any other read failure (e.g. `EIO`) keeps increment 6's error: the path and the reason macOS gives
+- Paths named are the expanded paths, e.g. `/Users/me/Downloads` for `~/Downloads`; "inside" means inside the folder, not sharing its name prefix (`~/Downloads Archive` is outside `~/Downloads`)
+- Adapter tests cannot make TCC deny a folder: the EPERM mapping is tested on a constructed error, and the real denial is checked by hand
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches a chmod 000 folder and receives an error result naming the path and saying it lacks read permission
+- [ ] A folder denied by file permissions returns an error result naming the path and saying it lacks read permission
+- [ ] ~/Downloads, ~/Documents or ~/Desktop denied by privacy protection returns an error result naming the path and the Files and Folders setting for that folder, granted to oxus if listed, otherwise to the app that launched oxus
+- [ ] A folder inside ~/Downloads denied by privacy protection returns an error result naming the scope path and the Files and Folders › Downloads setting
+- [ ] A folder outside the three protected folders denied by privacy protection returns an error result naming the path and the generic Privacy & Security fix, with no folder setting
+- [ ] A folder whose name starts with Downloads but sits beside it (~/Downloads Archive) denied by privacy protection gets the generic fix
+- [ ] Adapter: a chmod 000 folder is reported as denied by file permissions, with its path
+- [ ] Adapter: a read failure wrapping POSIX EPERM is reported as denied by privacy protection, with its path
+- [ ] Adapter: a read failure wrapping another POSIX error (EIO) is reported as unreadable, with its path and the reason Input/output error
+- [ ] Manual: with Downloads denied to oxus, Claude Desktop's search scoped to ~/Downloads returns the error naming Files and Folders › Downloads and oxus; result recorded in the increment doc
