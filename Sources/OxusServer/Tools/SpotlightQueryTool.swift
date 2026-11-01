@@ -26,6 +26,7 @@ import MCP
 
 struct SpotlightQueryTool: OxusTool {
     let spotlight: any Spotlight
+    let privacyProtectionProbe: PrivacyProtectionProbe
 
     let definition: Tool = Tool(
         name: "spotlight_query",
@@ -47,8 +48,9 @@ struct SpotlightQueryTool: OxusTool {
         do {
             let query = try arguments.required(QueryArgument.self).query
             let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
+            let unreadableFolders = privacyProtectionProbe.unreadableFolders(in: nil)
             let paths = try await spotlight.search(query: query, limit: limit, folder: nil)
-            return try OxusResponse(paths: paths).asResult
+            return try OxusResponse(paths: paths, unreadableFolders: unreadableFolders).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
         }

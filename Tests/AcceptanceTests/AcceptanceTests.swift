@@ -237,7 +237,58 @@ import Testing
         #expect(structuredContent["unreadableFolders"] == nil)
     }
 
-    private func connectedClient(spotlight: any Spotlight, home: String = NSHomeDirectory()) async throws -> Client {
+    @Test
+    func
+        `a client runs spotlight_query for Finder.app with a temporary home whose protected folders are readable and receives Finder's path without unreadableFolders`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "spotlight_query",
+                    arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+                ))
+        ).value
+        let structuredContent = try #require(result.structuredContent?.objectValue)
+
+        #expect(result.isError != true)
+        #expect(structuredContent["paths"]?.arrayValue?.contains("/System/Library/CoreServices/Finder.app") == true)
+        #expect(structuredContent["unreadableFolders"] == nil)
+    }
+
+    @Test
+    func
+        `a client searches for "finde" without a folder, with a temporary home whose protected folders are readable, and receives Finder's path without unreadableFolders`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["name_contains": "finde"]
+                ))
+        ).value
+        let structuredContent = try #require(result.structuredContent?.objectValue)
+
+        #expect(result.isError != true)
+        #expect(structuredContent["paths"]?.arrayValue?.contains("/System/Library/CoreServices/Finder.app") == true)
+        #expect(structuredContent["unreadableFolders"] == nil)
+    }
+
+    // Unscoped calls probe the home's protected folders; the real home would make runs prompt and depend on its privacy settings.
+    private static let home: String = {
+        let home = FileManager.default.temporaryDirectory.appending(path: "oxus-acceptance-home")
+        for protectedFolder in ["Downloads", "Documents", "Desktop"] {
+            try! FileManager.default.createDirectory(at: home.appending(path: protectedFolder), withIntermediateDirectories: true)
+        }
+        return home.path(percentEncoded: false)
+    }()
+
+    private func connectedClient(spotlight: any Spotlight, home: String = Self.home) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = try await makeOxusServer(
             spotlight: spotlight, fileSystem: LocalFileSystem(), home: Folder(absolutePath: home))

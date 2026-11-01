@@ -31,8 +31,10 @@ public func makeOxusServer(spotlight: any Spotlight, fileSystem: any FileSystem,
         capabilities: .init(tools: .init())
     )
 
+    let privacyProtectionProbe = PrivacyProtectionProbe(fileSystem: fileSystem, home: home)
     let tools: [any OxusTool] = [
-        SpotlightQueryTool(spotlight: spotlight), SearchTool(spotlight: spotlight, fileSystem: fileSystem, home: home),
+        SpotlightQueryTool(spotlight: spotlight, privacyProtectionProbe: privacyProtectionProbe),
+        SearchTool(spotlight: spotlight, fileSystem: fileSystem, home: home, privacyProtectionProbe: privacyProtectionProbe),
     ]
 
     await server.withMethodHandler(ListTools.self) { _ in

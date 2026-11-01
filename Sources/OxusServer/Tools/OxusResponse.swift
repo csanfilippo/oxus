@@ -54,7 +54,7 @@ struct OxusResponse: Codable {
                     "properties": .object([
                         "path": .object([
                             "type": "string",
-                            "description": "Path of a protected folder inside the searched folder that oxus cannot read",
+                            "description": "Path of a protected folder that oxus cannot read",
                         ]),
                         "fix": .object([
                             "type": "string",

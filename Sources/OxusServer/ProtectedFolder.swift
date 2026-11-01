@@ -70,3 +70,31 @@ struct ProtectedFolderDenial: ToolFailure {
         "'\(path)' is denied by macOS privacy protection. \(protectedFolder.fix)"
     }
 }
+
+struct PrivacyProtectionProbe {
+    let fileSystem: any FileSystem
+    let home: Folder
+
+    // Spotlight silently drops the files of a protected folder that privacy protection denies, so each one in the scope is probed.
+    // No scope means the whole index, which contains every protected folder.
+    func unreadableFolders(in scope: Folder?) -> [UnreadableFolder] {
+        let protectedFolders = scope.map { ProtectedFolder.inside($0, home: home) } ?? ProtectedFolder.allCases
+        return protectedFolders.compactMap { protectedFolder in
+            let folder = protectedFolder.folder(home: home)
+            return isDeniedByPrivacyProtection(folder) ? UnreadableFolder(path: folder.path, fix: protectedFolder.fix) : nil
+        }
+    }
+
+    private func isDeniedByPrivacyProtection(_ folder: Folder) -> Bool {
+        do {
+            try fileSystem.checkSearchable(folder)
+            return false
+        } catch {
+            guard case .deniedByPrivacyProtection = error else {
+                return false
+            }
+
+            return true
+        }
+    }
+}

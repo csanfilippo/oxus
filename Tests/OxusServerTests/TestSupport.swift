@@ -124,6 +124,25 @@ final class CheckedPathsRecordingSpotlight: Spotlight, @unchecked Sendable {
     }
 }
 
+enum UnscopedCall: CaseIterable {
+    case spotlightQuery
+    case search
+
+    var request: CallTool.Parameters {
+        switch self {
+        case .spotlightQuery: .init(name: "spotlight_query", arguments: ["query": "test"])
+        case .search: .init(name: "search", arguments: ["name_contains": "test"])
+        }
+    }
+
+    var rejectedRequest: CallTool.Parameters {
+        switch self {
+        case .spotlightQuery: .init(name: "spotlight_query", arguments: ["query": "test", "limit": 0])
+        case .search: .init(name: "search", arguments: ["name_contains": "test", "limit": 0])
+        }
+    }
+}
+
 func connectedClient(
     spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = "/"
 ) async throws -> Client {
