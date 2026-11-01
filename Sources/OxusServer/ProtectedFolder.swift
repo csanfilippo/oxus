@@ -28,11 +28,16 @@ enum ProtectedFolder: String, CaseIterable {
     case desktop = "Desktop"
 
     init?(containing folder: Folder, home: Folder) {
-        guard let protectedFolder = Self.allCases.first(where: { folder.path == home.path + "/" + $0.rawValue }) else {
+        guard let protectedFolder = Self.allCases.first(where: { $0.contains(folder, home: home) }) else {
             return nil
         }
 
         self = protectedFolder
+    }
+
+    private func contains(_ folder: Folder, home: Folder) -> Bool {
+        let path = home.path + "/" + rawValue
+        return folder.path == path || folder.path.hasPrefix(path + "/")
     }
 }
 

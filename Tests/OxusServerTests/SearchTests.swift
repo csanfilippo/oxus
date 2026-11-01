@@ -410,4 +410,19 @@ import Testing
         #expect(text.contains("System Settings › Privacy & Security › Files and Folders › \(protectedFolder)"))
         #expect(text.contains("oxus if it is listed there, otherwise the app that launched oxus"))
     }
+
+    @Test
+    func
+        `A folder inside ~/Downloads denied by privacy protection returns an error result naming the scope path and the Files and Folders › Downloads setting`()
+        async throws
+    {
+        let client = try await connectedClient(fileSystem: PrivacyProtectionDeniedFileSystem(), home: "/Users/test")
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "~/Downloads/Invoices"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("'/Users/test/Downloads/Invoices'"))
+        #expect(text.contains("System Settings › Privacy & Security › Files and Folders › Downloads"))
+    }
 }
