@@ -35,8 +35,26 @@ enum ProtectedFolder: String, CaseIterable {
         self = protectedFolder
     }
 
+    static func inside(_ scope: Folder, home: Folder) -> [ProtectedFolder] {
+        let scopePrefix = scope.path.hasSuffix("/") ? scope.path : scope.path + "/"
+        return allCases.filter { $0.path(home: home).hasPrefix(scopePrefix) }
+    }
+
+    var fix: String {
+        "Allow access in System Settings › Privacy & Security › Files and Folders › \(rawValue), for \(privacyProtectionGrantee)"
+    }
+
+    func folder(home: Folder) -> Folder {
+        // A path appended to an absolute home folder is absolute.
+        try! Folder(absolutePath: path(home: home))
+    }
+
+    private func path(home: Folder) -> String {
+        home.path + "/" + rawValue
+    }
+
     private func contains(_ folder: Folder, home: Folder) -> Bool {
-        let path = home.path + "/" + rawValue
+        let path = path(home: home)
         return folder.path == path || folder.path.hasPrefix(path + "/")
     }
 }
@@ -49,6 +67,6 @@ struct ProtectedFolderDenial: ToolFailure {
     let protectedFolder: ProtectedFolder
 
     var message: String {
-        "'\(path)' is denied by macOS privacy protection. Allow access in System Settings › Privacy & Security › Files and Folders › \(protectedFolder.rawValue), for \(privacyProtectionGrantee)"
+        "'\(path)' is denied by macOS privacy protection. \(protectedFolder.fix)"
     }
 }

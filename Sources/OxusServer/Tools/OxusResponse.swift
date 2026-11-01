@@ -25,8 +25,19 @@
 import Foundation
 import MCP
 
+struct UnreadableFolder: Codable {
+    let path: String
+    let fix: String
+}
+
 struct OxusResponse: Codable {
     let paths: [String]
+    let unreadableFolders: [UnreadableFolder]?
+
+    init(paths: [String], unreadableFolders: [UnreadableFolder] = []) {
+        self.paths = paths
+        self.unreadableFolders = unreadableFolders.isEmpty ? nil : unreadableFolders
+    }
 
     static let schema: Value = .object([
         "type": "object",
@@ -35,7 +46,26 @@ struct OxusResponse: Codable {
                 "type": "array",
                 "items": .object(["type": "string"]),
                 "description": "Paths of the matching files, in Spotlight's order",
-            ])
+            ]),
+            "unreadableFolders": .object([
+                "type": "array",
+                "items": .object([
+                    "type": "object",
+                    "properties": .object([
+                        "path": .object([
+                            "type": "string",
+                            "description": "Path of a protected folder inside the searched folder that oxus cannot read",
+                        ]),
+                        "fix": .object([
+                            "type": "string",
+                            "description": "What the user has to change for oxus to read the folder",
+                        ]),
+                    ]),
+                    "required": ["path", "fix"],
+                ]),
+                "description":
+                    "Protected folders macOS privacy protection denies to oxus. Their files are missing from paths until the user applies the fix",
+            ]),
         ]),
         "required": ["paths"],
     ])

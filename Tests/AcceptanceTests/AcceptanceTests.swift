@@ -211,10 +211,36 @@ import Testing
         #expect(text.contains("lacks read permission"))
     }
 
-    private func connectedClient(spotlight: any Spotlight) async throws -> Client {
+    @Test
+    func
+        `a client searches ~ in a temporary home whose Downloads, Documents and Desktop are readable and receives a result without unreadableFolders`()
+        async throws
+    {
+        let home = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: home) }
+        for protectedFolder in ["Downloads", "Documents", "Desktop"] {
+            try FileManager.default.createDirectory(at: home.appending(path: protectedFolder), withIntermediateDirectories: true)
+        }
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight(), home: home.path(percentEncoded: false))
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["folder": "~"]
+                ))
+        ).value
+        let structuredContent = try #require(result.structuredContent?.objectValue)
+
+        #expect(result.isError != true)
+        #expect(structuredContent["paths"] != nil)
+        #expect(structuredContent["unreadableFolders"] == nil)
+    }
+
+    private func connectedClient(spotlight: any Spotlight, home: String = NSHomeDirectory()) async throws -> Client {
         let (clientTransport, serverTransport) = await InMemoryTransport.createConnectedPair()
         let server = try await makeOxusServer(
-            spotlight: spotlight, fileSystem: LocalFileSystem(), home: Folder(absolutePath: NSHomeDirectory()))
+            spotlight: spotlight, fileSystem: LocalFileSystem(), home: Folder(absolutePath: home))
         try await server.start(transport: serverTransport)
         let client = Client(name: "oxus-tests", version: "0")
         try await client.connect(transport: clientTransport)

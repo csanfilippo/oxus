@@ -447,4 +447,170 @@ import Testing
         #expect(!text.contains("Files and Folders"))
         #expect(text.contains("oxus if it is listed there, otherwise the app that launched oxus"))
     }
+
+    @Test
+    func
+        `search advertises an optional unreadableFolders array of objects with a required string path and fix, described as folders whose files are missing from paths`()
+        async throws
+    {
+        let client = try await connectedClient()
+
+        let (tools, _) = try await client.listTools()
+        let schema = try #require(toolWithName(tools: tools, name: "search")?.outputSchema?.objectValue)
+        let unreadableFolders = try #require(schema["properties"]?.objectValue?["unreadableFolders"]?.objectValue)
+        let item = try #require(unreadableFolders["items"]?.objectValue)
+        let itemProperties = try #require(item["properties"]?.objectValue)
+        let description = try #require(unreadableFolders["description"]?.stringValue)
+
+        #expect(schema["required"] == ["paths"])
+        #expect(unreadableFolders["type"] == "array")
+        #expect(item["type"] == "object")
+        #expect(itemProperties["path"]?.objectValue?["type"] == "string")
+        #expect(itemProperties["fix"]?.objectValue?["type"] == "string")
+        #expect(item["required"] == ["path", "fix"])
+        #expect(description.contains("missing from paths"))
+    }
+
+    @Test
+    func
+        `A search scoped to ~ with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix`()
+        async throws
+    {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
+        ])
+        let client = try await connectedClient(
+            spotlight: SpySpotlight(result: ["/Users/test/a"]), fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+
+        #expect(result.isError != true)
+        #expect(
+            result.structuredContent == [
+                "paths": ["/Users/test/a"],
+                "unreadableFolders": [
+                    [
+                        "path": "/Users/test/Downloads",
+                        "fix":
+                            "Allow access in System Settings › Privacy & Security › Files and Folders › Downloads, for oxus if it is listed there, otherwise the app that launched oxus",
+                    ]
+                ],
+            ])
+    }
+
+    @Test
+    func
+        `A search scoped to ~ with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting`()
+        async throws
+    {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Desktop": .deniedByPrivacyProtection(path: "/Users/test/Desktop"),
+            "/Users/test/Documents": .deniedByPrivacyProtection(path: "/Users/test/Documents"),
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads"),
+        ])
+        let client = try await connectedClient(fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+        let entries = try #require(result.structuredContent?.objectValue?["unreadableFolders"]?.arrayValue)
+
+        #expect(entries.map { $0.objectValue?["path"] } == ["/Users/test/Downloads", "/Users/test/Documents", "/Users/test/Desktop"])
+        for (entry, protectedFolder) in zip(entries, ["Downloads", "Documents", "Desktop"]) {
+            let fix = try #require(entry.objectValue?["fix"]?.stringValue)
+            #expect(fix.contains("System Settings › Privacy & Security › Files and Folders › \(protectedFolder),"))
+        }
+    }
+
+    @Test func `A search scoped to a folder containing the home folder (/Users) reports a denied ~/Documents`() async throws {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Documents": .deniedByPrivacyProtection(path: "/Users/test/Documents")
+        ])
+        let client = try await connectedClient(fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "/Users"]))).value
+        let entries = try #require(result.structuredContent?.objectValue?["unreadableFolders"]?.arrayValue)
+
+        #expect(entries.map { $0.objectValue?["path"] } == ["/Users/test/Documents"])
+    }
+
+    @Test func `A search scoped to ~ with all three protected folders readable returns no unreadableFolders key`() async throws {
+        let client = try await connectedClient(
+            spotlight: SpySpotlight(result: ["/Users/test/a"]), fileSystem: ScriptedFileSystem(), home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+
+        #expect(result.isError != true)
+        #expect(result.structuredContent == ["paths": ["/Users/test/a"]])
+    }
+
+    @Test(arguments: [
+        FolderError.notFound(path: "/Users/test/Downloads"),
+        FolderError.deniedByFilePermissions(path: "/Users/test/Downloads"),
+        FolderError.unreadable(path: "/Users/test/Downloads", reason: "Input/output error"),
+    ])
+    func `A protected folder that is missing, lacks read permission or fails with another reason adds no entry`(failure: FolderError)
+        async throws
+    {
+        let fileSystem = ScriptedFileSystem(failures: ["/Users/test/Downloads": failure])
+        let client = try await connectedClient(fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+
+        #expect(result.isError != true)
+        #expect(result.structuredContent == ["paths": []])
+    }
+
+    @Test func `A search scoped to a folder containing none of the protected folders (/System/Applications) adds no entry`()
+        async throws
+    {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
+        ])
+        let client = try await connectedClient(fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(
+            CallTool.request(.init(name: "search", arguments: ["folder": "/System/Applications"]))
+        ).value
+
+        #expect(result.structuredContent == ["paths": []])
+        #expect(fileSystem.checkedPaths == ["/System/Applications"])
+    }
+
+    @Test func `The protected folders are probed before Spotlight runs the query`() async throws {
+        let fileSystem = ScriptedFileSystem()
+        let spotlight = CheckedPathsRecordingSpotlight(fileSystem: fileSystem)
+        let client = try await connectedClient(spotlight: spotlight, fileSystem: fileSystem, home: "/Users/test")
+
+        _ = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+
+        #expect(
+            spotlight.checkedPathsWhenSearched == [
+                "/Users/test", "/Users/test/Downloads", "/Users/test/Documents", "/Users/test/Desktop",
+            ])
+    }
+
+    @Test func `A scope that fails its own check returns its error and probes no protected folder`() async throws {
+        let fileSystem = ScriptedFileSystem(failures: ["/Users/test": .deniedByFilePermissions(path: "/Users/test")])
+        let client = try await connectedClient(fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+
+        #expect(result.isError == true)
+        #expect(fileSystem.checkedPaths == ["/Users/test"])
+    }
+
+    @Test func `The text block decodes to the structured content, including unreadableFolders`() async throws {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
+        ])
+        let client = try await connectedClient(
+            spotlight: SpySpotlight(result: ["/Users/test/a"]), fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(result.content.count == 1)
+        #expect(result.structuredContent?.objectValue?["unreadableFolders"] != nil)
+        #expect(mirrored == result.structuredContent)
+    }
 }

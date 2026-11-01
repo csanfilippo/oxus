@@ -56,11 +56,13 @@ struct SearchTool: OxusTool {
                 folder: folder
             )
             let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
+            var unreadableFolders: [UnreadableFolder] = []
             if let folder = criteria.folder {
                 try checkSearchable(folder)
+                unreadableFolders = unreadableProtectedFolders(inside: folder)
             }
             let paths = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
-            return try OxusResponse(paths: paths).asResult
+            return try OxusResponse(paths: paths, unreadableFolders: unreadableFolders).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
         }
@@ -77,6 +79,27 @@ struct SearchTool: OxusTool {
             }
 
             throw ProtectedFolderDenial(path: path, protectedFolder: protectedFolder)
+        }
+    }
+
+    // Spotlight silently drops the files of a protected folder that privacy protection denies, so it is probed apart from the scope.
+    private func unreadableProtectedFolders(inside scope: Folder) -> [UnreadableFolder] {
+        ProtectedFolder.inside(scope, home: home).compactMap { protectedFolder in
+            let folder = protectedFolder.folder(home: home)
+            return isDeniedByPrivacyProtection(folder) ? UnreadableFolder(path: folder.path, fix: protectedFolder.fix) : nil
+        }
+    }
+
+    private func isDeniedByPrivacyProtection(_ folder: Folder) -> Bool {
+        do {
+            try fileSystem.checkSearchable(folder)
+            return false
+        } catch {
+            guard case .deniedByPrivacyProtection = error else {
+                return false
+            }
+
+            return true
         }
     }
 }

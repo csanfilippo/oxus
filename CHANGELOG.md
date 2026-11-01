@@ -12,3 +12,4 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 - Both tools return `{"paths": [...]}` as structured content, described by an `outputSchema`, and as JSON in a single text block.
 - A `search` `folder` that does not exist, is a file, is a package, or cannot be read returns an error result naming the path and the fix, instead of an empty list.
 - A `search` `folder` denied by macOS privacy protection names the Privacy & Security setting to change, and one lacking read permission says so.
+- A `search` whose `folder` contains `~/Downloads`, `~/Documents` or `~/Desktop` denied by macOS privacy protection lists them in `unreadableFolders`, each with the setting to change, since Spotlight silently leaves out their files.

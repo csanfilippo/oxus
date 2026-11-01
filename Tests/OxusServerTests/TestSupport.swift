@@ -98,6 +98,32 @@ final class PrivacyProtectionDeniedFileSystem: Sendable, FileSystem {
     }
 }
 
+final class ScriptedFileSystem: FileSystem, @unchecked Sendable {
+    private(set) var checkedPaths: [String] = []
+
+    private let failures: [String: FolderError]
+    init(failures: [String: FolderError] = [:]) { self.failures = failures }
+
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        checkedPaths.append(folder.path)
+        if let failure = failures[folder.path] {
+            throw failure
+        }
+    }
+}
+
+final class CheckedPathsRecordingSpotlight: Spotlight, @unchecked Sendable {
+    private(set) var checkedPathsWhenSearched: [String]?
+
+    private let fileSystem: ScriptedFileSystem
+    init(fileSystem: ScriptedFileSystem) { self.fileSystem = fileSystem }
+
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+        checkedPathsWhenSearched = fileSystem.checkedPaths
+        return []
+    }
+}
+
 func connectedClient(
     spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = "/"
 ) async throws -> Client {

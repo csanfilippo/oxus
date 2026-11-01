@@ -82,6 +82,8 @@ Finds files by name, kind, folder, or any combination of them, without Spotlight
 
 The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
 
+When `folder` contains `~/Downloads`, `~/Documents` or `~/Desktop` and macOS privacy protection denies oxus one of them, Spotlight silently leaves out that folder's files. The result then also carries `unreadableFolders`, one `{"path": ..., "fix": ...}` per denied folder, the fix naming the Files and Folders setting to change.
+
 A `folder` that cannot be searched returns an error result naming the expanded path and the fix, instead of an empty list:
 
 | `folder` | Error result |
