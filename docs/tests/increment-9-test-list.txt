@@ -1,0 +1,25 @@
+# Increment 9: unscoped protected folders - Test List
+
+## Specifications
+- Tools: `spotlight_query`, and `search` without a `folder`; both count as a scope containing ~/Downloads, ~/Documents and ~/Desktop, and carry increment 8's `unreadableFolders` for each one denied by macOS privacy protection (TCC)
+- `search` with a `folder` keeps increment 8's behaviour unchanged
+- Probe: all three protected folders are probed after the arguments are accepted and before the Spotlight query runs; a rejected argument returns its error and probes nothing
+- Only a TCC denial adds an entry; a missing protected folder, a file-permission denial or any other read failure adds none
+- Entry, order and output: as in increment 8, {"path": <expanded path>, "fix": <increment 7's TCC fix>}, ordered Downloads, Documents, Desktop, next to `paths` in structuredContent and in the JSON text block; no denied folder means no `unreadableFolders` key
+- Error results are unchanged: a query Spotlight rejects returns its error with no structured content, even when a protected folder was found denied
+- Output schema: unchanged; its `unreadableFolders` wording must not assume a searched folder, since the field now also appears on unscoped calls
+- Acceptance tests start the server with a temporary home whose Downloads, Documents and Desktop are readable, so a run never probes the real home, never prompts, and does not depend on the machine's privacy settings
+- Tests cannot make TCC deny a folder: server tests use a fake file system, and the real denial is checked by hand for both tools
+
+## Test List (TDD)
+- [ ] Acceptance test: a client runs spotlight_query for Finder.app with a temporary home whose protected folders are readable and receives Finder's path without unreadableFolders
+- [ ] Acceptance test: a client searches for "finde" without a folder, with a temporary home whose protected folders are readable, and receives Finder's path without unreadableFolders
+- [ ] An unscoped search with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix
+- [ ] An unscoped search with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting
+- [ ] spotlight_query with ~/Desktop denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Desktop path and the Files and Folders › Desktop fix
+- [ ] spotlight_query with all three protected folders readable returns no unreadableFolders key
+- [ ] For spotlight_query and an unscoped search, a protected folder that is missing, lacks read permission or fails with another reason adds no entry
+- [ ] spotlight_query and an unscoped search probe the protected folders before Spotlight runs the query
+- [ ] A spotlight_query or search with a rejected argument returns its error and probes no protected folder
+- [ ] spotlight_query returns a single text block that decodes to its structured content, including unreadableFolders
+- [ ] Manual: with Downloads denied to oxus, Claude Desktop's unscoped search and spotlight_query for documento2 each return unreadableFolders naming the Downloads path and Files and Folders › Downloads; results recorded in the increment doc

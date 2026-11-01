@@ -25,6 +25,8 @@ None.
 ## Decisions
 
 - **Unscoped searches** (2026-11-01): treated as a scope containing all three protected folders, for both `search` and `spotlight_query`, which share the increment 4 output. Confirmed for `search` on 2026-11-01 from iTerm and Claude Desktop: the unscoped `search` returned no paths, with no error and no prompt; `spotlight_query` was not checked.
+- **Acceptance test home** (2026-11-01): every acceptance test starts the server with a temporary home whose protected folders are readable. Unscoped calls now probe the home's protected folders, and the real home would make runs prompt and depend on the machine's privacy settings.
+- **Checking `spotlight_query`** (2026-11-01): the manual check covers both tools, which also settles the risk that `spotlight_query` was never seen losing results.
 
 ## Test list
 
