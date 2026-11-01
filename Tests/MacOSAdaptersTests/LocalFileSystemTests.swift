@@ -94,7 +94,7 @@ import Testing
         #expect(path == link)
     }
 
-    @Test func `a chmod 000 folder is reported as unreadable, with its path and the reason Permission denied`() throws {
+    @Test func `a chmod 000 folder is reported as denied by file permissions, with its path`() throws {
         let fileSystem = LocalFileSystem()
 
         let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
@@ -106,13 +106,12 @@ import Testing
             try fileSystem.checkSearchable(Folder(absolutePath: folder.path()))
         }
 
-        guard case .unreadable(let path, let reason) = error else {
-            Issue.record("expected .unreadable, got \(String(describing: error))")
+        guard case .deniedByFilePermissions(let path) = error else {
+            Issue.record("expected .deniedByFilePermissions, got \(String(describing: error))")
             return
         }
 
         #expect(path == folder.path())
-        #expect(reason == "Permission denied")
     }
 
     @Test func `a read failure macOS explains with a POSIX error is reported as unreadable, with that error's description`() {
