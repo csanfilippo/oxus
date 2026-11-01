@@ -8,11 +8,16 @@ Stop macOS privacy protection (TCC) from silently shrinking search results, and 
 
 ## Contract
 
-- A scope folder denied by TCC and one denied by file permissions are separate errors, each naming what to fix: the permission to grant, and to which app, for TCC; the missing read permission for file permissions. Replaces increment 6's single "cannot read" error.
+- A scope folder denied by TCC and one denied by file permissions are separate errors, each naming what to fix. Replaces increment 6's single "cannot read" error.
+  - TCC: the setting to change (System Settings › Privacy & Security › Files and Folders › the folder), granted to `oxus` if it is listed there, otherwise to the app that launched oxus.
+  - File permissions: the missing read permission.
+- A successful `search` or `spotlight_query` whose scope contains `~/Downloads`, `~/Documents` or `~/Desktop` that oxus cannot read carries, next to `paths`, an optional field naming each such folder and the same TCC fix. An unscoped call counts as a scope containing all three. Extends the increment 4 output schema; a call with no unreadable protected folder returns the increment 4 output unchanged.
 
 ## Out of scope
 
-To be decided once the open decisions below are settled.
+- Protected locations other than `~/Downloads`, `~/Documents` and `~/Desktop`, such as iCloud Drive, removable and network volumes, and other apps' data.
+- Finding the responsible app at runtime: the TCC fix names both candidates instead.
+- Keeping a grant across rebuilds, e.g. signing oxus with a stable identity.
 
 ## Design
 
@@ -22,9 +27,14 @@ To be decided once the open decisions below are settled.
 
 ## Open decisions
 
-- **Which app the error names:** the app TCC judges varies with the host (see Design: Who TCC judges), so the error cannot name one fixed app. Decide how it names the app to grant.
-- **Protected subfolders inside a readable scope:** a scope such as `~` lists fine but silently loses results from `~/Downloads`, `~/Desktop` or `~/Documents` when the host has no access to them. Confirmed with oxus on 2026-11-01 from iTerm and Claude Desktop: a `search` for `documento2` scoped to `~` returned no paths, with no error and no prompt, while the file sat in a denied `~/Downloads`. Warn alongside the paths, e.g. an optional field next to `paths` naming the unreadable subfolders and the permission to grant, or accept partial results? A warning extends the increment 4 output schema, and detection can only check known protected locations inside the scope.
-- **Unscoped searches:** confirmed for `search` on 2026-11-01 from iTerm and Claude Desktop: the same unscoped `search` returned no paths, with no error and no prompt. `spotlight_query` was not checked; it runs the same Spotlight query path. Decide whether this increment addresses it.
+- **Name and shape of the warning field** next to `paths`.
+- **Probe before or after the Spotlight query:** probing a protected folder with no decision on record brings up the macOS prompt; probing first may let a grant given at the prompt show up in the same call's results (not checked).
+
+## Decisions
+
+- **Which app the error names** (2026-11-01): both candidates, `oxus` if listed in Files and Folders, otherwise the app that launched it. The app TCC judges varies with the host (see Design: Who TCC judges); naming both is correct in both observed cases without a private API, at the cost of precision.
+- **Protected subfolders inside a readable scope** (2026-11-01): warn next to `paths`. Confirmed with oxus on 2026-11-01 from iTerm and Claude Desktop: a `search` for `documento2` scoped to `~` returned no paths, with no error and no prompt, while the file sat in a denied `~/Downloads`. Detection checks only the three known protected folders inside the scope.
+- **Unscoped searches** (2026-11-01): treated as a scope containing all three protected folders, for both `search` and `spotlight_query`, which share the increment 4 output. Confirmed for `search` on 2026-11-01 from iTerm and Claude Desktop: the unscoped `search` returned no paths, with no error and no prompt; `spotlight_query` was not checked.
 
 ## Test list
 
@@ -37,4 +47,5 @@ To be decided once the open decisions below are settled.
 - **Tests cannot revoke TCC access.** A folder with no read permission covers the file-permission case only, so the TCC case is checked by hand.
 - **A slow answer to the prompt may outlast the client's timeout.** The tool call blocks while the prompt is open. On 2026-11-01 the prompt stayed open about 60 seconds and Claude Desktop retried the call; whether the first call timed out was not seen. Not verified.
 - **A rebuild may drop the grant.** TCC identifies an ad-hoc-signed binary by its code, and the debug build's identifier carries a hash (`oxus-5555…`), so each rebuild or update may prompt again. Not verified.
+- **Up to three prompts on a first call.** With no decision on record, the first unscoped or `~`-scoped call probes all three protected folders, which may bring up three prompts in a row, each blocking the call.
 - **An unexplained Documents prompt.** Before the 2026-11-01 reset, Claude Desktop once showed "oxus would like to access files in the Documents folder" during the checks; it did not recur after the reset, and its trigger is unknown.
