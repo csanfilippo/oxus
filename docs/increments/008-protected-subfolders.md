@@ -1,6 +1,6 @@
 # Increment 8 — Protected subfolders
 
-**Status:** Draft (2026-11-01), split from increment 7.
+**Status:** Done (2026-11-01)
 
 ## Goal
 
@@ -19,6 +19,10 @@ Stop TCC from silently shrinking the results of a `search` scoped to a readable 
 ## Design
 
 See increment 7 for who TCC judges and the access prompt.
+
+## Manual check
+
+On 2026-11-01, Claude Desktop's `search` for `documento2` scoped to `~`, with the file in `~/Downloads`, returned no paths and no error, and an `unreadableFolders` entry for each of `/Users/feanor/Downloads`, `/Users/feanor/Documents` and `/Users/feanor/Desktop`, in that order. Each `fix` named its Files and Folders setting, for oxus if it is listed there, otherwise the app that launched oxus.
 
 ## Open decisions
 

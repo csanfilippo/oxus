@@ -12,15 +12,15 @@
 - Tests cannot make TCC deny a folder: the server tests use a fake file system, the EPERM mapping is covered by increment 7's adapter test, and the real denial is checked by hand
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches ~ in a temporary home whose Downloads, Documents and Desktop are readable and receives a result without unreadableFolders
-- [ ] search advertises an optional unreadableFolders array of objects with a required string path and fix, described as folders whose files are missing from paths
-- [ ] A search scoped to ~ with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix
-- [ ] A search scoped to ~ with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting
-- [ ] A search scoped to a folder containing the home folder (/Users) reports a denied ~/Documents
-- [ ] A search scoped to ~ with all three protected folders readable returns no unreadableFolders key
-- [ ] A protected folder that is missing, lacks read permission or fails with another reason adds no entry
-- [ ] A search scoped to a folder containing none of the protected folders (/System/Applications) adds no entry
-- [ ] The protected folders are probed before Spotlight runs the query
-- [ ] A scope that fails its own check returns its error and probes no protected folder
-- [ ] The text block decodes to the structured content, including unreadableFolders
-- [ ] Manual: with Downloads denied to oxus, Claude Desktop's search scoped to ~ returns unreadableFolders naming the Downloads path and Files and Folders › Downloads; result recorded in the increment doc
+- [x] Acceptance test: a client searches ~ in a temporary home whose Downloads, Documents and Desktop are readable and receives a result without unreadableFolders
+- [x] search advertises an optional unreadableFolders array of objects with a required string path and fix, described as folders whose files are missing from paths
+- [x] A search scoped to ~ with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix
+- [x] A search scoped to ~ with all three protected folders denied returns three entries in Downloads, Documents, Desktop order, each naming its own setting
+- [x] A search scoped to a folder containing the home folder (/Users) reports a denied ~/Documents
+- [x] A search scoped to ~ with all three protected folders readable returns no unreadableFolders key
+- [x] A protected folder that is missing, lacks read permission or fails with another reason adds no entry
+- [x] A search scoped to a folder containing none of the protected folders (/System/Applications) adds no entry
+- [x] The protected folders are probed before Spotlight runs the query
+- [x] A scope that fails its own check returns its error and probes no protected folder
+- [x] The text block decodes to the structured content, including unreadableFolders
+- [x] Manual: with Downloads denied to oxus, Claude Desktop's search scoped to ~ returns unreadableFolders naming the Downloads path and Files and Folders › Downloads; result recorded in the increment doc
