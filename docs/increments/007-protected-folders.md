@@ -1,6 +1,6 @@
 # Increment 7 — Protected folders
 
-**Status:** In progress (2026-11-01): every automated test passes; the manual check with Downloads denied to oxus in Claude Desktop remains.
+**Status:** Done (2026-11-01)
 
 ## Goal
 
@@ -26,6 +26,10 @@ Tell the user exactly what to fix when macOS privacy protection (TCC) or file pe
 - **Telling denials apart:** the adapter tells the two denials apart by the underlying POSIX error: `EPERM` for TCC, `EACCES` for file permissions. `EACCES` was checked with a `chmod 000` folder on 2026-10-25. `EPERM` was checked on 2026-11-01: with `~/Downloads` denied, oxus reported "Operation not permitted", the `strerror` text of the underlying POSIX code, from both iTerm and Claude Desktop. The Cocoa error code was not observed; the adapter does not depend on it.
 - **Who TCC judges:** it depends on the host, observed on 2026-11-01. Launched from iTerm, oxus is judged as iTerm: it is denied exactly when iTerm is, and no prompt names oxus. Launched from Claude Desktop, oxus is judged as itself: the prompt reads "oxus would like to access files in the Downloads folder", and Claude's own Files and Folders setting plays no part.
 - **Access prompt:** when the judged app has no decision on record, the first listing of a protected folder triggers the macOS access prompt, observed with oxus from Claude Desktop on 2026-11-01. The listing, and so the tool call, blocks until the user answers. Once a decision is on record, no prompt appears again; `tccutil reset SystemPolicyDownloadsFolder` (and the `Documents` and `Desktop` equivalents) clears it for every app.
+
+## Manual check
+
+On 2026-11-01, with Downloads denied to oxus, Claude Desktop's `search` scoped to `~/Downloads` returned: "'/Users/feanor/Downloads' is denied by macOS privacy protection. Allow access in System Settings › Privacy & Security › Files and Folders › Downloads, for oxus if it is listed there, otherwise the app that launched oxus."
 
 ## Open decisions
 
