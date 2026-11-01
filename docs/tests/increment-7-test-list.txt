@@ -19,6 +19,6 @@
 - [x] A folder outside the three protected folders denied by privacy protection returns an error result naming the path and the generic Privacy & Security fix, with no folder setting
 - [x] A folder whose name starts with Downloads but sits beside it (~/Downloads Archive) denied by privacy protection gets the generic fix
 - [x] Adapter: a chmod 000 folder is reported as denied by file permissions, with its path
-- [ ] Adapter: a read failure wrapping POSIX EPERM is reported as denied by privacy protection, with its path
-- [ ] Adapter: a read failure wrapping another POSIX error (EIO) is reported as unreadable, with its path and the reason Input/output error
+- [x] Adapter: a read failure wrapping POSIX EPERM is reported as denied by privacy protection, with its path
+- [x] Adapter: a read failure wrapping another POSIX error (EIO) is reported as unreadable, with its path and the reason Input/output error
 - [ ] Manual: with Downloads denied to oxus, Claude Desktop's search scoped to ~/Downloads returns the error naming Files and Folders › Downloads and oxus; result recorded in the increment doc
