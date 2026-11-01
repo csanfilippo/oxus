@@ -86,6 +86,12 @@ final class UnreadableFolderFileSystem: Sendable, FileSystem {
     }
 }
 
+final class FilePermissionsDeniedFileSystem: Sendable, FileSystem {
+    func checkSearchable(_ folder: Folder) throws(FolderError) {
+        throw FolderError.deniedByFilePermissions(path: folder.path)
+    }
+}
+
 func connectedClient(
     spotlight: any Spotlight = SpySpotlight(), fileSystem: any FileSystem = SearchableFileSystem(), home: String = "/"
 ) async throws -> Client {

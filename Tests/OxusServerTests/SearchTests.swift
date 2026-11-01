@@ -379,4 +379,17 @@ import Testing
         #expect(text.contains("is not readable"))
         #expect(text.contains("Permission denied"))
     }
+
+    @Test func `A folder denied by file permissions returns an error result naming the path and saying it lacks read permission`()
+        async throws
+    {
+        let client = try await connectedClient(fileSystem: FilePermissionsDeniedFileSystem())
+
+        let (content, isError) = try await client.callTool(name: "search", arguments: ["folder": "/Users/test/Private"])
+        let text = try #require(texts(in: content).first)
+
+        #expect(isError == true)
+        #expect(text.contains("/Users/test/Private"))
+        #expect(text.contains("lacks read permission"))
+    }
 }
