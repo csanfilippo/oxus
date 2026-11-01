@@ -29,6 +29,9 @@ None.
 - **Protected subfolders inside a readable scope** (2026-11-01): warn next to `paths`. Confirmed with oxus on 2026-11-01 from iTerm and Claude Desktop: a `search` for `documento2` scoped to `~` returned no paths, with no error and no prompt, while the file sat in a denied `~/Downloads`. Detection checks only the three known protected folders inside the scope.
 - **Warning field** (2026-11-01): `unreadableFolders`, an array of `{path, fix}` objects. The path can be checked without matching prose, and "unreadable" is the term `FolderError` already uses; the fix text repeats per folder.
 - **Probe order** (2026-11-01): before the Spotlight query, like the scope check. Probing after has a silent loss: a grant given at the prompt makes the probe succeed with no warning, though the query ran without access.
+- **Which failures warn** (2026-11-01): only a TCC denial, the one case where Spotlight's silent filtering was observed; a missing folder, a file-permission denial or another read failure adds no entry.
+- **Telling the model** (2026-11-01): the `unreadableFolders` description in the output schema says those folders' files are missing from `paths`; the `search` description is unchanged.
+- **End-to-end coverage** (2026-11-01): an acceptance test on a temporary home with readable protected folders, plus a manual check with Downloads denied, since tests cannot make TCC deny a folder.
 
 ## Test list
 
