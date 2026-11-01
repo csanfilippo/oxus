@@ -95,6 +95,25 @@ A `folder` that cannot be searched returns an error result naming the expanded p
 | lacks read permission | asks to grant your user read permission on it |
 | cannot be read for another reason | gives the reason macOS reports, e.g. `Input/output error` |
 
+## Troubleshooting
+
+### Files in Downloads, Documents or Desktop are missing
+
+macOS privacy protection decides whether oxus may read `~/Downloads`, `~/Documents` and `~/Desktop`. Without access, Spotlight leaves their files out with no error. oxus reports each denied folder in `unreadableFolders`, or returns an error when the `folder` you search is inside one.
+
+Which app macOS asks about depends on what launched oxus:
+
+- **Claude Desktop:** oxus itself. The first search that reaches one of these folders shows "oxus would like to access files in the Downloads folder" (or Documents, or Desktop).
+- **A terminal**, e.g. Claude Code in iTerm: the terminal app. No prompt names oxus; the terminal's access applies.
+
+To grant access, open System Settings › Privacy & Security › Files and Folders and turn on the folder for oxus if it is listed there, otherwise for the app that launched oxus.
+
+The tool call waits while the access prompt is open. If the client gives up first, answer the prompt and run the search again.
+
+To be asked again, reset the decision with `tccutil reset SystemPolicyDownloadsFolder` (or `SystemPolicyDocumentsFolder`, `SystemPolicyDesktopFolder`). This clears that folder's decision for every app, not only oxus.
+
+A rebuilt or updated oxus may be treated as a new app, so macOS may ask again.
+
 ## Development
 
 ```sh

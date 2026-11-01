@@ -4,8 +4,8 @@ Steps to publish oxus as a public, installable MCP server.
 
 ## Blockers
 
-- [ ] Finish [increment 7](increments/007-protected-folders.md), so a folder macOS denies access to becomes an actionable error instead of silently missing results.
-- [ ] Add a README troubleshooting section on macOS privacy permissions: access is granted to the client app that launches oxus (Claude Desktop, the terminal), not to oxus.
+- [x] Finish [increment 7](increments/007-protected-folders.md), so a folder macOS denies access to becomes an actionable error instead of silently missing results. Increments [8](increments/008-protected-subfolders.md) and [9](increments/009-unscoped-protected-folders.md) cover the folders denied inside a scope and in unscoped calls.
+- [x] Add a README troubleshooting section on macOS privacy permissions: which app macOS asks about depends on what launched oxus (oxus itself under Claude Desktop, the terminal app under a terminal), how to grant or reset access, and that the access prompt blocks the tool call.
 
 ## Versioning
 
