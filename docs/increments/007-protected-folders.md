@@ -46,7 +46,7 @@ None.
 
 ## Test list
 
-`docs/tests/increment-7-test-list.txt`
+[`007-protected-folders.test-list.txt`](007-protected-folders.test-list.txt)
 
 ## Risks
 

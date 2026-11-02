@@ -39,7 +39,7 @@ None.
 
 ## Test list
 
-`docs/tests/increment-8-test-list.txt`
+[`008-protected-subfolders.test-list.txt`](008-protected-subfolders.test-list.txt)
 
 ## Risks
 

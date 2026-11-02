@@ -37,7 +37,7 @@ None. Decided on 2026-10-29: messages carry the fix, name the expanded path, and
 
 ## Test list
 
-`docs/tests/increment-6-test-list.txt` (written on 2026-10-29). Acceptance tests chosen on 2026-10-25: a folder that does not exist, and `/System/Applications/Calculator.app` as a package.
+[`006-folder-checks.test-list.txt`](006-folder-checks.test-list.txt) (written on 2026-10-29). Acceptance tests chosen on 2026-10-25: a folder that does not exist, and `/System/Applications/Calculator.app` as a package.
 
 ## Risks
 

@@ -34,7 +34,7 @@ None.
 
 ## Test list
 
-`docs/tests/increment-9-test-list.txt`
+[`009-unscoped-protected-folders.test-list.txt`](009-unscoped-protected-folders.test-list.txt)
 
 ## Risks
 

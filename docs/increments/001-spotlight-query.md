@@ -41,7 +41,7 @@ Free-text search (increment 2), folder scopes, metadata in results, structured c
 
 ## Test list
 
-`docs/tests/increment-1-test-list.txt`
+[`001-spotlight-query.test-list.txt`](001-spotlight-query.test-list.txt)
 
 ## Risks
 

@@ -28,4 +28,4 @@ Let `search` filter by kind of file, so a request like "find all the images whos
 
 ## Test list
 
-`docs/tests/increment-3-test-list.txt`
+[`003-search-by-kind.test-list.txt`](003-search-by-kind.test-list.txt)

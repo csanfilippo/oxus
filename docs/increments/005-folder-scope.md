@@ -35,7 +35,7 @@ None.
 
 ## Test list
 
-`docs/tests/increment-5-test-list.txt`
+[`005-folder-scope.test-list.txt`](005-folder-scope.test-list.txt)
 
 ## Risks
 

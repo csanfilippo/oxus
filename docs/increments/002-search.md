@@ -40,7 +40,7 @@ Filtering by kind (increment 3), starts with / ends with / exact name, dates, si
 
 ## Test list
 
-`docs/tests/increment-2-test-list.txt`
+[`002-search.test-list.txt`](002-search.test-list.txt)
 
 ## Risks
 

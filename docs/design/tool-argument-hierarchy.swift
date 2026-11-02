@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-// Run from the repository root: swift docs/diagrams/tool-argument-hierarchy.swift docs/diagrams/tool-argument-hierarchy.png
+// Run from the repository root: swift docs/design/tool-argument-hierarchy.swift docs/design/tool-argument-hierarchy.png
 
 import AppKit
 

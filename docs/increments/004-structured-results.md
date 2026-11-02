@@ -33,7 +33,7 @@ Metadata per path (name, kind, size, dates, photo information), structured error
 
 ## Test list
 
-`docs/tests/increment-4-test-list.txt`
+[`004-structured-results.test-list.txt`](004-structured-results.test-list.txt)
 
 ## Risks
 
