@@ -44,5 +44,8 @@ Not written yet.
 
 ## Risks
 
-- **The release scripts read the version declaration literally.** `scripts/tag-release.sh`, `scripts/release.sh` and `scripts/update-tap.sh` match the line `let oxusVersion = "…"`. Making it `public let` breaks all three until their pattern changes with it.
-- **Finding the binary from a test.** A test has to locate the `oxus` product in the build folder, and the test target has to depend on the executable so that `swift test` builds it first.
+- **The release scripts read the version declaration literally.** Settled on 2026-11-03: the three release scripts now read the version through `scripts/version.sh`, which accepts both `let` and `public let`, so making `oxusVersion` public needs no script change.
+- **Finding the binary from a test.** Settled on 2026-11-03 by a throwaway package (one library, one executable, one Swift Testing target that runs it as a process), on Swift 6.4.2:
+  - A test target can depend on an executable target with the new build system, and `swift test` builds the executable first.
+  - The usual lookup, the `.xctest` bundle among `Bundle.allBundles`, fails under Swift Testing: the test bundle is not listed until something loads it.
+  - `Bundle(for: SomeClass.self)`, with a class declared in the test target, returns the test bundle; its parent folder holds the executable. This passed in debug, in release and with `--parallel`. The class exists only for this lookup.

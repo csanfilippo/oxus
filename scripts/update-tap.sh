@@ -7,7 +7,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 tap_repository=csanfilippo/homebrew-tap
 
-version=$(sed -n 's/^let oxusVersion = "\(.*\)"$/\1/p' Sources/OxusServer/Version.swift)
+version=$(scripts/version.sh)
 url="https://github.com/csanfilippo/oxus/releases/download/v$version/oxus-macos-arm64.zip"
 
 # The checksum of what was published, not of a local build.

@@ -9,7 +9,7 @@ signing_identity=${OXUS_SIGNING_IDENTITY:-Developer ID Application}
 notary_profile=${OXUS_NOTARY_PROFILE:-oxus-notary}
 bundle_identifier=io.github.csanfilippo.oxus
 
-version=$(sed -n 's/^let oxusVersion = "\(.*\)"$/\1/p' Sources/OxusServer/Version.swift)
+version=$(scripts/version.sh)
 tag="v$version"
 
 if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
