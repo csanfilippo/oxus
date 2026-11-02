@@ -34,6 +34,10 @@ import Testing
         #expect(run.stderr == "")
         #expect(run.status == 0)
     }
+
+    @Test func `oxus --version exits while its stdin is still open, so it starts no server`() throws {
+        #expect(try exitsWhileStdinStaysOpen(arguments: ["--version"]))
+    }
 }
 
 private final class TestBundleMarker {}
@@ -44,11 +48,13 @@ private struct OxusRun {
     let status: Int32
 }
 
+private let oxusExecutable = Bundle(for: TestBundleMarker.self).bundleURL
+    .deletingLastPathComponent()
+    .appending(path: "oxus")
+
 private func runOxus(arguments: [String]) throws -> OxusRun {
     let process = Process()
-    process.executableURL = Bundle(for: TestBundleMarker.self).bundleURL
-        .deletingLastPathComponent()
-        .appending(path: "oxus")
+    process.executableURL = oxusExecutable
     process.arguments = arguments
     process.standardInput = FileHandle.nullDevice
     let stdout = Pipe()
@@ -66,4 +72,27 @@ private func runOxus(arguments: [String]) throws -> OxusRun {
         stderr: String(decoding: errors, as: UTF8.self),
         status: process.terminationStatus
     )
+}
+
+// A server waits on an open stdin until it closes, so an oxus still running after the grace period has started one.
+private func exitsWhileStdinStaysOpen(arguments: [String]) throws -> Bool {
+    let process = Process()
+    process.executableURL = oxusExecutable
+    process.arguments = arguments
+    let stdin = Pipe()
+    process.standardInput = stdin
+    process.standardOutput = FileHandle.nullDevice
+    process.standardError = FileHandle.nullDevice
+    let exited = DispatchSemaphore(value: 0)
+    process.terminationHandler = { _ in exited.signal() }
+
+    try process.run()
+    let outcome = exited.wait(timeout: .now() + .seconds(5))
+    if outcome == .timedOut {
+        process.terminate()
+        process.waitUntilExit()
+    }
+    try stdin.fileHandleForWriting.close()
+
+    return outcome == .success
 }
