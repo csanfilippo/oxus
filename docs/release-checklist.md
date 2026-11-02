@@ -12,7 +12,7 @@ Steps to publish oxus as a public, installable MCP server.
 - [x] Keep the version in one place: `oxusVersion` in `Sources/OxusServer/Version.swift`; `scripts/tag-release.sh` derives the tag from it.
 - [x] Add `CHANGELOG.md`.
 - [x] Replace the README's "Status: early" with what is supported.
-- [ ] Tag `v0.1.0`: move the CHANGELOG's Unreleased entries under `## [0.1.0]`, commit, run `scripts/tag-release.sh`, and push the tag.
+- [x] Tag `v0.1.0`: move the CHANGELOG's Unreleased entries under `## [0.1.0]`, commit, run `scripts/tag-release.sh`, and push the tag.
 
 ## CI
 
