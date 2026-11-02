@@ -38,6 +38,15 @@ import Testing
     @Test func `oxus --version exits while its stdin is still open, so it starts no server`() throws {
         #expect(try exitsWhileStdinStaysOpen(arguments: ["--version"]))
     }
+
+    @Test(arguments: [["--verison"], ["--version", "extra"], ["-v"], ["-V"], ["--help"]])
+    func `oxus rejects any other arguments with its usage on stderr and exit status 64`(arguments: [String]) throws {
+        let run = try runOxus(arguments: arguments)
+
+        #expect(run.stdout == "")
+        #expect(run.stderr == "usage: oxus [--version]\n")
+        #expect(run.status == 64)
+    }
 }
 
 private final class TestBundleMarker {}

@@ -30,10 +30,18 @@ import OxusServer
 @main
 struct Oxus {
     static func main() async throws {
-        if CommandLine.arguments.dropFirst() == ["--version"] {
+        switch Array(CommandLine.arguments.dropFirst()) {
+        case []:
+            try await serve()
+        case ["--version"]:
             print("oxus \(oxusVersion)")
-            return
+        default:
+            FileHandle.standardError.write(Data("usage: oxus [--version]\n".utf8))
+            exit(EX_USAGE)
         }
+    }
+
+    private static func serve() async throws {
         let home = try Folder(absolutePath: NSHomeDirectory())
         let server = await makeOxusServer(spotlight: CoreServicesSpotlight(), fileSystem: LocalFileSystem(), home: home)
         try await server.start(transport: StdioTransport())
