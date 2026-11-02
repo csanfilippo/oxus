@@ -9,7 +9,7 @@
 - A server reading a closed stdin exits at once with status 0, so tests that must prove no server started keep stdin open: a server would wait, while the flag or a rejection exits on its own
 
 ## Test List (TDD)
-- [ ] Acceptance test: `oxus --version` prints "oxus " followed by oxusVersion and a newline on stdout, nothing on stderr, and exits 0
+- [x] Acceptance test: `oxus --version` prints "oxus " followed by oxusVersion and a newline on stdout, nothing on stderr, and exits 0
 - [ ] `oxus --version` exits while its stdin is still open, so it starts no server
 - [ ] `--verison`, `--version extra`, `-v`, `-V` and `--help` each print "usage: oxus [--version]" and a newline on stderr, nothing on stdout, and exit 64
 - [ ] A rejected argument exits while its stdin is still open, so it starts no server

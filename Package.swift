@@ -78,6 +78,14 @@ let package = Package(
             swiftSettings: swiftSettings,
         ),
         .testTarget(
+            name: "oxusTests",
+            dependencies: [
+                "oxus",
+                "OxusServer",
+            ],
+            swiftSettings: swiftSettings,
+        ),
+        .testTarget(
             name: "AcceptanceTests",
             dependencies: [
                 "MacOSAdapters",
