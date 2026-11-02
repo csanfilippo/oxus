@@ -52,6 +52,44 @@ import Testing
     func `oxus rejects any other arguments while its stdin is still open, so it starts no server`(arguments: [String]) throws {
         #expect(try exitsWhileStdinStaysOpen(arguments: arguments))
     }
+
+    @Test(.timeLimit(.minutes(1)))
+    func `oxus with no arguments answers an MCP initialize with serverInfo named oxus at its version`() async throws {
+        let process = Process()
+        process.executableURL = oxusExecutable
+        let stdin = Pipe()
+        let stdout = Pipe()
+        process.standardInput = stdin
+        process.standardOutput = stdout
+        process.standardError = FileHandle.nullDevice
+
+        try process.run()
+        try stdin.fileHandleForWriting.write(contentsOf: Data((initializeRequest + "\n").utf8))
+        let reply = try await stdout.fileHandleForReading.bytes.lines.first { _ in true }
+        try stdin.fileHandleForWriting.close()
+        process.waitUntilExit()
+
+        let serverInfo = try JSONDecoder().decode(InitializeReply.self, from: Data(try #require(reply).utf8)).result.serverInfo
+        #expect(serverInfo.name == "oxus")
+        #expect(serverInfo.version == oxusVersion)
+    }
+}
+
+private let initializeRequest = #"""
+    {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"oxusTests","version":"0"}}}
+    """#
+
+private struct InitializeReply: Decodable {
+    struct Result: Decodable {
+        let serverInfo: ServerInfo
+    }
+
+    struct ServerInfo: Decodable {
+        let name: String
+        let version: String
+    }
+
+    let result: Result
 }
 
 private let rejectedArguments = [["--verison"], ["--version", "extra"], ["-v"], ["-V"], ["--help"]]
