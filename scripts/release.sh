@@ -33,7 +33,7 @@ dist=.build/dist
 archive="$dist/oxus-$version-macos-arm64.zip"
 rm -rf "$dist"
 mkdir -p "$dist"
-ditto -c -k --keepParent "$binary" "$archive"
+ditto -c -k --norsrc "$binary" "$archive"
 
 submission=$(xcrun notarytool submit "$archive" --keychain-profile "$notary_profile" --wait --output-format json)
 status=$(plutil -extract status raw - <<<"$submission")
