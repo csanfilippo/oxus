@@ -1,4 +1,4 @@
-# Increment 10 — MCP bundle and registry listing
+# Increment 11 — MCP bundle and registry listing
 
 **Status:** Planned, optional
 
