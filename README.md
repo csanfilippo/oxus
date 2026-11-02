@@ -8,14 +8,29 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** pre-release, built from source. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name, kind and folder without query syntax; both report the Downloads, Documents and Desktop folders macOS privacy protection hides from Spotlight. Runs on macOS 27; checked by hand with Claude Code and Claude Desktop.
+> **Status:** 0.1.0, the first release. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name, kind and folder without query syntax; both report the Downloads, Documents and Desktop folders macOS privacy protection hides from Spotlight. Runs on macOS 27; checked by hand with Claude Code and Claude Desktop.
 
 ## Requirements
 
-- macOS 27
-- Swift 6.4 toolchain
+- macOS 27 on Apple silicon
 
-## Build
+## Install
+
+Each [release](https://github.com/csanfilippo/oxus/releases) has a signed and notarized binary. To install 0.1.0 in `~/.local/bin`:
+
+```sh
+curl -fLO https://github.com/csanfilippo/oxus/releases/download/v0.1.0/oxus-0.1.0-macos-arm64.zip
+curl -fLO https://github.com/csanfilippo/oxus/releases/download/v0.1.0/oxus-0.1.0-macos-arm64.zip.sha256
+shasum -a 256 -c oxus-0.1.0-macos-arm64.zip.sha256
+unzip oxus-0.1.0-macos-arm64.zip
+mkdir -p ~/.local/bin && mv oxus ~/.local/bin/
+```
+
+The binary is then at `~/.local/bin/oxus`; MCP clients need its absolute path, which `echo ~/.local/bin/oxus` prints.
+
+### Build from source
+
+Building needs the Swift 6.4 toolchain:
 
 ```sh
 swift build -c release

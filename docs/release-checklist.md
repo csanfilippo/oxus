@@ -26,7 +26,7 @@ Steps to publish oxus as a public, installable MCP server.
 - [x] Publish the binary on GitHub Releases with `scripts/release.sh`.
 - [ ] Homebrew tap, so users don't need the Swift 6.4 toolchain.
 - [ ] Optional: MCPB bundle for one-click install in Claude Desktop, and a listing in the official MCP registry.
-- [ ] README: install instructions ahead of "Build from source".
+- [x] README: install instructions ahead of "Build from source".
 
 ## Repo hygiene
 
