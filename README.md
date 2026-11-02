@@ -16,6 +16,16 @@ An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight se
 
 ## Install
 
+With [Homebrew](https://brew.sh):
+
+```sh
+brew install csanfilippo/tap/oxus
+```
+
+The binary is then at `$(brew --prefix)/bin/oxus`, usually `/opt/homebrew/bin/oxus`.
+
+### Without Homebrew
+
 Each [release](https://github.com/csanfilippo/oxus/releases) has a signed and notarized binary. To install 0.1.0 in `~/.local/bin`:
 
 ```sh
