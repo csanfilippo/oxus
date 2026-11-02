@@ -4,6 +4,14 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Added
+
+- `oxus --version` prints `oxus <version>` on stdout and exits without starting a server, so a binary installed from the release zip can report its version.
+
+### Changed
+
+- oxus rejects any arguments other than a lone `--version`: it prints `usage: oxus [--version]` on stderr and exits with status 64, instead of ignoring them and starting the server. A client configuration that passes arguments to oxus must drop them.
+
 ## [0.1.0] - 2026-11-02
 
 ### Added
