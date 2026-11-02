@@ -30,7 +30,8 @@ codesign --force --sign "$signing_identity" --identifier "$bundle_identifier" --
 codesign --verify --strict --verbose=2 "$binary"
 
 dist=.build/dist
-archive="$dist/oxus-$version-macos-arm64.zip"
+# No version in the name, so the README can link to releases/latest/download/ for every release.
+archive="$dist/oxus-macos-arm64.zip"
 rm -rf "$dist"
 mkdir -p "$dist"
 ditto -c -k --norsrc "$binary" "$archive"
@@ -52,3 +53,5 @@ notes=$(awk -v heading="## [$version]" '
 ' CHANGELOG.md)
 
 gh release create "$tag" "$archive" "$archive.sha256" --verify-tag --title "$tag" --notes "$notes"
+
+scripts/update-tap.sh

@@ -26,13 +26,13 @@ The binary is then at `$(brew --prefix)/bin/oxus`, usually `/opt/homebrew/bin/ox
 
 ### Without Homebrew
 
-Each [release](https://github.com/csanfilippo/oxus/releases) has a signed and notarized binary. To install 0.1.0 in `~/.local/bin`:
+Each [release](https://github.com/csanfilippo/oxus/releases) has a signed and notarized binary. To install the latest one in `~/.local/bin`:
 
 ```sh
-curl -fLO https://github.com/csanfilippo/oxus/releases/download/v0.1.0/oxus-0.1.0-macos-arm64.zip
-curl -fLO https://github.com/csanfilippo/oxus/releases/download/v0.1.0/oxus-0.1.0-macos-arm64.zip.sha256
-shasum -a 256 -c oxus-0.1.0-macos-arm64.zip.sha256
-unzip oxus-0.1.0-macos-arm64.zip
+curl -fLO https://github.com/csanfilippo/oxus/releases/latest/download/oxus-macos-arm64.zip
+curl -fLO https://github.com/csanfilippo/oxus/releases/latest/download/oxus-macos-arm64.zip.sha256
+shasum -a 256 -c oxus-macos-arm64.zip.sha256
+unzip oxus-macos-arm64.zip
 mkdir -p ~/.local/bin && mv oxus ~/.local/bin/
 ```
 

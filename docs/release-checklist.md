@@ -24,7 +24,7 @@ Steps to publish oxus as a public, installable MCP server.
 - [x] Release binary, arm64 only (macOS 27 does not run on Intel).
 - [x] Sign with a Developer ID and notarize; otherwise Gatekeeper blocks the downloaded binary and the client fails to launch it without a clear error. Requires a paid Apple Developer account.
 - [x] Publish the binary on GitHub Releases with `scripts/release.sh`.
-- [x] Homebrew tap ([csanfilippo/homebrew-tap](https://github.com/csanfilippo/homebrew-tap)), so users don't need the Swift 6.4 toolchain. Each release must update the formula's `url` and `sha256`.
+- [x] Homebrew tap ([csanfilippo/homebrew-tap](https://github.com/csanfilippo/homebrew-tap)), so users don't need the Swift 6.4 toolchain. `scripts/release.sh` points the formula at each new release through `scripts/update-tap.sh`.
 - [ ] Optional: MCPB bundle for one-click install in Claude Desktop, and a listing in the official MCP registry.
 - [x] README: install instructions ahead of "Build from source".
 
