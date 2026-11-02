@@ -69,7 +69,7 @@ How to publish a new version, e.g. `0.2.0`. A release produces a signed, notariz
 
    ```sh
    brew update && brew upgrade oxus && brew test oxus
-   brew list --versions oxus        # oxus 0.2.0
+   oxus --version        # oxus 0.2.0
    ```
 
    The README's manual install links follow the latest release, so they need no change.

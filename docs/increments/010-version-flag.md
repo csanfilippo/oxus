@@ -1,6 +1,6 @@
 # Increment 10 — Version flag
 
-**Status:** In progress
+**Status:** Done (shipped in 0.2.0)
 
 ## Goal
 
@@ -23,14 +23,15 @@ Let anyone see which oxus they run, however they installed it. Today only Homebr
 - The `oxus` executable checks its arguments before building the server, so the flag never reaches `OxusServer` and the composition root stays a thin adapter. Printing to stdout is safe: in this mode there is no server, so no JSON-RPC to corrupt.
 - `oxusVersion` is internal to `OxusServer` today; the executable needs to read it.
 - The tests live in a new `oxusTests` target, which depends on the `oxus` executable, and on `OxusServer` to compare the output with `oxusVersion`. They run the built binary as a separate process and check what a user sees: its stdout, its stderr and its exit status.
-- Once a release ships the flag, the Homebrew formula's test and step 8 of `docs/releasing.md` can check `oxus --version` instead of sending an MCP `initialize`.
+- Once 0.2.0 shipped the flag, the Homebrew formula's test and step 8 of `docs/releasing.md` switched to checking `oxus --version` instead of sending an MCP `initialize`.
 
 ## Manual check
 
 Install the release from the zip and from Homebrew, and run `oxus --version` for each.
 
 - **Local build** (2026-11-03): `oxus --version` printed `oxus 0.1.0` and exited 0 at once; `--verison`, `--version extra` and `-V` printed the usage on stderr and exited 64; `oxus` with no arguments answered an `initialize` with `serverInfo` named `oxus` at `0.1.0`.
-- **Release zip and Homebrew:** pending the release that ships the flag.
+- **Homebrew** (2026-11-03): `brew test oxus` on 0.2.0 passed; the formula's test now checks that `oxus --version` prints `oxus 0.2.0`.
+- **Release zip** (2026-11-03): the 0.2.0 binary from `oxus-macos-arm64.zip` printed `oxus 0.2.0`.
 
 ## Open decisions
 
