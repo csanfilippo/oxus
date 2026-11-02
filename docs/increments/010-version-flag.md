@@ -22,7 +22,7 @@ Let anyone see which oxus they run, however they installed it. Today only Homebr
 
 - The `oxus` executable checks its arguments before building the server, so the flag never reaches `OxusServer` and the composition root stays a thin adapter. Printing to stdout is safe: in this mode there is no server, so no JSON-RPC to corrupt.
 - `oxusVersion` is internal to `OxusServer` today; the executable needs to read it.
-- The tests live in a new `oxusTests` target, which depends on the `oxus` executable. They run the built binary as a separate process and check what a user sees: its stdout, its stderr and its exit status.
+- The tests live in a new `oxusTests` target, which depends on the `oxus` executable, and on `OxusServer` to compare the output with `oxusVersion`. They run the built binary as a separate process and check what a user sees: its stdout, its stderr and its exit status.
 - Once a release ships the flag, the Homebrew formula's test and step 8 of `docs/releasing.md` can check `oxus --version` instead of sending an MCP `initialize`.
 
 ## Manual check
@@ -40,7 +40,7 @@ None.
 
 ## Test list
 
-Not written yet.
+[`010-version-flag.test-list.txt`](010-version-flag.test-list.txt)
 
 ## Risks
 
