@@ -39,7 +39,7 @@ import Testing
         #expect(try exitsWhileStdinStaysOpen(arguments: ["--version"]))
     }
 
-    @Test(arguments: [["--verison"], ["--version", "extra"], ["-v"], ["-V"], ["--help"]])
+    @Test(arguments: rejectedArguments)
     func `oxus rejects any other arguments with its usage on stderr and exit status 64`(arguments: [String]) throws {
         let run = try runOxus(arguments: arguments)
 
@@ -47,7 +47,14 @@ import Testing
         #expect(run.stderr == "usage: oxus [--version]\n")
         #expect(run.status == 64)
     }
+
+    @Test(arguments: rejectedArguments)
+    func `oxus rejects any other arguments while its stdin is still open, so it starts no server`(arguments: [String]) throws {
+        #expect(try exitsWhileStdinStaysOpen(arguments: arguments))
+    }
 }
+
+private let rejectedArguments = [["--verison"], ["--version", "extra"], ["-v"], ["-V"], ["--help"]]
 
 private final class TestBundleMarker {}
 
