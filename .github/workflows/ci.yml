@@ -3,7 +3,15 @@ name: CI
 on:
   push:
     branches: [main]
+    paths: &code
+      - Sources/**
+      - Tests/**
+      - Package.swift
+      - Package.resolved
+      - .swift-format
+      - .github/workflows/ci.yml
   pull_request:
+    paths: *code
 
 permissions:
   contents: read
