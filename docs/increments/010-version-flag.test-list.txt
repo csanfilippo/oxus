@@ -10,7 +10,7 @@
 
 ## Test List (TDD)
 - [x] Acceptance test: `oxus --version` prints "oxus " followed by oxusVersion and a newline on stdout, nothing on stderr, and exits 0
-- [ ] `oxus --version` exits while its stdin is still open, so it starts no server
+- [x] `oxus --version` exits while its stdin is still open, so it starts no server
 - [ ] `--verison`, `--version extra`, `-v`, `-V` and `--help` each print "usage: oxus [--version]" and a newline on stderr, nothing on stdout, and exit 64
 - [ ] A rejected argument exits while its stdin is still open, so it starts no server
 - [ ] Acceptance test: `oxus` with no arguments answers an MCP initialize on stdout with serverInfo named oxus at oxusVersion
