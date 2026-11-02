@@ -30,8 +30,9 @@ Steps to publish oxus as a public, installable MCP server.
 
 ## Repo hygiene
 
-- [ ] `SECURITY.md`: oxus exposes file paths to a model, so give leak reports a channel.
-- [ ] Repository description (currently empty).
+- [x] `SECURITY.md`: oxus exposes file paths to a model, so give leak reports a channel.
+- [ ] Enable private vulnerability reporting once the repository is public; `SECURITY.md` points reporters to it.
+- [x] Repository description.
 - [ ] Upload `.github/assets/oxus-social-preview.png` as the social preview.
 - [ ] Make the repository public.
 
