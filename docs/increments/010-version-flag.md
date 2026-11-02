@@ -29,6 +29,9 @@ Let anyone see which oxus they run, however they installed it. Today only Homebr
 
 Install the release from the zip and from Homebrew, and run `oxus --version` for each.
 
+- **Local build** (2026-11-03): `oxus --version` printed `oxus 0.1.0` and exited 0 at once; `--verison`, `--version extra` and `-V` printed the usage on stderr and exited 64; `oxus` with no arguments answered an `initialize` with `serverInfo` named `oxus` at `0.1.0`.
+- **Release zip and Homebrew:** pending the release that ships the flag.
+
 ## Open decisions
 
 None.
