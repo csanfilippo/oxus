@@ -25,4 +25,5 @@ jobs:
       - name: Lint
         run: swift format lint --strict -r Sources Tests Package.swift
       - name: Test
-        run: swift test --skip AcceptanceTests
+        # The runner's Spotlight never answers, so tests that query it hang; run them locally.
+        run: swift test --skip AcceptanceTests --skip MacOSAdaptersTests
