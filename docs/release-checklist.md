@@ -36,6 +36,6 @@ Steps to publish oxus as a public, installable MCP server.
 - [ ] Upload `.github/assets/oxus-social-preview.png` as the social preview.
 - [ ] Make the repository public.
 
-## Open decisions
+## Decisions
 
-- Are contributions welcome? If yes, add `CONTRIBUTING.md` describing the increments and test-list workflow; if not, say so in the README.
+- Contributions are not accepted for now; the README says so. If that changes, add `CONTRIBUTING.md` describing the increments and test-list workflow.
