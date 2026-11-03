@@ -8,7 +8,7 @@
 
 An [MCP](https://modelcontextprotocol.io) server that exposes macOS Spotlight search to MCP clients over stdio.
 
-> **Status:** 0.1.0, the first release. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name, kind and folder without query syntax; both report the Downloads, Documents and Desktop folders macOS privacy protection hides from Spotlight. Runs on macOS 27; checked by hand with Claude Code and Claude Desktop.
+> **Status:** 0.2.0. `spotlight_query` runs raw Spotlight queries, and `search` finds files by name, kind and folder without query syntax; both report the Downloads, Documents and Desktop folders macOS privacy protection hides from Spotlight. `oxus --version` reports the installed version. Runs on macOS 27; checked by hand with Claude Code and Claude Desktop.
 
 ## Requirements
 
