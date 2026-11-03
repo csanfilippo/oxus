@@ -156,7 +156,7 @@ git config core.hooksPath .githooks       # once per clone: lint staged Swift fi
 | `MacOSAdaptersTests` | Adapter tests against real Spotlight and real folders |
 | `AcceptanceTests` | End-to-end tests through an MCP client, against real Spotlight and real folders |
 
-Work is planned in increments: each one is described in [`docs/increments`](docs/increments), next to its TDD test list. How tool arguments are read is described in [`docs/design/tool-arguments.md`](docs/design/tool-arguments.md). Releases follow [`docs/releasing.md`](docs/releasing.md).
+Work is planned in increments: each one is described in [`docs/increments`](docs/increments), next to its TDD test list. The modules and how they depend on each other are drawn in [`docs/design/architecture.md`](docs/design/architecture.md), and how tool arguments are read is described in [`docs/design/tool-arguments.md`](docs/design/tool-arguments.md). Releases follow [`docs/releasing.md`](docs/releasing.md).
 
 ## Contributing
 
