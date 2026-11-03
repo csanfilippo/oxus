@@ -7,8 +7,9 @@
 - `truncated` and `unreadableFolders` are independent
 - Output schema: both tools advertise `truncated` as an optional boolean, described as more matches existing than `paths` holds
 - Error results are unchanged: no structured content
-- `limit`: default, maximum and error messages unchanged; Spotlight stays capped one result above `limit`, including at the maximum of 100
-- The port's way of reporting a cut-off is an open decision in the increment doc; each test below states behaviour, not its shape
+- `limit`: default, maximum and error messages unchanged; CoreServicesSpotlight caps MDQuery one result above `limit`, including at the maximum of 100, and the port tells the server that more matches exist
+- SpySpotlight must honour the same contract: at most `limit` paths, and a report that more matches exist
+- The port returns SpotlightMatches, declared in OxusServer: the paths and whether more matches exist
 
 ## Test List (TDD)
 - [ ] Acceptance test: a client runs spotlight_query with a query matching more system files than a limit of 1 and receives one path and truncated true
