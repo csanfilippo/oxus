@@ -1,0 +1,15 @@
+# Increment 11: concurrent queries - Test List
+
+## Specifications
+- Tools: `spotlight_query` and `search`; every concurrent call gets its own reply, including more calls than the Mac has CPUs
+- A call's reply depends only on its own arguments: results and errors are unchanged
+- `CoreServicesSpotlight` is an actor, so it runs at most one query at a time; the composition root creates a single instance
+- The `Spotlight` port and `SpySpotlight` are unchanged
+- Without the fix these tests hang instead of failing
+
+## Test List (TDD)
+- [ ] Acceptance test: a client sends more concurrent spotlight_query calls for Finder.app than the Mac has CPUs and every call receives Finder's path
+- [ ] CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs
+- [ ] Concurrent searches for different files each return their own path
+- [ ] A malformed query among concurrent searches reports its own error and the others return their paths
+- [ ] Manual: piping more concurrent spotlight_query calls than the Mac has CPUs into the built binary returns one reply per call; results recorded in the increment doc

@@ -1,4 +1,4 @@
-# Increment 11 — Truncated results
+# Increment 12 — Truncated results
 
 **Status:** Planned
 
@@ -47,7 +47,7 @@ None.
 
 ## Test list
 
-[`011-truncated-results.test-list.txt`](011-truncated-results.test-list.txt)
+[`012-truncated-results.test-list.txt`](012-truncated-results.test-list.txt)
 
 ## Risks
 

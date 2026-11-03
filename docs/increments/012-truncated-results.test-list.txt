@@ -1,4 +1,4 @@
-# Increment 11: truncated results - Test List
+# Increment 12: truncated results - Test List
 
 ## Specifications
 - Tools: `spotlight_query` and `search`, which share `OxusResponse`
