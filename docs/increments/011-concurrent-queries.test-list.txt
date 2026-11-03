@@ -9,8 +9,8 @@
 
 ## Test List (TDD)
 - [x] Acceptance test: a client sends more concurrent spotlight_query calls for Finder.app than the Mac has CPUs and every call receives Finder's path
-- [ ] CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs
-- [ ] Separate CoreServicesSpotlight instances answer more concurrent searches than the Mac has CPUs
-- [ ] Concurrent searches for different files each return their own path
-- [ ] A malformed query among concurrent searches reports its own error and the others return their paths
-- [ ] Manual: piping more concurrent spotlight_query calls than the Mac has CPUs into the built binary returns one reply per call; results recorded in the increment doc
+- [x] CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs
+- [x] Separate CoreServicesSpotlight instances answer more concurrent searches than the Mac has CPUs
+- [x] Concurrent searches for different files each return their own path
+- [x] A malformed query among concurrent searches reports its own error and the others return their paths
+- [x] Manual: piping more concurrent spotlight_query calls than the Mac has CPUs into the built binary returns one reply per call; results recorded in the increment doc

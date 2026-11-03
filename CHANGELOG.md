@@ -4,6 +4,10 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Fixed
+
+- As many concurrent tool calls as the Mac has CPUs, or more, no longer hang the server with no reply: Spotlight queries now run one at a time.
+
 ## [0.2.0] - 2026-11-03
 
 ### Added

@@ -137,4 +137,102 @@ import Testing
         #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
         #expect(Set(pathsThroughLink) == Set(paths))
     }
+
+    @Test func `CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let searchCount = ProcessInfo.processInfo.activeProcessorCount + 1
+
+        let results = try await withThrowingTaskGroup(of: [String].self) { group in
+            for _ in 0..<searchCount {
+                group.addTask {
+                    try await spotlight.search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
+                }
+            }
+            return try await group.reduce(into: []) { $0.append($1) }
+        }
+
+        #expect(results.count == searchCount)
+        #expect(results.allSatisfy { $0.contains("/System/Library/CoreServices/Finder.app") })
+    }
+
+    @Test func `Separate CoreServicesSpotlight instances answer more concurrent searches than the Mac has CPUs`() async throws {
+        let searchCount = ProcessInfo.processInfo.activeProcessorCount + 1
+
+        let results = try await withThrowingTaskGroup(of: [String].self) { group in
+            for _ in 0..<searchCount {
+                group.addTask {
+                    try await CoreServicesSpotlight().search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
+                }
+            }
+            return try await group.reduce(into: []) { $0.append($1) }
+        }
+
+        #expect(results.count == searchCount)
+        #expect(results.allSatisfy { $0.contains("/System/Library/CoreServices/Finder.app") })
+    }
+
+    @Test func `Concurrent searches for different files each return their own path`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let files = [
+            (name: "Finder.app", path: "/System/Library/CoreServices/Finder.app"),
+            (name: "Terminal.app", path: "/System/Applications/Utilities/Terminal.app"),
+            (name: "Calculator.app", path: "/System/Applications/Calculator.app"),
+        ]
+        let searchCount = ProcessInfo.processInfo.activeProcessorCount + 1
+
+        let results = try await withThrowingTaskGroup(of: (expected: String, paths: [String]).self) { group in
+            for index in 0..<searchCount {
+                let file = files[index % files.count]
+                group.addTask {
+                    let query = try Query(#"kMDItemFSName == "\#(file.name)""#)
+                    return (file.path, try await spotlight.search(query: query, limit: Limit(10), folder: nil))
+                }
+            }
+            return try await group.reduce(into: []) { $0.append($1) }
+        }
+
+        #expect(results.count == searchCount)
+        for result in results {
+            #expect(result.paths == [result.expected])
+        }
+    }
+
+    @Test func `A malformed query among concurrent searches reports its own error and the others return their paths`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let malformedQuery = "kMDItemFSName =="
+        let searchCount = ProcessInfo.processInfo.activeProcessorCount + 1
+
+        let results = await withTaskGroup(of: Result<[String], SpotlightError>.self) { group in
+            for index in 0..<searchCount {
+                let text = index == 0 ? malformedQuery : #"kMDItemFSName == "Finder.app""#
+                group.addTask {
+                    do {
+                        return .success(try await spotlight.search(query: Query(text), limit: Limit(10), folder: nil))
+                    } catch let error as SpotlightError {
+                        return .failure(error)
+                    } catch {
+                        fatalError("unexpected error: \(error)")
+                    }
+                }
+            }
+            return await group.reduce(into: []) { $0.append($1) }
+        }
+
+        var malformedQueries: [String] = []
+        var paths: [[String]] = []
+        for result in results {
+            switch result {
+            case .success(let found):
+                paths.append(found)
+            case .failure(.malformedQuery(let query)):
+                malformedQueries.append(query)
+            case .failure(let error):
+                Issue.record("expected malformedQuery, got \(error)")
+            }
+        }
+
+        #expect(malformedQueries == [malformedQuery])
+        #expect(paths.count == searchCount - 1)
+        #expect(paths.allSatisfy { $0.contains("/System/Library/CoreServices/Finder.app") })
+    }
 }
