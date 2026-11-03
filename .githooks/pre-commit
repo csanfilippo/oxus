@@ -2,7 +2,7 @@
 # Lints the staged content, not the working tree, so a partially staged file is checked as it will be committed.
 
 status=0
-git diff --cached --name-only --diff-filter=ACMR -z -- '*.swift' | while IFS= read -r -d '' file; do
+git diff --cached --name-only --diff-filter=ACMR -z -- 'Sources/*.swift' 'Tests/*.swift' Package.swift | while IFS= read -r -d '' file; do
     git show ":$file" | swift format lint --strict --assume-filename "$file" - || exit 1
 done || status=1
 
