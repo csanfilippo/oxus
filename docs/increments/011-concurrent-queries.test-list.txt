@@ -3,13 +3,14 @@
 ## Specifications
 - Tools: `spotlight_query` and `search`; every concurrent call gets its own reply, including more calls than the Mac has CPUs
 - A call's reply depends only on its own arguments: results and errors are unchanged
-- `CoreServicesSpotlight` is an actor, so it runs at most one query at a time; the composition root creates a single instance
+- At most one query runs in the process, however many `CoreServicesSpotlight` instances exist: a global actor isolates `search`, and `CoreServicesSpotlight` stays a struct
 - The `Spotlight` port and `SpySpotlight` are unchanged
-- Without the fix these tests hang instead of failing
+- Without the fix these tests hang instead of failing; `.timeLimit` does not stop them, and CI skips them, so `swift test` before a release is what catches a regression
 
 ## Test List (TDD)
 - [ ] Acceptance test: a client sends more concurrent spotlight_query calls for Finder.app than the Mac has CPUs and every call receives Finder's path
 - [ ] CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs
+- [ ] Separate CoreServicesSpotlight instances answer more concurrent searches than the Mac has CPUs
 - [ ] Concurrent searches for different files each return their own path
 - [ ] A malformed query among concurrent searches reports its own error and the others return their paths
 - [ ] Manual: piping more concurrent spotlight_query calls than the Mac has CPUs into the built binary returns one reply per call; results recorded in the increment doc
