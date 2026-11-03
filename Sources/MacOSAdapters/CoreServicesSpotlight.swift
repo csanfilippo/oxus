@@ -28,7 +28,7 @@ import OxusServer
 
 // A synchronous MDQueryExecute blocks its thread, and once as many queries as the cooperative pool has
 // threads are in flight, none of them ends. Queries run one at a time across every instance to prevent that.
-@globalActor public actor SpotlightQueries {
+@globalActor private actor SpotlightQueries {
     public static let shared = SpotlightQueries()
 }
 
