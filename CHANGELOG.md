@@ -4,6 +4,8 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-04
+
 ### Fixed
 
 - As many concurrent tool calls as the Mac has CPUs, or more, no longer hang the server with no reply: Spotlight queries now run one at a time.
@@ -30,6 +32,7 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 - A `search` `folder` denied by macOS privacy protection names the Privacy & Security setting to change, and one lacking read permission says so.
 - A `search` whose `folder` contains `~/Downloads`, `~/Documents` or `~/Desktop`, a `search` without a `folder`, and every `spotlight_query` list in `unreadableFolders` those of the three folders macOS privacy protection denies, each with the setting to change, since Spotlight silently leaves out their files.
 
-[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/csanfilippo/oxus/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/csanfilippo/oxus/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/csanfilippo/oxus/releases/tag/v0.1.0
