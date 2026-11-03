@@ -1,0 +1,29 @@
+# Increment 11: truncated results - Test List
+
+## Specifications
+- Tools: `spotlight_query` and `search`, which share `OxusResponse`
+- Matches above `limit` add "truncated": true next to `paths`, in structuredContent and in the JSON text block; `paths` holds exactly `limit` paths
+- Every match returned, including matches equal to `limit`, means no `truncated` key
+- `truncated` and `unreadableFolders` are independent
+- Output schema: both tools advertise `truncated` as an optional boolean, described as more matches existing than `paths` holds
+- Error results are unchanged: no structured content
+- `limit`: default, maximum and error messages unchanged; Spotlight stays capped one result above `limit`, including at the maximum of 100
+- The port's way of reporting a cut-off is an open decision in the increment doc; each test below states behaviour, not its shape
+
+## Test List (TDD)
+- [ ] Acceptance test: a client runs spotlight_query with a query matching more system files than a limit of 1 and receives one path and truncated true
+- [ ] Acceptance test: a client searches for "finde" with a limit above its matches and receives the paths without a truncated key
+- [ ] A search whose matches exceed limit returns limit paths and truncated true
+- [ ] spotlight_query whose matches exceed limit returns limit paths and truncated true
+- [ ] A search whose matches equal limit returns them all and no truncated key
+- [ ] spotlight_query whose matches equal limit returns them all and no truncated key
+- [ ] A search with no limit argument and more than 25 matches returns 25 paths and truncated true
+- [ ] A search at the maximum limit of 100 with more than 100 matches returns 100 paths and truncated true
+- [ ] A result that is cut off with a protected folder denied carries both truncated and unreadableFolders
+- [ ] A query Spotlight rejects returns its error with no structured content
+- [ ] The text block decodes to the structured content, including truncated
+- [ ] search and spotlight_query advertise an optional boolean truncated in their output schema, described as more matches existing than paths holds
+- [ ] CoreServicesSpotlight reports a cut-off for a query matching more system files than the limit, and returns limit paths
+- [ ] CoreServicesSpotlight reports no cut-off when the matches equal the limit, for Finder.app with a limit of 1
+- [ ] CoreServicesSpotlight reports a cut-off at the maximum limit of 100 for a query matching more than 100 system files
+- [ ] Manual: Claude Desktop's search matching more than 25 files returns truncated true, and a narrower search below its limit returns no truncated key; results recorded in the increment doc
