@@ -279,6 +279,37 @@ import Testing
         #expect(structuredContent["unreadableFolders"] == nil)
     }
 
+    @Test
+    func
+        `a client sends more concurrent spotlight_query calls for Finder.app than the Mac has CPUs and every call receives Finder's path`()
+        async throws
+    {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+        let callCount = ProcessInfo.processInfo.activeProcessorCount + 1
+
+        let results = try await withThrowingTaskGroup(of: CallTool.Result.self) { group in
+            for _ in 0..<callCount {
+                group.addTask {
+                    try await client.send(
+                        CallTool.request(
+                            .init(
+                                name: "spotlight_query",
+                                arguments: ["query": #"kMDItemFSName == "Finder.app""#]
+                            ))
+                    ).value
+                }
+            }
+            return try await group.reduce(into: []) { $0.append($1) }
+        }
+
+        #expect(results.count == callCount)
+        for result in results {
+            let paths = result.structuredContent?.objectValue?["paths"]?.arrayValue
+            #expect(result.isError != true)
+            #expect(paths?.contains("/System/Library/CoreServices/Finder.app") == true)
+        }
+    }
+
     // Unscoped calls probe the home's protected folders; the real home would make runs prompt and depend on its privacy settings.
     private static let home: String = {
         let home = FileManager.default.temporaryDirectory.appending(path: "oxus-acceptance-home")

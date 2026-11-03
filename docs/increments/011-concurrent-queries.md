@@ -1,6 +1,6 @@
 # Increment 11 — Concurrent queries
 
-**Status:** Planned
+**Status:** In progress
 
 ## Goal
 
