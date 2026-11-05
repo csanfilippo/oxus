@@ -50,7 +50,11 @@ struct SpotlightQueryTool: OxusTool {
             let limit = try arguments.optional(LimitArgument.self)?.limit ?? .default
             let unreadableFolders = privacyProtectionProbe.unreadableFolders(in: nil)
             let matches = try await spotlight.search(query: query, limit: limit, folder: nil)
-            return try OxusResponse(paths: matches.paths, unreadableFolders: unreadableFolders).asResult
+            return try OxusResponse(
+                paths: matches.paths,
+                unreadableFolders: unreadableFolders,
+                truncated: matches.truncated
+            ).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
         }

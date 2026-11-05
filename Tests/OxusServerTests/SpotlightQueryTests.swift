@@ -285,4 +285,17 @@ import Testing
         #expect(result.structuredContent?.objectValue?["unreadableFolders"] != nil)
         #expect(mirrored == result.structuredContent)
     }
+
+    @Test func `spotlight_query whose matches exceed limit returns limit paths and truncated true`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
+
+        let result = try await client.send(
+            CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test", "limit": 1]))
+        ).value
+
+        let content = try #require(result.structuredContent?.objectValue)
+
+        #expect(content["paths"] == ["/a"])
+        #expect(content["truncated"] == true)
+    }
 }
