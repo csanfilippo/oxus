@@ -298,4 +298,17 @@ import Testing
         #expect(content["paths"] == ["/a"])
         #expect(content["truncated"] == true)
     }
+
+    @Test func `spotlight_query whose matches equal limit returns them all and no truncated key`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
+
+        let result = try await client.send(
+            CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test", "limit": 2]))
+        ).value
+
+        let content = try #require(result.structuredContent?.objectValue)
+
+        #expect(content["paths"] == ["/a", "/b"])
+        #expect(content["truncated"] == nil)
+    }
 }
