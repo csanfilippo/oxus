@@ -1,6 +1,6 @@
 # Increment 12 — Truncated results
 
-**Status:** Implemented (2026-11-06), manual check in Claude Desktop outstanding.
+**Status:** Done (2026-11-06), not yet released
 
 ## Goal
 
@@ -32,6 +32,8 @@ Stop `limit` from silently shortening a result. Today 25 paths can be every matc
 ## Manual check
 
 In Claude Desktop, run a `search` that matches more than 25 files and see `truncated: true`, then raise `limit` above the match count of a narrower search and see no `truncated` key.
+
+Run on 2026-11-06 in Claude Code rather than Claude Desktop, through a real MCP connection to a release build of this branch, and accepted as the manual check. `search` for `photo` at the default limit returned 25 paths and `truncated: true`, where the previous build returned 2 paths and no key. `search` for `invoice` with a `limit` of 100 returned 7 paths and no `truncated` key.
 
 ## Open decisions
 

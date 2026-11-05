@@ -79,6 +79,8 @@ oxus runs locally and makes no network requests, but it gives the connected MCP 
 
 Without access to `~/Downloads`, `~/Documents` or `~/Desktop`, Spotlight silently leaves out their files. So a `spotlight_query`, a `search` without a `folder`, and a `search` whose `folder` contains one of them also return `unreadableFolders`: one `{"path": ..., "fix": ...}` per folder macOS privacy protection denies to oxus, the fix naming the Files and Folders setting to change.
 
+When more matches exist than `limit` allows, a result also carries `"truncated": true` next to `paths`, so raise `limit` or narrow the search. A result with every match has no `truncated` key.
+
 ### `spotlight_query`
 
 Runs a raw [Spotlight query](https://developer.apple.com/library/archive/documentation/Carbon/Conceptual/SpotlightQuery/Concepts/QueryFormat.html) and returns the paths of matching files.

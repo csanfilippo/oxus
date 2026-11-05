@@ -28,4 +28,4 @@
 - [x] CoreServicesSpotlight reports no cut-off when the matches equal the limit, for Finder.app with a limit of 1
 - [x] CoreServicesSpotlight reports a cut-off at the maximum limit of 100 for a query matching more than 100 system files
 - [x] CoreServicesSpotlight reports a cut-off for a display name query matching more files than the limit
-- [ ] Manual: Claude Desktop's search matching more than 25 files returns truncated true, and a narrower search below its limit returns no truncated key; results recorded in the increment doc
+- [x] Manual: Claude Desktop's search matching more than 25 files returns truncated true, and a narrower search below its limit returns no truncated key; results recorded in the increment doc

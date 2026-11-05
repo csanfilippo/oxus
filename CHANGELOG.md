@@ -4,6 +4,18 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Added
+
+- `spotlight_query` and `search` results carry `truncated: true` when more matches exist than `paths` holds, so a client can raise `limit` or narrow the search. A result with every match has no `truncated` key.
+
+### Changed
+
+- Very broad searches, such as a single letter, can take a few seconds, because Spotlight queries no longer run with a cap.
+
+### Fixed
+
+- `search` no longer returns far fewer paths than `limit` while more matches exist: a capped Spotlight query on display names could stop early, for example 3 of 1,079 matches for `.app`.
+
 ## [0.2.1] - 2026-11-04
 
 ### Fixed
