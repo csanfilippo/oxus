@@ -31,18 +31,18 @@ import Testing
     @Test func `Real Spotlight finds Finder.app by name`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
+        let matches = try await spotlight.search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
 
-        #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
+        #expect(matches.paths.contains("/System/Library/CoreServices/Finder.app"))
     }
 
     @Test func `Real Spotlight returns at most the requested number of paths`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemContentType == "com.apple.application-bundle""#), limit: Limit(2), folder: nil)
 
-        #expect(paths.count == 2)
+        #expect(matches.paths.count == 2)
     }
 
     @Test func `Real Spotlight reports a malformed query as invalid`() async throws {
@@ -62,45 +62,45 @@ import Testing
         let spotlight = CoreServicesSpotlight()
         let nonexistentFileName = UUID().uuidString
 
-        let paths = try await spotlight.search(query: Query(#"kMDItemFSName == "\#(nonexistentFileName)""#), limit: Limit(2), folder: nil)
+        let matches = try await spotlight.search(query: Query(#"kMDItemFSName == "\#(nonexistentFileName)""#), limit: Limit(2), folder: nil)
 
-        #expect(paths.isEmpty)
+        #expect(matches.paths.isEmpty)
     }
 
     @Test func `a scope includes its subfolders: Terminal.app is found under /System/Applications`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemFSName == "Terminal.app""#),
             limit: Limit(10),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
-        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+        #expect(matches.paths.contains("/System/Applications/Utilities/Terminal.app"))
     }
 
     @Test func `a scope excludes files outside it: Finder.app is not found under /System/Applications`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemFSName == "Finder.app""#),
             limit: Limit(10),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
-        #expect(!paths.contains("/System/Library/CoreServices/Finder.app"))
+        #expect(!matches.paths.contains("/System/Library/CoreServices/Finder.app"))
     }
 
     @Test func `the scope folder is never a result: Utilities is not found under /Applications/Utilities`() async throws {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemFSName == "Utilities""#),
             limit: Limit(10),
             folder: Folder(absolutePath: "/Applications/Utilities")
         )
 
-        #expect(!paths.contains("/Applications/Utilities"))
+        #expect(!matches.paths.contains("/Applications/Utilities"))
     }
 
     @Test func `the match-all query finds files of any name in a scope, e.g. Calculator.app and Terminal.app under /System/Applications`()
@@ -108,14 +108,14 @@ import Testing
     {
         let spotlight = CoreServicesSpotlight()
 
-        let paths = try await spotlight.search(
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemDisplayName == "*""#),
             limit: Limit(100),
             folder: Folder(absolutePath: "/System/Applications")
         )
 
-        #expect(paths.contains("/System/Applications/Calculator.app"))
-        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
+        #expect(matches.paths.contains("/System/Applications/Calculator.app"))
+        #expect(matches.paths.contains("/System/Applications/Utilities/Terminal.app"))
     }
 
     @Test func `a scope through a symlink finds the same paths as the folder it points to`() async throws {
@@ -127,15 +127,16 @@ import Testing
         try FileManager.default.createSymbolicLink(atPath: link, withDestinationPath: "/System/Applications/Utilities")
 
         let pathsThroughLink = try await spotlight.search(
-            query: Query(#"kMDItemDisplayName == "*""#), limit: Limit(100), folder: Folder(absolutePath: link))
-        let paths = try await spotlight.search(
+            query: Query(#"kMDItemDisplayName == "*""#), limit: Limit(100), folder: Folder(absolutePath: link)
+        ).paths
+        let matches = try await spotlight.search(
             query: Query(#"kMDItemDisplayName == "*""#),
             limit: Limit(100),
             folder: Folder(absolutePath: "/System/Applications/Utilities")
         )
 
-        #expect(paths.contains("/System/Applications/Utilities/Terminal.app"))
-        #expect(Set(pathsThroughLink) == Set(paths))
+        #expect(matches.paths.contains("/System/Applications/Utilities/Terminal.app"))
+        #expect(Set(pathsThroughLink) == Set(matches.paths))
     }
 
     @Test func `CoreServicesSpotlight answers more concurrent searches than the Mac has CPUs`() async throws {
@@ -145,7 +146,7 @@ import Testing
         let results = try await withThrowingTaskGroup(of: [String].self) { group in
             for _ in 0..<searchCount {
                 group.addTask {
-                    try await spotlight.search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
+                    try await spotlight.search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil).paths
                 }
             }
             return try await group.reduce(into: []) { $0.append($1) }
@@ -162,6 +163,7 @@ import Testing
             for _ in 0..<searchCount {
                 group.addTask {
                     try await CoreServicesSpotlight().search(query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(10), folder: nil)
+                        .paths
                 }
             }
             return try await group.reduce(into: []) { $0.append($1) }
@@ -185,7 +187,7 @@ import Testing
                 let file = files[index % files.count]
                 group.addTask {
                     let query = try Query(#"kMDItemFSName == "\#(file.name)""#)
-                    return (file.path, try await spotlight.search(query: query, limit: Limit(10), folder: nil))
+                    return (file.path, try await spotlight.search(query: query, limit: Limit(10), folder: nil).paths)
                 }
             }
             return try await group.reduce(into: []) { $0.append($1) }
@@ -207,7 +209,7 @@ import Testing
                 let text = index == 0 ? malformedQuery : #"kMDItemFSName == "Finder.app""#
                 group.addTask {
                     do {
-                        return .success(try await spotlight.search(query: Query(text), limit: Limit(10), folder: nil))
+                        return .success(try await spotlight.search(query: Query(text), limit: Limit(10), folder: nil).paths)
                     } catch let error as SpotlightError {
                         return .failure(error)
                     } catch {

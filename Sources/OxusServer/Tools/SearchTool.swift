@@ -61,8 +61,12 @@ struct SearchTool: OxusTool {
                 try checkSearchable(folder)
             }
             let unreadableFolders = privacyProtectionProbe.unreadableFolders(in: criteria.folder)
-            let paths = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
-            return try OxusResponse(paths: paths, unreadableFolders: unreadableFolders).asResult
+            let matches = try await spotlight.search(query: criteria.query, limit: limit, folder: criteria.folder)
+            return try OxusResponse(
+                paths: matches.paths,
+                unreadableFolders: unreadableFolders,
+                truncated: matches.truncated
+            ).asResult
         } catch let failure as any ToolFailure {
             return failure.asResult
         }

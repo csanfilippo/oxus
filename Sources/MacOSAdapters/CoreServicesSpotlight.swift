@@ -34,7 +34,7 @@ import OxusServer
 
 public struct CoreServicesSpotlight: Spotlight {
     @SpotlightQueries
-    public func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    public func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches {
 
         guard let spotlightQuery = MDQueryCreate(kCFAllocatorDefault, query.text as CFString, nil, nil) else {
             throw .malformedQuery(query: query.text)
@@ -50,10 +50,12 @@ public struct CoreServicesSpotlight: Spotlight {
             throw .executionFailed(query: query.text)
         }
 
-        return (0..<MDQueryGetResultCount(spotlightQuery)).compactMap { index in
+        let paths = (0..<MDQueryGetResultCount(spotlightQuery)).compactMap { index in
             let item = Unmanaged<MDItem>.fromOpaque(MDQueryGetResultAtIndex(spotlightQuery, index)).takeUnretainedValue()
             return MDItemCopyAttribute(item, kMDItemPath) as? String
         }
+
+        return SpotlightMatches(paths: paths, truncated: false)
     }
 
     public init() {}

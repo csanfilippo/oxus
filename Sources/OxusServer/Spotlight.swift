@@ -36,6 +36,16 @@ public enum SpotlightError: Error, ToolFailure {
     }
 }
 
+public struct SpotlightMatches: Sendable {
+    public let paths: [String]
+    public let truncated: Bool
+
+    public init(paths: [String], truncated: Bool) {
+        self.paths = paths
+        self.truncated = truncated
+    }
+}
+
 public protocol Spotlight: Sendable {
-    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String]
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches
 }

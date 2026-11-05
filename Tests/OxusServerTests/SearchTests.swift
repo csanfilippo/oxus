@@ -662,4 +662,17 @@ import Testing
             #expect(fix.contains("System Settings › Privacy & Security › Files and Folders › \(protectedFolder),"))
         }
     }
+
+    @Test func `A search whose matches exceed limit returns limit paths and truncated true`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
+
+        let result = try await client.send(
+            CallTool.request(.init(name: "search", arguments: ["name_contains": "test", "limit": 1]))
+        ).value
+
+        let content = try #require(result.structuredContent?.objectValue)
+
+        #expect(content["paths"] == ["/a"])
+        #expect(content["truncated"] == true)
+    }
 }

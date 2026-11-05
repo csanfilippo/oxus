@@ -33,10 +33,12 @@ struct UnreadableFolder: Codable {
 struct OxusResponse: Codable {
     let paths: [String]
     let unreadableFolders: [UnreadableFolder]?
+    let truncated: Bool?
 
-    init(paths: [String], unreadableFolders: [UnreadableFolder] = []) {
+    init(paths: [String], unreadableFolders: [UnreadableFolder] = [], truncated: Bool = false) {
         self.paths = paths
         self.unreadableFolders = unreadableFolders.isEmpty ? nil : unreadableFolders
+        self.truncated = truncated ? true : nil
     }
 
     static let schema: Value = .object([

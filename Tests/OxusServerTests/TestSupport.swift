@@ -26,13 +26,13 @@ import MCP
 import OxusServer
 
 final class MalformedQuerySpotlight: Sendable, Spotlight {
-    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches {
         throw SpotlightError.malformedQuery(query: query.text)
     }
 }
 
 final class FailingExecutionSpotlight: Sendable, Spotlight {
-    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches {
         throw SpotlightError.executionFailed(query: query.text)
     }
 }
@@ -44,11 +44,14 @@ final class SpySpotlight: Spotlight, @unchecked Sendable {
 
     private let result: [String]
     init(result: [String] = []) { self.result = result }
-    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches {
         receivedQuery = query
         receivedLimit = limit
         receivedFolder = folder
-        return Array(result.prefix(limit.value))
+
+        let truncated = result.count > limit.value
+
+        return SpotlightMatches(paths: Array(result.prefix(limit.value)), truncated: truncated)
     }
 }
 
@@ -118,9 +121,9 @@ final class CheckedPathsRecordingSpotlight: Spotlight, @unchecked Sendable {
     private let fileSystem: ScriptedFileSystem
     init(fileSystem: ScriptedFileSystem) { self.fileSystem = fileSystem }
 
-    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> [String] {
+    func search(query: Query, limit: Limit, folder: Folder?) async throws(SpotlightError) -> SpotlightMatches {
         checkedPathsWhenSearched = fileSystem.checkedPaths
-        return []
+        return SpotlightMatches(paths: [], truncated: false)
     }
 }
 

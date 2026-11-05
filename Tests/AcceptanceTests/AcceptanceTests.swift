@@ -310,6 +310,29 @@ import Testing
         }
     }
 
+    @Test func `a client runs spotlight_query matching more system files than a limit of 1 and receives one path and truncated true`()
+        async throws
+    {
+        await withKnownIssue {
+            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+            let result = try await client.send(
+                CallTool.request(
+                    .init(
+                        name: "spotlight_query",
+                        arguments: ["query": #"kMDItemFSName == "*.app"c"#, "limit": 1]
+                    ))
+            ).value
+
+            let content = try #require(result.structuredContent?.objectValue)
+            let paths = try #require(content["paths"]?.arrayValue)
+
+            #expect(result.isError != true)
+            #expect(paths.count == 1)
+            #expect(content["truncated"] == true)
+        }
+    }
+
     // Unscoped calls probe the home's protected folders; the real home would make runs prompt and depend on its privacy settings.
     private static let home: String = {
         let home = FileManager.default.temporaryDirectory.appending(path: "oxus-acceptance-home")
