@@ -75,4 +75,23 @@ import Testing
         #expect(result.isError == true)
         #expect(fileSystem.checkedPaths.isEmpty)
     }
+
+    @Test func `A result that is cut off with a protected folder denied carries both truncated and unreadableFolders`() async throws {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
+        ])
+        let client = try await connectedClient(
+            spotlight: SpySpotlight(result: ["/Users/test/a", "/Users/test/b"]), fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(
+            CallTool.request(.init(name: "search", arguments: ["name_contains": "test", "limit": 1]))
+        ).value
+
+        let content = try #require(result.structuredContent?.objectValue)
+        let entries = try #require(content["unreadableFolders"]?.arrayValue)
+
+        #expect(content["paths"] == ["/Users/test/a"])
+        #expect(content["truncated"] == true)
+        #expect(entries.count == 1)
+    }
 }
