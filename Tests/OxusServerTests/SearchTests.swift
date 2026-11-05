@@ -614,6 +614,23 @@ import Testing
         #expect(mirrored == result.structuredContent)
     }
 
+    @Test func `The text block decodes to the structured content, including truncated`() async throws {
+        let fileSystem = ScriptedFileSystem(failures: [
+            "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
+        ])
+        let client = try await connectedClient(
+            spotlight: SpySpotlight(result: ["/Users/test/a", "/Users/test/a"]), fileSystem: fileSystem, home: "/Users/test")
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~", "limit": 1]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(result.content.count == 1)
+        #expect(result.structuredContent?.objectValue?["unreadableFolders"] != nil)
+        #expect(result.structuredContent?.objectValue?["truncated"] != nil)
+        #expect(mirrored == result.structuredContent)
+    }
+
     @Test
     func
         `An unscoped search with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix`()
