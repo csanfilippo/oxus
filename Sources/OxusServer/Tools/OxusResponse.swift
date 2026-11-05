@@ -68,6 +68,10 @@ struct OxusResponse: Codable {
                 "description":
                     "Protected folders macOS privacy protection denies to oxus. Their files are missing from paths until the user applies the fix",
             ]),
+            "truncated": .object([
+                "type": "boolean",
+                "description": "True when more matches exist than paths holds, so raise limit or narrow the search. Absent otherwise",
+            ]),
         ]),
         "required": ["paths"],
     ])

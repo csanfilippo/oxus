@@ -1,6 +1,6 @@
 # Increment 12 — Truncated results
 
-**Status:** Closed unfinished (2026-11-05), to be revisited. `search` and `spotlight_query` forward `truncated` from the `Spotlight` port, but `CoreServicesSpotlight` still caps `MDQuery` at `limit` and always reports no cut-off, and the output schema and the `limit` description are unchanged, so no client sees `truncated` yet.
+**Status:** Closed unfinished (2026-11-05), to be revisited. `search` and `spotlight_query` forward `truncated` from the `Spotlight` port, but `CoreServicesSpotlight` still caps `MDQuery` at `limit` and always reports no cut-off, so the output schema advertises `truncated` but no result carries it yet, and the `limit` description is unchanged.
 
 ## Goal
 

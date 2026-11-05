@@ -471,6 +471,26 @@ import Testing
         #expect(description.contains("missing from paths"))
     }
 
+    @Test(arguments: ["search", "spotlight_query"])
+    func
+        `search and spotlight_query advertise an optional boolean truncated in their output schema, described as more matches existing than paths holds`(
+            toolName: String
+        )
+        async throws
+    {
+        let client = try await connectedClient()
+
+        let (tools, _) = try await client.listTools()
+        let schema = try #require(toolWithName(tools: tools, name: toolName)?.outputSchema?.objectValue)
+        let truncated = try #require(schema["properties"]?.objectValue?["truncated"]?.objectValue)
+        let description = try #require(truncated["description"]?.stringValue)
+
+        #expect(schema["required"] == ["paths"])
+        #expect(truncated["type"] == "boolean")
+        #expect(description.contains("more matches exist than paths holds"))
+        #expect(description.contains("raise limit or narrow the search"))
+    }
+
     @Test
     func
         `A search scoped to ~ with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix`()
@@ -619,7 +639,7 @@ import Testing
             "/Users/test/Downloads": .deniedByPrivacyProtection(path: "/Users/test/Downloads")
         ])
         let client = try await connectedClient(
-            spotlight: SpySpotlight(result: ["/Users/test/a", "/Users/test/a"]), fileSystem: fileSystem, home: "/Users/test")
+            spotlight: SpySpotlight(result: ["/Users/test/a", "/Users/test/b"]), fileSystem: fileSystem, home: "/Users/test")
 
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~", "limit": 1]))).value
         let text = try #require(texts(in: result.content).first)
