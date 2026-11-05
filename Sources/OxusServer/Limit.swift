@@ -54,7 +54,7 @@ struct LimitArgument: ToolArgument {
         "type": "integer",
         "maximum": .int(Limit.maximum),
         "minimum": .int(Limit.minimum),
-        "description": "The maximum number of paths to return",
+        "description": "The maximum number of paths to return. A result cut off at this limit carries truncated",
     ])
 
     enum Error: ToolFailure {

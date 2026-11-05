@@ -40,8 +40,7 @@ public struct CoreServicesSpotlight: Spotlight {
             throw .malformedQuery(query: query.text)
         }
 
-        MDQuerySetMaxCount(spotlightQuery, limit.value)
-
+        // No MDQuerySetMaxCount: a capped kMDItemDisplayName query can stop before its cap with more matches left.
         if let folder {
             MDQuerySetSearchScope(spotlightQuery, [folder.path] as CFArray, 0)
         }
@@ -50,12 +49,14 @@ public struct CoreServicesSpotlight: Spotlight {
             throw .executionFailed(query: query.text)
         }
 
-        let paths = (0..<MDQueryGetResultCount(spotlightQuery)).compactMap { index in
+        let resultCount = MDQueryGetResultCount(spotlightQuery)
+
+        let paths = (0..<min(resultCount, limit.value)).compactMap { index in
             let item = Unmanaged<MDItem>.fromOpaque(MDQueryGetResultAtIndex(spotlightQuery, index)).takeUnretainedValue()
             return MDItemCopyAttribute(item, kMDItemPath) as? String
         }
 
-        return SpotlightMatches(paths: paths, truncated: false)
+        return SpotlightMatches(paths: paths, truncated: resultCount > limit.value)
     }
 
     public init() {}

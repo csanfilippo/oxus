@@ -22,6 +22,7 @@
  SOFTWARE.
  */
 
+import CoreServices
 import Foundation
 import MacOSAdapters
 import OxusServer
@@ -236,5 +237,57 @@ import Testing
         #expect(malformedQueries == [malformedQuery])
         #expect(paths.count == searchCount - 1)
         #expect(paths.allSatisfy { $0.contains("/System/Library/CoreServices/Finder.app") })
+    }
+
+    @Test func `reports a cut-off for a query matching more system files than the limit, and returns limit paths`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let matches = try await spotlight.search(
+            query: Query(#"kMDItemFSName == "*.app"c"#), limit: Limit(2), folder: Folder(absolutePath: "/System"))
+
+        #expect(matches.truncated)
+        #expect(matches.paths.count == 2)
+    }
+
+    @Test func `reports no cut-off when the matches equal the limit, for Finder.app with a limit of 1`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let matches = try await spotlight.search(
+            query: Query(#"kMDItemFSName == "Finder.app""#), limit: Limit(1),
+            folder: Folder(absolutePath: "/System/Library/CoreServices"))
+
+        #expect(!matches.truncated)
+        #expect(matches.paths == ["/System/Library/CoreServices/Finder.app"])
+    }
+
+    @Test func `reports a cut-off at the maximum limit of 100 for a query matching more than 100 system files`() async throws {
+        let spotlight = CoreServicesSpotlight()
+
+        let matches = try await spotlight.search(
+            query: Query(#"kMDItemFSName == "*.app"c"#), limit: Limit(100), folder: Folder(absolutePath: "/System"))
+
+        #expect(matches.truncated)
+        #expect(matches.paths.count == 100)
+    }
+
+    @Test func `reports a cut-off for a display name query matching more files than the limit`() async throws {
+        let spotlight = CoreServicesSpotlight()
+        let displayNameQuery = #"kMDItemDisplayName == "*.app*"cd"#
+        let allMatches = try #require(uncappedResultCount(of: displayNameQuery))
+        try #require(allMatches > 100)
+
+        let matches = try await spotlight.search(query: Query(displayNameQuery), limit: Limit(100), folder: nil)
+
+        #expect(matches.paths.count == 100)
+        #expect(matches.truncated)
+    }
+
+    private func uncappedResultCount(of text: String) -> Int? {
+        guard let query = MDQueryCreate(kCFAllocatorDefault, text as CFString, nil, nil),
+            MDQueryExecute(query, CFOptionFlags(kMDQuerySynchronous.rawValue))
+        else {
+            return nil
+        }
+        return MDQueryGetResultCount(query)
     }
 }

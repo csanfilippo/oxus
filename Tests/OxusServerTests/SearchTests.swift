@@ -491,6 +491,21 @@ import Testing
         #expect(description.contains("raise limit or narrow the search"))
     }
 
+    @Test(arguments: ["search", "spotlight_query"])
+    func `search and spotlight_query describe their limit argument as cutting off results that then carry truncated`(toolName: String)
+        async throws
+    {
+        let client = try await connectedClient()
+
+        let (tools, _) = try await client.listTools()
+        let schema = try #require(toolWithName(tools: tools, name: toolName)?.inputSchema.objectValue)
+        let limit = try #require(schema["properties"]?.objectValue?["limit"]?.objectValue)
+        let description = try #require(limit["description"]?.stringValue)
+
+        #expect(description.contains("cut off"))
+        #expect(description.contains("truncated"))
+    }
+
     @Test
     func
         `A search scoped to ~ with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix`()

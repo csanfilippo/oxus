@@ -313,24 +313,42 @@ import Testing
     @Test func `a client runs spotlight_query matching more system files than a limit of 1 and receives one path and truncated true`()
         async throws
     {
-        await withKnownIssue {
-            let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
-            let result = try await client.send(
-                CallTool.request(
-                    .init(
-                        name: "spotlight_query",
-                        arguments: ["query": #"kMDItemFSName == "*.app"c"#, "limit": 1]
-                    ))
-            ).value
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "spotlight_query",
+                    arguments: ["query": #"kMDItemFSName == "*.app"c"#, "limit": 1]
+                ))
+        ).value
 
-            let content = try #require(result.structuredContent?.objectValue)
-            let paths = try #require(content["paths"]?.arrayValue)
+        let content = try #require(result.structuredContent?.objectValue)
+        let paths = try #require(content["paths"]?.arrayValue)
 
-            #expect(result.isError != true)
-            #expect(paths.count == 1)
-            #expect(content["truncated"] == true)
-        }
+        #expect(result.isError != true)
+        #expect(paths.count == 1)
+        #expect(content["truncated"] == true)
+    }
+
+    @Test func `a client searches for "finde" with a limit above its matches and receives the paths without a truncated key`() async throws
+    {
+        let client = try await connectedClient(spotlight: CoreServicesSpotlight())
+
+        let result = try await client.send(
+            CallTool.request(
+                .init(
+                    name: "search",
+                    arguments: ["name_contains": "finde", "folder": "/System/Library/CoreServices", "limit": 100]
+                ))
+        ).value
+
+        let content = try #require(result.structuredContent?.objectValue)
+        let paths = try #require(content["paths"]?.arrayValue)
+
+        #expect(result.isError != true)
+        #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
+        #expect(content["truncated"] == nil)
     }
 
     // Unscoped calls probe the home's protected folders; the real home would make runs prompt and depend on its privacy settings.
