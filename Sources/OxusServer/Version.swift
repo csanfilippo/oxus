@@ -23,4 +23,4 @@
  */
 
 // The single source of oxus's version: scripts/tag-release.sh derives the release tag from it.
-public let oxusVersion = "0.2.1"
+public let oxusVersion = "0.3.0"

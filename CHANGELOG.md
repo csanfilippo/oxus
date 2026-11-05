@@ -4,17 +4,11 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-06
+
 ### Added
 
 - `spotlight_query` and `search` results carry `truncated: true` when more matches exist than `paths` holds, so a client can raise `limit` or narrow the search. A result with every match has no `truncated` key.
-
-### Changed
-
-- Very broad searches, such as a single letter, can take a few seconds, because Spotlight queries no longer run with a cap.
-
-### Fixed
-
-- `search` no longer returns far fewer paths than `limit` while more matches exist: a capped Spotlight query on display names could stop early, for example 3 of 1,079 matches for `.app`.
 
 ## [0.2.1] - 2026-11-04
 
@@ -44,7 +38,8 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 - A `search` `folder` denied by macOS privacy protection names the Privacy & Security setting to change, and one lacking read permission says so.
 - A `search` whose `folder` contains `~/Downloads`, `~/Documents` or `~/Desktop`, a `search` without a `folder`, and every `spotlight_query` list in `unreadableFolders` those of the three folders macOS privacy protection denies, each with the setting to change, since Spotlight silently leaves out their files.
 
-[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/csanfilippo/oxus/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/csanfilippo/oxus/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/csanfilippo/oxus/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/csanfilippo/oxus/releases/tag/v0.1.0

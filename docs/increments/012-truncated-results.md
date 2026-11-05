@@ -27,7 +27,7 @@ Stop `limit` from silently shortening a result. Today 25 paths can be every matc
 - `CoreServicesSpotlight` runs `MDQuery` without a cap and keeps the first `limit` results. A raw result count above `limit` means more matches exist, and it tells the server through the `Spotlight` port.
 - The field is added to `OxusResponse`, which both tools share.
 - `Limit` is unchanged.
-- Adding an optional field is not a breaking change, so this ships as a patch release under `docs/releasing.md`.
+- Adding an optional field is not a breaking change, but it ships in 0.3.0, a minor release, as a new feature.
 
 ## Manual check
 
