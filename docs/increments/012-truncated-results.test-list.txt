@@ -16,9 +16,9 @@
 ## Test List (TDD)
 - [ ] Acceptance test: a client runs spotlight_query with a query matching more system files than a limit of 1 and receives one path and truncated true
 - [ ] Acceptance test: a client searches for "finde" with a limit above its matches and receives the paths without a truncated key
-- [ ] A search whose matches exceed limit returns limit paths and truncated true
-- [ ] spotlight_query whose matches exceed limit returns limit paths and truncated true
-- [ ] A search whose matches equal limit returns them all and no truncated key
+- [x] A search whose matches exceed limit returns limit paths and truncated true
+- [x] spotlight_query whose matches exceed limit returns limit paths and truncated true
+- [x] A search whose matches equal limit returns them all and no truncated key
 - [ ] spotlight_query whose matches equal limit returns them all and no truncated key
 - [ ] A result that is cut off with a protected folder denied carries both truncated and unreadableFolders
 - [ ] The text block decodes to the structured content, including truncated
