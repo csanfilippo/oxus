@@ -47,7 +47,7 @@ import Testing
         let result = try await client.send(CallTool.request(call.request)).value
 
         #expect(result.isError != true)
-        #expect(result.structuredContent == ["paths": []])
+        #expect(result.structuredContent == ["paths": [], "truncated": false])
     }
 
     @Test(arguments: UnscopedCall.allCases)

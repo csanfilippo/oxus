@@ -331,8 +331,7 @@ import Testing
         #expect(content["truncated"] == true)
     }
 
-    @Test func `a client searches for "finde" with a limit above its matches and receives the paths without a truncated key`() async throws
-    {
+    @Test func `a client searches for "finde" with a limit above its matches and receives the paths and truncated false`() async throws {
         let client = try await connectedClient(spotlight: CoreServicesSpotlight())
 
         let result = try await client.send(
@@ -348,7 +347,7 @@ import Testing
 
         #expect(result.isError != true)
         #expect(paths.contains("/System/Library/CoreServices/Finder.app"))
-        #expect(content["truncated"] == nil)
+        #expect(content["truncated"] == false)
     }
 
     // Unscoped calls probe the home's protected folders; the real home would make runs prompt and depend on its privacy settings.

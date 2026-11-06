@@ -104,7 +104,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
 
         #expect(spy.receivedQuery?.text == #"kMDItemDisplayName == "*test*"cd"#)
-        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"], "truncated": false])
     }
 
     @Test(arguments: ["", "   "])
@@ -133,7 +133,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
 
         #expect(spy.receivedLimit?.value == 25)
-        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"], "truncated": false])
     }
 
     @Test func `search with only a kind returns the paths Spotlight finds for the compiled kind query`() async throws {
@@ -144,7 +144,7 @@ import Testing
 
         #expect(spy.receivedLimit?.value == 25)
         #expect(spy.receivedQuery?.text == #"kMDItemContentTypeTree == "public.image""#)
-        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"], "truncated": false])
     }
 
     @Test func `An unknown kind is rejected as an error result that lists the accepted kinds`() async throws {
@@ -218,7 +218,7 @@ import Testing
 
         #expect(spy.receivedQuery?.text == #"kMDItemDisplayName == "*test*"cd && kMDItemContentTypeTree == "public.image""#)
         #expect(spy.receivedFolder?.path == "/test")
-        #expect(result.structuredContent == ["paths": ["/a", "/b"]])
+        #expect(result.structuredContent == ["paths": ["/a", "/b"], "truncated": false])
     }
 
     @Test func `search without a folder asks Spotlight to search the whole index`() async throws {
@@ -462,7 +462,7 @@ import Testing
         let itemProperties = try #require(item["properties"]?.objectValue)
         let description = try #require(unreadableFolders["description"]?.stringValue)
 
-        #expect(schema["required"] == ["paths"])
+        #expect(schema["required"] == ["paths", "truncated"])
         #expect(unreadableFolders["type"] == "array")
         #expect(item["type"] == "object")
         #expect(itemProperties["path"]?.objectValue?["type"] == "string")
@@ -473,7 +473,7 @@ import Testing
 
     @Test(arguments: ["search", "spotlight_query"])
     func
-        `search and spotlight_query advertise an optional boolean truncated in their output schema, described as more matches existing than paths holds`(
+        `search and spotlight_query list truncated as a required boolean in their output schema, without saying it can be absent`(
             toolName: String
         )
         async throws
@@ -485,14 +485,15 @@ import Testing
         let truncated = try #require(schema["properties"]?.objectValue?["truncated"]?.objectValue)
         let description = try #require(truncated["description"]?.stringValue)
 
-        #expect(schema["required"] == ["paths"])
+        #expect(schema["required"] == ["paths", "truncated"])
         #expect(truncated["type"] == "boolean")
         #expect(description.contains("more matches exist than paths holds"))
         #expect(description.contains("raise limit or narrow the search"))
+        #expect(!description.contains("Absent"))
     }
 
     @Test(arguments: ["search", "spotlight_query"])
-    func `search and spotlight_query describe their limit argument as cutting off results that then carry truncated`(toolName: String)
+    func `search and spotlight_query describe their limit argument as truncated being true when a result is cut off`(toolName: String)
         async throws
     {
         let client = try await connectedClient()
@@ -502,8 +503,8 @@ import Testing
         let limit = try #require(schema["properties"]?.objectValue?["limit"]?.objectValue)
         let description = try #require(limit["description"]?.stringValue)
 
+        #expect(description.contains("truncated is true"))
         #expect(description.contains("cut off"))
-        #expect(description.contains("truncated"))
     }
 
     @Test
@@ -530,6 +531,7 @@ import Testing
                             "Allow access in System Settings › Privacy & Security › Files and Folders › Downloads, for oxus if it is listed there, otherwise the app that launched oxus",
                     ]
                 ],
+                "truncated": false,
             ])
     }
 
@@ -574,7 +576,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
 
         #expect(result.isError != true)
-        #expect(result.structuredContent == ["paths": ["/Users/test/a"]])
+        #expect(result.structuredContent == ["paths": ["/Users/test/a"], "truncated": false])
     }
 
     @Test(arguments: [
@@ -591,7 +593,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["folder": "~"]))).value
 
         #expect(result.isError != true)
-        #expect(result.structuredContent == ["paths": []])
+        #expect(result.structuredContent == ["paths": [], "truncated": false])
     }
 
     @Test func `A search scoped to a folder containing none of the protected folders (/System/Applications) adds no entry`()
@@ -606,7 +608,7 @@ import Testing
             CallTool.request(.init(name: "search", arguments: ["folder": "/System/Applications"]))
         ).value
 
-        #expect(result.structuredContent == ["paths": []])
+        #expect(result.structuredContent == ["paths": [], "truncated": false])
         #expect(fileSystem.checkedPaths == ["/System/Applications"])
     }
 
@@ -666,6 +668,18 @@ import Testing
         #expect(mirrored == result.structuredContent)
     }
 
+    @Test func `The text block decodes to the structured content, including truncated false`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a"]))
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
+        let text = try #require(texts(in: result.content).first)
+        let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
+
+        #expect(result.content.count == 1)
+        #expect(result.structuredContent?.objectValue?["truncated"] == false)
+        #expect(mirrored == result.structuredContent)
+    }
+
     @Test
     func
         `An unscoped search with ~/Downloads denied by privacy protection returns the paths Spotlight finds and one unreadableFolders entry with the Downloads path and the Files and Folders › Downloads fix`()
@@ -690,6 +704,7 @@ import Testing
                             "Allow access in System Settings › Privacy & Security › Files and Folders › Downloads, for oxus if it is listed there, otherwise the app that launched oxus",
                     ]
                 ],
+                "truncated": false,
             ])
     }
 
@@ -728,7 +743,15 @@ import Testing
         #expect(content["truncated"] == true)
     }
 
-    @Test func `A search whose matches equal limit returns them all and no truncated key`() async throws {
+    @Test func `A search with no matches returns empty paths and truncated false`() async throws {
+        let client = try await connectedClient(spotlight: SpySpotlight())
+
+        let result = try await client.send(CallTool.request(.init(name: "search", arguments: ["name_contains": "test"]))).value
+
+        #expect(result.structuredContent == ["paths": [], "truncated": false])
+    }
+
+    @Test func `A search whose matches equal limit returns them all and truncated false`() async throws {
         let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
 
         let result = try await client.send(
@@ -738,6 +761,6 @@ import Testing
         let content = try #require(result.structuredContent?.objectValue)
 
         #expect(content["paths"] == ["/a", "/b"])
-        #expect(content["truncated"] == nil)
+        #expect(content["truncated"] == false)
     }
 }

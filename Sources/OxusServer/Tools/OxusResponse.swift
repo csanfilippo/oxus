@@ -33,12 +33,12 @@ struct UnreadableFolder: Codable {
 struct OxusResponse: Codable {
     let paths: [String]
     let unreadableFolders: [UnreadableFolder]?
-    let truncated: Bool?
+    let truncated: Bool
 
-    init(paths: [String], unreadableFolders: [UnreadableFolder] = [], truncated: Bool = false) {
+    init(paths: [String], unreadableFolders: [UnreadableFolder] = [], truncated: Bool) {
         self.paths = paths
         self.unreadableFolders = unreadableFolders.isEmpty ? nil : unreadableFolders
-        self.truncated = truncated ? true : nil
+        self.truncated = truncated
     }
 
     static let schema: Value = .object([
@@ -70,10 +70,10 @@ struct OxusResponse: Codable {
             ]),
             "truncated": .object([
                 "type": "boolean",
-                "description": "True when more matches exist than paths holds, so raise limit or narrow the search. Absent otherwise",
+                "description": "True when more matches exist than paths holds, so raise limit or narrow the search",
             ]),
         ]),
-        "required": ["paths"],
+        "required": ["paths", "truncated"],
     ])
 
     var asResult: CallTool.Result {

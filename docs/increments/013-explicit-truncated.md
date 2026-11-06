@@ -1,6 +1,6 @@
 # Increment 13 — Explicit truncated
 
-**Status:** Planned
+**Status:** Done (2026-11-06), not yet released
 
 ## Goal
 
@@ -32,6 +32,8 @@ Make every successful result say whether it is complete. Since 0.3.0 a complete 
 ## Manual check
 
 Point a client at a release build of this increment. Run a `search` that matches more than 25 files and see `truncated: true`, then raise `limit` above the match count of a narrower search and see `truncated: false`.
+
+Run and confirmed by the user on 2026-11-06.
 
 ## Open decisions
 

@@ -12,12 +12,12 @@
 - The Spotlight port, SpotlightMatches and CoreServicesSpotlight are unchanged
 
 ## Test List (TDD)
-- [ ] Acceptance test: a client searches for "finde" with a limit above its matches and receives the paths and truncated false
-- [ ] A search whose matches equal limit returns them all and truncated false
-- [ ] spotlight_query whose matches equal limit returns them all and truncated false
-- [ ] A search with no matches returns empty paths and truncated false
-- [ ] The text block decodes to the structured content, including truncated false
-- [ ] search and spotlight_query list truncated as a required boolean in their output schema, without saying it can be absent
-- [ ] search and spotlight_query describe their limit argument as truncated being true when a result is cut off
-- [ ] An error result still has no structured content
-- [ ] Manual: a search matching more than 25 files returns truncated true, and a narrower search below its limit returns truncated false; results recorded in the increment doc
+- [x] Acceptance test: a client searches for "finde" with a limit above its matches and receives the paths and truncated false
+- [x] A search whose matches equal limit returns them all and truncated false
+- [x] spotlight_query whose matches equal limit returns them all and truncated false
+- [x] A search with no matches returns empty paths and truncated false
+- [x] The text block decodes to the structured content, including truncated false
+- [x] search and spotlight_query list truncated as a required boolean in their output schema, without saying it can be absent
+- [x] search and spotlight_query describe their limit argument as truncated being true when a result is cut off
+- [x] An error result still has no structured content
+- [x] Manual: a search matching more than 25 files returns truncated true, and a narrower search below its limit returns truncated false; results recorded in the increment doc

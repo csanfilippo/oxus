@@ -79,7 +79,7 @@ oxus runs locally and makes no network requests, but it gives the connected MCP 
 
 Without access to `~/Downloads`, `~/Documents` or `~/Desktop`, Spotlight silently leaves out their files. So a `spotlight_query`, a `search` without a `folder`, and a `search` whose `folder` contains one of them also return `unreadableFolders`: one `{"path": ..., "fix": ...}` per folder macOS privacy protection denies to oxus, the fix naming the Files and Folders setting to change.
 
-When more matches exist than `limit` allows, a result also carries `"truncated": true` next to `paths`, so raise `limit` or narrow the search. A result with every match has no `truncated` key.
+Every result carries `truncated` next to `paths`. It is `true` when more matches exist than `limit` allows, so raise `limit` or narrow the search, and `false` when `paths` holds every match.
 
 ### `spotlight_query`
 
@@ -90,7 +90,7 @@ Runs a raw [Spotlight query](https://developer.apple.com/library/archive/documen
 | `query` | string | yes | Spotlight query syntax, e.g. `kMDItemFSName == "*.pdf"c` |
 | `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
 
-The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
+The result is `{"paths": [...], "truncated": false}` with `paths` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"],"truncated":false}`.
 
 To try a query before sending it, run it with `mdfind`:
 
@@ -109,7 +109,7 @@ Finds files by name, kind, folder, or any combination of them, without Spotlight
 | `folder` | string | no | The folder to search, including its subfolders: an absolute path, `~` alone, or a path starting with `~/` |
 | `limit` | integer | no | Maximum number of paths, default 25, capped at 100 |
 
-The result is `{"paths": [...]}` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"]}`.
+The result is `{"paths": [...], "truncated": false}` with `paths` in Spotlight's order, as structured content and as JSON in a single text block, e.g. `{"paths":["/System/Library/CoreServices/Finder.app"],"truncated":false}`.
 
 A `folder` that cannot be searched returns an error result naming the expanded path and the fix, instead of an empty list:
 

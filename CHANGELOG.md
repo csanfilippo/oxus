@@ -4,6 +4,10 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Changed
+
+- Every `spotlight_query` and `search` result now carries `truncated`, which is `false` when `paths` holds every match. A client that tests whether the key exists, instead of its value, has to be updated.
+
 ## [0.3.0] - 2026-11-06
 
 ### Added

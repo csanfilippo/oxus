@@ -60,7 +60,7 @@ import Testing
         let paths = try #require(schema["properties"]?.objectValue?["paths"]?.objectValue)
         #expect(paths["type"] == "array")
         #expect(paths["items"]?.objectValue?["type"] == "string")
-        #expect(schema["required"] == ["paths"])
+        #expect(schema["required"] == ["paths", "truncated"])
     }
 
     @Test func `Spotlight is asked for 25 results when no limit is given`() async throws {
@@ -156,7 +156,7 @@ import Testing
         let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
 
         #expect(result.isError != true)
-        #expect(result.structuredContent == ["paths": []])
+        #expect(result.structuredContent == ["paths": [], "truncated": false])
         #expect(mirrored == result.structuredContent)
     }
 
@@ -209,7 +209,7 @@ import Testing
         let text = try #require(texts(in: result.content).first)
         let mirrored = try JSONDecoder().decode(Value.self, from: Data(text.utf8))
 
-        #expect(mirrored == ["paths": .array(paths.map { .string($0) })])
+        #expect(mirrored == ["paths": .array(paths.map { .string($0) }), "truncated": false])
     }
 
     @Test func `An error result carries no structured content`() async throws {
@@ -255,6 +255,7 @@ import Testing
                             "Allow access in System Settings › Privacy & Security › Files and Folders › Desktop, for oxus if it is listed there, otherwise the app that launched oxus",
                     ]
                 ],
+                "truncated": false,
             ])
     }
 
@@ -265,7 +266,7 @@ import Testing
         let result = try await client.send(CallTool.request(.init(name: "spotlight_query", arguments: ["query": "test"]))).value
 
         #expect(result.isError != true)
-        #expect(result.structuredContent == ["paths": ["/Users/test/a"]])
+        #expect(result.structuredContent == ["paths": ["/Users/test/a"], "truncated": false])
     }
 
     @Test func `spotlight_query returns a single text block that decodes to its structured content, including unreadableFolders`()
@@ -299,7 +300,7 @@ import Testing
         #expect(content["truncated"] == true)
     }
 
-    @Test func `spotlight_query whose matches equal limit returns them all and no truncated key`() async throws {
+    @Test func `spotlight_query whose matches equal limit returns them all and truncated false`() async throws {
         let client = try await connectedClient(spotlight: SpySpotlight(result: ["/a", "/b"]))
 
         let result = try await client.send(
@@ -309,6 +310,6 @@ import Testing
         let content = try #require(result.structuredContent?.objectValue)
 
         #expect(content["paths"] == ["/a", "/b"])
-        #expect(content["truncated"] == nil)
+        #expect(content["truncated"] == false)
     }
 }
