@@ -1,0 +1,23 @@
+# Increment 13: explicit truncated - Test List
+
+## Specifications
+- Tools: `spotlight_query` and `search`, which share `OxusResponse`
+- Every successful result carries `truncated` next to `paths`, in structuredContent and in the JSON text block
+- `truncated` is true when matches exceed `limit`, false otherwise, including matches equal to `limit`
+- `unreadableFolders` still appears only when there is something to report
+- Output schema: both tools list `truncated` as a required boolean; `required` is `paths` and `truncated`
+- The `truncated` description no longer says the key can be absent
+- Input schema: the `limit` description, shared by both tools, says `truncated` is true when a result is cut off
+- Error results are unchanged: no structured content
+- The Spotlight port, SpotlightMatches and CoreServicesSpotlight are unchanged
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches for "finde" with a limit above its matches and receives the paths and truncated false
+- [ ] A search whose matches equal limit returns them all and truncated false
+- [ ] spotlight_query whose matches equal limit returns them all and truncated false
+- [ ] A search with no matches returns empty paths and truncated false
+- [ ] The text block decodes to the structured content, including truncated false
+- [ ] search and spotlight_query list truncated as a required boolean in their output schema, without saying it can be absent
+- [ ] search and spotlight_query describe their limit argument as truncated being true when a result is cut off
+- [ ] An error result still has no structured content
+- [ ] Manual: a search matching more than 25 files returns truncated true, and a narrower search below its limit returns truncated false; results recorded in the increment doc

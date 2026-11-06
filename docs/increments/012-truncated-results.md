@@ -1,6 +1,6 @@
 # Increment 12 — Truncated results
 
-**Status:** Done (2026-11-06), not yet released
+**Status:** Done (2026-11-06), shipped in 0.3.0. Increment 13 replaces the missing key with an explicit `false`.
 
 ## Goal
 
