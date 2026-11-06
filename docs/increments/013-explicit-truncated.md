@@ -1,6 +1,6 @@
 # Increment 13 — Explicit truncated
 
-**Status:** Done (2026-11-06), not yet released
+**Status:** Done (2026-11-06), shipped in 0.4.0
 
 ## Goal
 

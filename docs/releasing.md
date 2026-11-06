@@ -16,7 +16,7 @@ How to publish a new version, e.g. `0.2.0`. A release produces a signed, notariz
 
 ## Steps
 
-1. **Pick the version.** Follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html): while oxus is `0.x`, a breaking change to the command line or to a tool's arguments or results bumps the minor version, anything else the patch version.
+1. **Pick the version.** Follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html): while oxus is `0.x`, a new feature, or a breaking change to the command line or to a tool's arguments or results, bumps the minor version, anything else the patch version.
 
 2. **Set the version** in `Sources/OxusServer/Version.swift`:
 

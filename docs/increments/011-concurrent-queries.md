@@ -1,6 +1,6 @@
 # Increment 11 — Concurrent queries
 
-**Status:** Done (2026-11-04), not yet released
+**Status:** Done (2026-11-04), shipped in 0.2.1
 
 ## Goal
 
