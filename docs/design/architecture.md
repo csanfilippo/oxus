@@ -20,7 +20,7 @@ Dependencies point inward. `MacOSAdapters` depends on `OxusServer` to implement 
 2. The server dispatches `tools/call` by name to an `OxusTool`: `SpotlightQueryTool` or `SearchTool`. An unknown name is a protocol error.
 3. The tool reads its arguments once into domain values (see [Tool arguments](tool-arguments.md)). `SearchTool` turns them into `SearchCriteria`, which builds the Spotlight query, and checks a `folder` through `FileSystem`.
 4. `PrivacyProtectionProbe` checks, through `FileSystem`, which of Downloads, Documents and Desktop macOS privacy protection denies, since Spotlight silently leaves out their files.
-5. The tool runs the query through `Spotlight` and returns the paths, any unreadable folders and whether `limit` cut the result off. A failure of a known tool returns a result with `isError: true`.
+5. The tool runs the query through `Spotlight` and returns `paths`, `truncated` and any `unreadableFolders` as the result. `truncated` says whether `limit` cut the result off. A failure of a known tool returns a result with `isError: true`.
 
 `oxus --version` never reaches the server: `Oxus` prints the version and exits before creating the transport.
 
