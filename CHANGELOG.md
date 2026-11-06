@@ -4,6 +4,8 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-06
+
 ### Changed
 
 - Every `spotlight_query` and `search` result now carries `truncated`, which is `false` when `paths` holds every match. A client that tests whether the key exists, instead of its value, has to be updated.
@@ -42,7 +44,8 @@ All notable changes to oxus are documented here. The format follows [Keep a Chan
 - A `search` `folder` denied by macOS privacy protection names the Privacy & Security setting to change, and one lacking read permission says so.
 - A `search` whose `folder` contains `~/Downloads`, `~/Documents` or `~/Desktop`, a `search` without a `folder`, and every `spotlight_query` list in `unreadableFolders` those of the three folders macOS privacy protection denies, each with the setting to change, since Spotlight silently leaves out their files.
 
-[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/csanfilippo/oxus/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/csanfilippo/oxus/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/csanfilippo/oxus/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/csanfilippo/oxus/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/csanfilippo/oxus/compare/v0.1.0...v0.2.0
