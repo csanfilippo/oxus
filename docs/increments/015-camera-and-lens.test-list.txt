@@ -1,0 +1,28 @@
+# Increment 15: search by camera and lens - Test List
+
+## Specifications
+- Tool: `search` gains `camera` and `lens` (strings, optional)
+- `camera`: each whitespace-separated word must appear in kMDItemAcquisitionMake or kMDItemAcquisitionModel, ignoring case and diacritics
+- `lens`: each whitespace-separated word must appear in kMDItemLensModel, ignoring case and diacritics
+- At least one of name_contains, kind, folder, camera and lens is required; filters in the same call are combined with AND
+- Blank or non-string camera or lens: result with isError, same message as the other non-empty string arguments
+- Quotes, backslashes and asterisks in a word are escaped like name_contains
+- Result, limit, truncated, unreadableFolders and folder errors unchanged; spotlight_query unchanged
+- Spotlight port and adapter unchanged
+- Checked on 2026-11-19 with mdls on a Fujifilm X-T4 RAF: make "FUJIFILM", model "X-T4", lens "XF16-80mmF4 R OIS WR"
+
+## Test List (TDD)
+- [ ] Acceptance test: a client searches with the fixture's camera over MCP and receives the fixture's path
+- [ ] Acceptance test: a client searches with the fixture's lens and a different camera over MCP and does not receive the fixture's path
+- [ ] A one-word camera compiles to a match on make or model
+- [ ] A camera of several words compiles to one make-or-model clause per word, combined with AND
+- [ ] A lens compiles to one lens model clause per word, combined with AND
+- [ ] Camera and lens words are escaped like name_contains
+- [ ] A name, a kind, a camera and a lens compile to all their clauses combined with AND
+- [ ] search advertises optional camera and lens arguments whose descriptions say each word must match
+- [ ] search with only a camera returns the paths Spotlight finds for the compiled camera query
+- [ ] search with a folder and a lens scopes the compiled lens query to the folder
+- [ ] A search with no filter lists all five filters in its error
+- [ ] A blank camera is rejected as an error result
+- [ ] A lens that is not a string is rejected as an error result
+- [ ] CoreServicesSpotlight finds the fixture by its camera model
