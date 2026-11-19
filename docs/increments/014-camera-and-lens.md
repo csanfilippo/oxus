@@ -1,4 +1,4 @@
-# Increment 15 — `search` by camera and lens
+# Increment 14 — `search` by camera and lens
 
 **Status:** Planned
 
@@ -51,4 +51,4 @@ Point a client at a release build of this increment. Ask for photos taken with a
 
 ## Test list
 
-[`015-camera-and-lens.test-list.txt`](015-camera-and-lens.test-list.txt)
+[`014-camera-and-lens.test-list.txt`](014-camera-and-lens.test-list.txt)
