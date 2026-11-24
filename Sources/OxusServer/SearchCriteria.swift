@@ -22,8 +22,6 @@
  SOFTWARE.
  */
 
-import Foundation
-
 struct SearchCriteria {
     enum Error: ToolFailure {
         case noFilters
@@ -33,45 +31,18 @@ struct SearchCriteria {
         }
     }
 
-    private let nameContains: NameContains?
-    private let kind: Kind?
+    let query: Query
     let folder: Folder?
 
-    private var onlyFolder: Bool {
-        nameContains == nil && kind == nil
-    }
-
     init(nameContains: NameContains? = nil, kind: Kind? = nil, folder: Folder? = nil) throws(Error) {
-        self.nameContains = nameContains
-        self.kind = kind
+        let filters = [nameContains?.query, kind?.query].compactMap { $0 }
+
+        switch (Query.all(of: filters), folder) {
+        case (let query?, _): self.query = query
+        case (nil, _?): query = .everyFile
+        case (nil, nil): throw .noFilters
+        }
+
         self.folder = folder
-
-        guard nameContains != nil || kind != nil || folder != nil else {
-            throw .noFilters
-        }
     }
-
-    // Never blank: the match-all query is a constant, and otherwise a name or a kind contributes a clause.
-    var query: Query {
-
-        guard !onlyFolder else {
-            return try! Query(#"kMDItemDisplayName == "*""#)
-        }
-
-        return try! Query(
-            [
-                nameContains.map { #"kMDItemDisplayName == "*\#(literal($0.text))*"cd"# },
-                kind?.spotlightQuery,
-            ]
-            .compactMap { $0 }
-            .joined(separator: " && "))
-    }
-}
-
-// Backslashes must be escaped first, or the backslashes added for quotes and asterisks would be doubled.
-private func literal(_ value: String) -> String {
-    value
-        .replacingOccurrences(of: #"\"#, with: #"\\"#)
-        .replacingOccurrences(of: #"""#, with: #"\""#)
-        .replacingOccurrences(of: "*", with: #"\*"#)
 }

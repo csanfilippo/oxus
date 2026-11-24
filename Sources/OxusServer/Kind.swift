@@ -32,8 +32,8 @@ enum Kind: String, CaseIterable {
     case folder
     case application
 
-    var spotlightQuery: String {
-        #"kMDItemContentTypeTree == "\#(contentType)""#
+    var query: Query {
+        Query(attribute: "kMDItemContentTypeTree", matches: contentType)
     }
 
     private var contentType: String {

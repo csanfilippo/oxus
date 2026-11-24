@@ -39,6 +39,6 @@ import Testing
     func `Each kind compiles to a match on its content type`(name: String, contentType: String) throws {
         let kind = try #require(Kind(rawValue: name))
 
-        #expect(kind.spotlightQuery == #"kMDItemContentTypeTree == "\#(contentType)""#)
+        #expect(kind.query.text == #"kMDItemContentTypeTree == "\#(contentType)""#)
     }
 }

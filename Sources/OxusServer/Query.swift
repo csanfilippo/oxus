@@ -38,6 +38,21 @@ public struct Query: Sendable {
 
         self.text = text
     }
+
+    init(attribute: String, matches pattern: String, modifiers: String = "") {
+        text = #"\#(attribute) == "\#(pattern)"\#(modifiers)"#
+    }
+
+    private init(_ left: Query, and right: Query) {
+        text = "\(left.text) && \(right.text)"
+    }
+
+    static let everyFile = Query(attribute: "kMDItemDisplayName", matches: "*")
+
+    static func all(of queries: [Query]) -> Query? {
+        guard let first = queries.first else { return nil }
+        return queries.dropFirst().reduce(first) { Query($0, and: $1) }
+    }
 }
 
 struct QueryArgument: NonEmptyStringArgument {

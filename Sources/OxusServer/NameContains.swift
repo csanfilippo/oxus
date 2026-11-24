@@ -22,6 +22,7 @@
  SOFTWARE.
  */
 
+import Foundation
 import MCP
 
 struct NameContains {
@@ -37,6 +38,18 @@ struct NameContains {
         }
 
         self.text = text
+    }
+
+    var query: Query {
+        Query(attribute: "kMDItemDisplayName", matches: "*\(literalText)*", modifiers: "cd")
+    }
+
+    // Backslashes must be escaped first, or the backslashes added for quotes and asterisks would be doubled.
+    private var literalText: String {
+        text
+            .replacingOccurrences(of: #"\"#, with: #"\\"#)
+            .replacingOccurrences(of: #"""#, with: #"\""#)
+            .replacingOccurrences(of: "*", with: #"\*"#)
     }
 }
 
